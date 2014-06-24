@@ -19,6 +19,7 @@ Boot.prototype = {
   create: function() {
 
     this.game.globals = require('../globals');
+    this.game.terrain = require('../../../shared/terrain');
 
     this.game.input.maxPointers = 1;
     this.game.state.start('preload');
