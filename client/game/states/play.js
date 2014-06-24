@@ -15,6 +15,8 @@ Play.prototype = {
 
   create: function() {
 
+    var Terrain = require('../../../shared/terrain');
+    console.log(Terrain);
     var gw = this.game.width;
     var gh = this.game.height;
 
@@ -25,7 +27,7 @@ Play.prototype = {
 
     // add terrain
     var hh = 170;
-    var polyTerrain = this.createTerrainPoly(gw, hh);
+    var polyTerrain = Terrain.create(gw, hh);
     var terrain = this.game.add.sprite(0, gh - hh,
       this.createTerrain(gw, hh, polyTerrain));
 
@@ -83,32 +85,6 @@ Play.prototype = {
 
   clickListener: function() {
     this.game.state.start('gameover');
-  },
-
-  createTerrainPoly: function(width, height) {
-    var poly = []
-      , amp = 1
-      , amps = 0.2
-      , baseY = height / 2;
-
-    for(var i = 0; i < width + 3; i+=3) {
-      var pt = [
-        i,
-        baseY + amp * Math.sin(1.2*i * Math.PI / 180.0)
-      ];
-      poly.push(pt);
-
-      if (amp >= height / 2)
-        amps = -amps;
-
-      amp += amps;
-    }
-
-    poly.push([pt[0], height]);
-    poly.push([0, height]);
-    poly.push([0, baseY]);
-
-    return poly;
   },
 
   createTerrain: function(width, height, poly) {
