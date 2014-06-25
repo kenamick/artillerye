@@ -16,26 +16,41 @@ Play.prototype = {
   create: function() {
 
     var Terrain = require('../../../shared/terrain');
-    console.log(Terrain);
     var gw = this.game.width;
     var gh = this.game.height;
 
     // enable P2 physics
     this.game.physics.startSystem(Phaser.Physics.P2JS);
-    this.game.physics.p2.restitution = 0.2;
-    this.game.physics.p2.gravity.y = 300;
+    this.game.physics.p2.restitution = 0.05;
+    this.game.physics.p2.gravity.y = 500;
 
     // add terrain
-    var hh = 170;
+    var hh = 570;
     var polyTerrain = Terrain.create(gw, hh);
-    var terrain = this.game.add.sprite(0, gh - hh,
-      this.createTerrain(gw, hh, polyTerrain));
+    var terrainBM = this.createTerrain(gw, hh, polyTerrain);
+    this.terrainBM = terrainBM;
+
+    var terrain = this.game.add.sprite(0, gh - hh, terrainBM);
+    this.terrain = terrain;
+
+    this.terrain.inputEnabled = true;
+    this.terrain.events.onInputDown.add(this.shootListener, this);
 
     // create physics body for this sprite
-    this.game.physics.p2.enable(terrain, true);
-    terrain.anchor.set(0, 0);
+    // this.game.physics.p2.enable(terrain, true);
+    // terrain.anchor.set(0, 0);
+    // terrain.body.static = true;
+    // terrain.body.clearShapes();
+    // terrain.body.addPolygon({
+    //   'skipSimpleCheck': true,
+    //   'removeCollinearPoints': true
+    // }, polyTerrain);
+
+    // terrain.body.x = gw / 2;
+    // terrain.body.y = gh - hh + 50;
 
     // ---------------------------
+    //TODO: use http://schteppe.github.io/p2.js/demos/heightfield.html
     // var data = [];
     // for (var i = 0; i < polyTerrain.length; i++) {
     //   data.push(polyTerrain[i][1]);
@@ -52,20 +67,6 @@ Play.prototype = {
     // heightfield.addShape(heightfieldShape);
     // this.game.physics.p2.addBody(heightfield);
 
-    //TODO: use http://schteppe.github.io/p2.js/demos/heightfield.html
-    terrain.body.clearShapes();
-    terrain.body.addPolygon({
-      'skipSimpleCheck': true,
-      'removeCollinearPoints': true
-    }, polyTerrain);
-
-
-    terrain.body.static = true;
-    // terrain.body.x = gw/2;
-    // terrain.body.y = gh - 70 + 70/2;
-    // terrain.body.collideWorldBounds = true;
-    // terrain.body.allowGravity = false;
-
     // add game tank sprite
     this.sprite = this.game.add.sprite(gw/2, gh/2, 'tank');
     this.sprite.inputEnabled = true;
@@ -77,14 +78,52 @@ Play.prototype = {
     this.sprite.body.velocity.y = this.game.rnd.integerInRange(-500,500);
 
     this.sprite.events.onInputDown.add(this.clickListener, this);
+
+
+
+    this.game.input.onDown.add(this.click, this);
+
   },
 
   update: function() {
 
   },
 
+  click: function(pointer) {
+    // var bodies = this.game.physics.p2.hitTest(pointer.position, [ this.terrain ]);
+    // if (bodies.length > 0) {
+    //   var dx = this.game.input.x - this.terrain.x;
+    //   var dy = this.game.input.y - this.terrain.y;
+
+    //   console.log('opaa ', dx, dy);
+
+    //   var ctx = this.terrainBM.context;
+    //   ctx.beginPath();
+    //   ctx.arc(dx, dy, 20, 0, 2 * Math.PI, false);
+    //   ctx.fillStyle = '#0F0F0F';
+    //   ctx.fill();
+
+    //   //  Because we're changing the context manually, we need to tell Phaser the texture is dirty.
+    //   //  You only need to do this in WebGL mode. In Canvas it's not needed.
+    //   this.terrainBM.dirty = true;
+    // }
+  },
+
   clickListener: function() {
     this.game.state.start('gameover');
+  },
+
+  shootListener: function() {
+    var dx = this.game.input.x - this.terrain.x;
+    var dy = this.game.input.y - this.terrain.y;
+    var ctx = this.terrainBM.context;
+    ctx.beginPath();
+    ctx.arc(dx, dy, 20, 0, 2 * Math.PI, false);
+    ctx.fillStyle = '#000';
+    ctx.fill();
+    //  Because we're changing the context manually, we need to tell Phaser the texture is dirty.
+    //  You only need to do this in WebGL mode. In Canvas it's not needed.
+    this.terrainBM.dirty = true;
   },
 
   createTerrain: function(width, height, poly) {
@@ -102,7 +141,7 @@ Play.prototype = {
     for(var i = 0, count = poly.length; i < count; i++) {
       var p = poly[i];
       bmd.ctx.lineTo(p[0], p[1]);
-      console.log('line to ', p);
+      // console.log('line to ', p);
     }
     // bmd.ctx.lineTo(p[0], height);
     // bmd.ctx.lineTo(0, height);

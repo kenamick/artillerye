@@ -13,7 +13,7 @@ var _globals = require('../../shared/globals');
 
 //global variables
 window.onload = function () {
-  var game = new Phaser.Game(640, 480, Phaser.CANVAS, 'artillerye');
+  var game = new Phaser.Game(960, 640, Phaser.CANVAS, 'artillerye');
 
   // Game States
   game.state.add('boot', require('./states/boot'));

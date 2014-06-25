@@ -1,6 +1,6 @@
 {
   "projectName": "Artillerye",
-  "gameWidth": "640",
-  "gameHeight": "480",
+  "gameWidth": "960",
+  "gameHeight": "640",
   "gameRenderer": "Phaser.CANVAS"
 }
