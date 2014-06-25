@@ -26,26 +26,34 @@ Play.prototype = {
 
     // add terrain
     var hh = 570;
-    var polyTerrain = Terrain.create(gw, hh);
-    var terrainBM = this.createTerrain(gw, hh, polyTerrain);
+    var polyTerrain = Terrain.create(gw, gh);
+    var terrainBM = this.createTerrain(gw, gh, polyTerrain);
     this.terrainBM = terrainBM;
 
-    var terrain = this.game.add.sprite(0, gh - hh, terrainBM);
+    var terrain = this.game.add.sprite(0, 0, terrainBM);
     this.terrain = terrain;
 
-    this.terrain.inputEnabled = true;
-    this.terrain.events.onInputDown.add(this.shootListener, this);
+    // this.terrain.inputEnabled = true;
+    // this.terrain.events.onInputDown.add(this.shootListener, this);
 
     // create physics body for this sprite
-    // this.game.physics.p2.enable(terrain, true);
+    // for (var i = 0; i < polyTerrain.length; i++) {
+    //   polyTerrain[i][0] += 0;
+    //   // polyTerrain[i][1] += gh / 2;
+    // }
+    this.game.physics.p2.enable(terrain, true);
     // terrain.anchor.set(0, 0);
-    // terrain.body.static = true;
-    // terrain.body.clearShapes();
-    // terrain.body.addPolygon({
-    //   'skipSimpleCheck': true,
-    //   'removeCollinearPoints': true
-    // }, polyTerrain);
 
+    terrain.body.clearShapes();
+    terrain.body.addPolygon({
+      'skipSimpleCheck': true,
+      'removeCollinearPoints': false
+    }, polyTerrain);
+
+    // terrain.body.static = true;
+
+    // terrain.body.y -= 150;
+    // terrain.anchor.set(0, 0);
     // terrain.body.x = gw / 2;
     // terrain.body.y = gh - hh + 50;
 
