@@ -28,8 +28,11 @@ Play.prototype = {
 
     // enable P2 physics
     this.game.physics.startSystem(Phaser.Physics.P2JS);
-    this.game.physics.p2.restitution = 0.05;
+    this.game.physics.p2.restitution = 0.09;
     this.game.physics.p2.gravity.y = 500;
+
+    // add backdrop
+    this.backdrop = this.game.add.sprite(0, 0, 'sky01');
 
     // add terrain
     var vertices = Terrain.create(30, 10);
@@ -98,7 +101,7 @@ Play.prototype = {
     sprite.body.collideWorldBounds = true;
     // sprite.body.fixedRotation = true;
     //this.sprite.body.velocity.x = this.game.rnd.integerInRange(-500,500);
-    sprite.body.velocity.y = this.game.rnd.integerInRange(-50,-100);
+    sprite.body.velocity.y = this.game.rnd.integerInRange(-50,-200);
     sprite.events.onInputDown.add(this.clickListener, this);
   },
 
@@ -106,7 +109,6 @@ Play.prototype = {
     var sprite
       , batch = this.game.add.spriteBatch(this.game, null, 'voxels');
 
-    console.log(vertices.length);
     for (var i = vertices.length - 1; i >= 0; i--) {
         sprite = batch.create(vertices[i][0] * vWidth, vertices[i][1] * vWidth, 'box32');
         this.game.physics.p2.enable(sprite, false);
