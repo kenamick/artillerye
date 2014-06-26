@@ -16,8 +16,15 @@ Play.prototype = {
   create: function() {
 
     var Terrain = require('../../../shared/terrain');
+
     var gw = this.game.width;
     var gh = this.game.height;
+
+    // fps
+    this.game.time.advancedTiming = true;
+    this.fpsText = this.game.add.text(
+      20, 20, '', { font: '16px Arial', fill: '#ffffff' }
+    );
 
     // enable P2 physics
     this.game.physics.startSystem(Phaser.Physics.P2JS);
@@ -25,88 +32,23 @@ Play.prototype = {
     this.game.physics.p2.gravity.y = 500;
 
     // add terrain
-    var hh = 570;
-    var polyTerrain = Terrain.create(gw, gh);
-    var terrainBM = this.createTerrain(gw, gh, polyTerrain);
-    this.terrainBM = terrainBM;
-
-    var terrain = this.game.add.sprite(0, 0, terrainBM);
-    this.terrain = terrain;
-
-    // this.terrain.inputEnabled = true;
-    // this.terrain.events.onInputDown.add(this.shootListener, this);
-
-    // create physics body for this sprite
-    // for (var i = 0; i < polyTerrain.length; i++) {
-    //   polyTerrain[i][0] += 0;
-    //   // polyTerrain[i][1] += gh / 2;
-    // }
-    this.game.physics.p2.enable(terrain, true);
-    console.log(terrain.x, terrain.y);
-    // terrain.anchor.set(0, 0);
-    // console.log(terrain.x, terrain.y);
-
-    // var terrainBody = new Phaser.Physics.P2.Body(this.game, {}, 0, 0, 1);
-    // terrainBody.debug = true;
-    var terrainBody = this.game.physics.p2.createBody(0, 0, 0, true, {
-      'skipSimpleCheck': true,
-      'removeCollinearPoints': false
-    }, polyTerrain);
-    console.log(terrainBody)
-    // var terrainBody = terrain.body;
-    // terrainBody.clearShapes();
-    // terrainBody.addPolygon({
-    //   'skipSimpleCheck': true,
-    //   'removeCollinearPoints': false
-    // }, polyTerrain);
-
-    // terrain.body = terrainBody;
-
-    // terrain.body.static = true;
-
-    // terrain.body.y -= 150;
-    // terrain.anchor.set(0, 0);
-    // terrain.body.x = gw / 2;
-    // terrain.body.y = gh - hh + 50;
-
-    // ---------------------------
-    //TODO: use http://schteppe.github.io/p2.js/demos/heightfield.html
-    // var data = [];
-    // for (var i = 0; i < polyTerrain.length; i++) {
-    //   data.push(polyTerrain[i][1]);
-    // }
-    // var heightfieldShape = new p2.Heightfield(data, {
-    //   'minValue': -1.0,
-    //   'maxValue': 1.0,
-    //   'elementWidth': 0.1
-    // });
-    // // var heightfield = this.game.physics.p2.addBody(0, 0, 0, false, {});
-    // var heightfield = new p2.Body({
-    //       position:[-5,-1]
-    //   });
-    // heightfield.addShape(heightfieldShape);
-    // this.game.physics.p2.addBody(heightfield);
+    var vertices = Terrain.create(30, 10);
+    this.voxels = this.createTerrain(vertices, 32);
 
     // add game tank sprite
-    this.sprite = this.game.add.sprite(gw/2, 50, 'tank');
-    this.sprite.inputEnabled = true;
-
-    this.game.physics.p2.enable([ this.sprite ], true);
-
-    this.sprite.body.collideWorldBounds = true;
-    this.sprite.body.velocity.x = this.game.rnd.integerInRange(-500,500);
-    this.sprite.body.velocity.y = this.game.rnd.integerInRange(-500,500);
-
-    this.sprite.events.onInputDown.add(this.clickListener, this);
-
-
+    this.player1 = this.createPlayer(150, 50);
+    this.player2 = this.createPlayer(350, 50);
+    this.player3 = this.createPlayer(550, 50);
+    this.player4 = this.createPlayer(750, 50);
 
     this.game.input.onDown.add(this.click, this);
 
   },
 
   update: function() {
-
+    if (this.game.time.fps !== 0) {
+      this.fpsText.setText(this.game.time.fps + ' FPS');
+    }
   },
 
   click: function(pointer) {
@@ -134,9 +76,10 @@ Play.prototype = {
   },
 
   shootListener: function() {
-    var dx = this.game.input.x - this.terrain.x;
-    var dy = this.game.input.y - this.terrain.y;
-    var ctx = this.terrainBM.context;
+    var dx = this.game.input.x - this.terrain.x
+      , dy = this.game.input.y - this.terrain.y
+      , ctx = this.terrainBM.context;
+
     ctx.beginPath();
     ctx.arc(dx, dy, 20, 0, 2 * Math.PI, false);
     ctx.fillStyle = '#000';
@@ -146,33 +89,40 @@ Play.prototype = {
     this.terrainBM.dirty = true;
   },
 
-  createTerrain: function(width, height, poly) {
-    var bmd = this.game.add.bitmapData(width, height);
-    bmd.ctx.beginPath();
+  createPlayer: function(x, y) {
+    var sprite = this.game.add.sprite(x, y, 'tank');
+    sprite.inputEnabled = true;
 
-    // bmd.ctx.beginPath();
-    // bmd.ctx.rect(0, 0, width, height);
-    // bmd.ctx.fillStyle = '#ff0000';
-    // bmd.ctx.fill();
-    // return bmd;
+    this.game.physics.p2.enable(sprite, false);
 
-    bmd.ctx.moveTo(poly[0][0], poly[0][1]);
+    sprite.body.collideWorldBounds = true;
+    // sprite.body.fixedRotation = true;
+    //this.sprite.body.velocity.x = this.game.rnd.integerInRange(-500,500);
+    sprite.body.velocity.y = this.game.rnd.integerInRange(-50,-100);
+    sprite.events.onInputDown.add(this.clickListener, this);
+  },
 
-    for(var i = 0, count = poly.length; i < count; i++) {
-      var p = poly[i];
-      bmd.ctx.lineTo(p[0], p[1]);
-      // console.log('line to ', p);
+  createTerrain: function(vertices, vWidth) {
+    var sprite
+      , batch = this.game.add.spriteBatch(this.game, null, 'voxels');
+
+    console.log(vertices.length);
+    for (var i = vertices.length - 1; i >= 0; i--) {
+        sprite = batch.create(vertices[i][0] * vWidth, vertices[i][1] * vWidth, 'box32');
+        this.game.physics.p2.enable(sprite, false);
+        // sprite.anchor.set(0, 0);
+        sprite.body.collideWorldBounds = true;
+        // sprite.body.static = true;
     }
-    // bmd.ctx.lineTo(p[0], height);
-    // bmd.ctx.lineTo(0, height);
-    // bmd.ctx.lineTo(0, 0);
 
-    bmd.ctx.fillStyle = '#ff0000';
-    bmd.ctx.fill();
-
-    return bmd;
+    // this.game.physics.p2.enable(voxels, true);
+    return batch;
   }
 
 };
+
+/**
+ * Exports
+ */
 
 module.exports = Play;
