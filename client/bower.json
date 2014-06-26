@@ -2,6 +2,7 @@
   "name": "artillerye",
   "version": "0.0.0",
   "dependencies": {
+    //"phaser-official": "https://github.com/photonstorm/phaser.git#v2.0.5"
     "phaser-official": "2.0.5"
   }
 }

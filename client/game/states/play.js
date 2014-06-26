@@ -42,13 +42,25 @@ Play.prototype = {
     //   // polyTerrain[i][1] += gh / 2;
     // }
     this.game.physics.p2.enable(terrain, true);
+    console.log(terrain.x, terrain.y);
     // terrain.anchor.set(0, 0);
+    // console.log(terrain.x, terrain.y);
 
-    terrain.body.clearShapes();
-    terrain.body.addPolygon({
+    // var terrainBody = new Phaser.Physics.P2.Body(this.game, {}, 0, 0, 1);
+    // terrainBody.debug = true;
+    var terrainBody = this.game.physics.p2.createBody(0, 0, 0, true, {
       'skipSimpleCheck': true,
       'removeCollinearPoints': false
     }, polyTerrain);
+    console.log(terrainBody)
+    // var terrainBody = terrain.body;
+    // terrainBody.clearShapes();
+    // terrainBody.addPolygon({
+    //   'skipSimpleCheck': true,
+    //   'removeCollinearPoints': false
+    // }, polyTerrain);
+
+    // terrain.body = terrainBody;
 
     // terrain.body.static = true;
 
@@ -76,7 +88,7 @@ Play.prototype = {
     // this.game.physics.p2.addBody(heightfield);
 
     // add game tank sprite
-    this.sprite = this.game.add.sprite(gw/2, gh/2, 'tank');
+    this.sprite = this.game.add.sprite(gw/2, 50, 'tank');
     this.sprite.inputEnabled = true;
 
     this.game.physics.p2.enable([ this.sprite ], true);
