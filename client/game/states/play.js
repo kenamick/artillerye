@@ -20,12 +20,6 @@ Play.prototype = {
     var gw = this.game.width;
     var gh = this.game.height;
 
-    // fps
-    this.game.time.advancedTiming = true;
-    this.fpsText = this.game.add.text(
-      20, 20, '', { font: '16px Arial', fill: '#ffffff' }
-    );
-
     // enable P2 physics
     this.game.physics.startSystem(Phaser.Physics.P2JS);
     this.game.physics.p2.restitution = 0.09;
@@ -44,14 +38,31 @@ Play.prototype = {
     this.player3 = this.createPlayer(550, 50);
     this.player4 = this.createPlayer(750, 50);
 
-    this.game.input.onDown.add(this.click, this);
+    // fps
+    this.game.time.advancedTiming = true;
+    this.fpsText = this.game.add.text(
+      20, 20, '', { font: '16px Arial', fill: '#ffffff' }
+    );
 
+    this.game.input.onDown.add(this.click, this);
+    this.cursors = this.game.input.keyboard.createCursorKeys();
   },
 
   update: function() {
+    // draw fps
     if (this.game.time.fps !== 0) {
       this.fpsText.setText(this.game.time.fps + ' FPS');
     }
+
+    // move player 1
+    if (this.cursors.left.isDown) {
+      this.player1.body.moveLeft(50);
+    } else if (this.cursors.right.isDown) {
+      this.player1.body.moveRight(50);
+    } else if (this.cursors.down.isDown) {
+      this.player1.body.moveDown(50);
+    }
+
   },
 
   click: function(pointer) {
@@ -103,6 +114,8 @@ Play.prototype = {
     //this.sprite.body.velocity.x = this.game.rnd.integerInRange(-500,500);
     sprite.body.velocity.y = this.game.rnd.integerInRange(-50,-200);
     sprite.events.onInputDown.add(this.clickListener, this);
+    sprite.body.mass = 100;
+    return sprite;
   },
 
   createTerrain: function(vertices, vWidth) {
@@ -114,6 +127,7 @@ Play.prototype = {
         this.game.physics.p2.enable(sprite, false);
         // sprite.anchor.set(0, 0);
         sprite.body.collideWorldBounds = true;
+        sprite.body.mass = 200;
         // sprite.body.static = true;
     }
 
