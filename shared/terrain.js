@@ -19,15 +19,15 @@ function createTerrainPoly(width, height) {
     , amps = 0.2
     , baseY = height / 2;
 
-  for(var i = 0; i < width + 3; i+=3) {
+  for(var i = 0; i < width + 3; i += 3) {
     var pt = [
       i,
-      baseY + amp * Math.sin(1.2*i * Math.PI / 180.0)
+      baseY + amp * Math.sin(1.5 * i * Math.PI / 180.0)
     ];
     poly.push(pt);
 
-    if (amp >= height / 2)
-      amps = -amps;
+    // if (amp >= height / 4)
+    //   amps = -amps;
 
     amp += amps;
   }
@@ -39,8 +39,33 @@ function createTerrainPoly(width, height) {
   return poly;
 };
 
+function createHeightField(width, height) {
+  var vertices = []
+    , amp = 1
+    , amps = 0.2
+    , baseY = height / 2;
+
+  for(var i = 0; i < width; i ++) {
+    var y = baseY + amp * Math.sin(1.5 * i * Math.PI / 180.0);
+
+    for(var j = height; j > y; j--) {
+      var pt = [i, j];
+      vertices.push(pt);
+    }
+    // if (amp >= height / 4)
+    //   amps = -amps;
+    amp += amps;
+  }
+
+  return vertices;
+};
+
+/**
+ * Exports
+ */
+
 module.exports = {
   create: function(width, height) {
-    return createTerrainPoly(width, height);
+    return createHeightField(width, height);
   }
 };
