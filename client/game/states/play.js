@@ -22,8 +22,8 @@ Play.prototype = {
 
     // enable P2 physics
     this.game.physics.startSystem(Phaser.Physics.P2JS);
-    this.game.physics.p2.restitution = 0.09;
-    this.game.physics.p2.gravity.y = 500;
+    this.game.physics.p2.restitution = 0.9;
+    this.game.physics.p2.gravity.y = 150;
 
     // add backdrop
     this.backdrop = this.game.add.sprite(0, 0, 'sky01');
@@ -56,11 +56,17 @@ Play.prototype = {
 
     // move player 1
     if (this.cursors.left.isDown) {
-      this.player1.body.moveLeft(50);
+      this.player1.body.rotateLeft(25);
     } else if (this.cursors.right.isDown) {
-      this.player1.body.moveRight(50);
+      this.player1.body.rotateRight(25);
+    } else {
+      this.player1.body.setZeroRotation();
+    }
+
+    if (this.cursors.up.isDown) {
+      this.player1.body.thrust(5000);
     } else if (this.cursors.down.isDown) {
-      this.player1.body.moveDown(50);
+      this.player1.body.reverse(2000);
     }
 
   },
@@ -112,9 +118,11 @@ Play.prototype = {
     sprite.body.collideWorldBounds = true;
     // sprite.body.fixedRotation = true;
     //this.sprite.body.velocity.x = this.game.rnd.integerInRange(-500,500);
-    sprite.body.velocity.y = this.game.rnd.integerInRange(-50,-200);
+    sprite.body.velocity.y = this.game.rnd.integerInRange(50, 70);
     sprite.events.onInputDown.add(this.clickListener, this);
+    // sprite.body.motionState = p2.Body.KINEMATIC;// this.game.physics.p2.Body.KINEMATIC;
     sprite.body.mass = 100;
+    sprite.body.data.gravityScale = 0.125;
     return sprite;
   },
 
