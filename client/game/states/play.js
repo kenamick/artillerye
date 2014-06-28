@@ -15,22 +15,32 @@ Play.prototype = {
 
   create: function() {
 
-    var Terrain = require('../../../shared/terrain');
-
     var gw = this.game.width;
     var gh = this.game.height;
 
+    var Terrain = require('../../../shared/terrain');
+    var Physics = require('../../../shared/physics');
+
+    this.physics = new Physics({
+      restitution: 0.9,
+      gravity: {x: 0, y: -150}
+    });
+    this.physics.addWallTop(0, 0);
+    this.physics.addWallBottom(0, gh);
+
+    console.log(this.physics.world);
+
     // enable P2 physics
-    this.game.physics.startSystem(Phaser.Physics.P2JS);
-    this.game.physics.p2.restitution = 0.9;
-    this.game.physics.p2.gravity.y = 150;
+    // this.game.physics.startSystem(Phaser.Physics.P2JS);
+    // this.game.physics.p2.restitution = 0.9;
+    // this.game.physics.p2.gravity.y = 150;
 
     // add backdrop
     this.backdrop = this.game.add.sprite(0, 0, 'sky01');
 
     // add terrain
     var vertices = Terrain.create(30, 10);
-    this.voxels = this.createTerrain(vertices, 32);
+    // this.voxels = this.createTerrain(vertices, 32);
 
     // add game tank sprite
     this.player1 = this.createPlayer(150, 50);
@@ -55,20 +65,26 @@ Play.prototype = {
     }
 
     // move player 1
-    if (this.cursors.left.isDown) {
-      this.player1.body.rotateLeft(25);
-    } else if (this.cursors.right.isDown) {
-      this.player1.body.rotateRight(25);
-    } else {
-      this.player1.body.setZeroRotation();
-    }
+    // if (this.cursors.left.isDown) {
+    //   this.player1.body.rotateLeft(25);
+    // } else if (this.cursors.right.isDown) {
+    //   this.player1.body.rotateRight(25);
+    // } else {
+    //   this.player1.body.setZeroRotation();
+    // }
 
-    if (this.cursors.up.isDown) {
-      this.player1.body.thrust(5000);
-    } else if (this.cursors.down.isDown) {
-      this.player1.body.reverse(2000);
-    }
+    // if (this.cursors.up.isDown) {
+    //   this.player1.body.thrust(5000);
+    // } else if (this.cursors.down.isDown) {
+    //   this.player1.body.reverse(2000);
+    // }
 
+    this.physics.update();
+
+    this.player1.x = this.player1.spirit.position[0] * 20;
+    this.player1.y = this.player1.spirit.position[1] * 20;
+    // console.log(this.player1.x, this.player1.y);
+    console.log(this.player1.spirit.position[0],this.player1.spirit.position[1]);
   },
 
   click: function(pointer) {
@@ -113,16 +129,22 @@ Play.prototype = {
     var sprite = this.game.add.sprite(x, y, 'tank');
     sprite.inputEnabled = true;
 
-    this.game.physics.p2.enable(sprite, false);
+    var shape = this.physics.shapes.rect(sprite.width, sprite.height);
+    var body = this.physics.addBody(x, y, shape);
+    body.velocity[0] = 0;
+    body.velocity[1] = 0;
+    sprite.spirit = body;
+    sprite.anchor.set(0.5);
 
-    sprite.body.collideWorldBounds = true;
-    // sprite.body.fixedRotation = true;
-    //this.sprite.body.velocity.x = this.game.rnd.integerInRange(-500,500);
-    sprite.body.velocity.y = this.game.rnd.integerInRange(50, 70);
-    sprite.events.onInputDown.add(this.clickListener, this);
-    // sprite.body.motionState = p2.Body.KINEMATIC;// this.game.physics.p2.Body.KINEMATIC;
-    sprite.body.mass = 100;
-    sprite.body.data.gravityScale = 0.125;
+    // this.game.physics.p2.enable(sprite, false);
+    // sprite.body.collideWorldBounds = true;
+    // // sprite.body.fixedRotation = true;
+    // //this.sprite.body.velocity.x = this.game.rnd.integerInRange(-500,500);
+    // // sprite.body.velocity.y = this.game.rnd.integerInRange(50, 70);
+    // sprite.events.onInputDown.add(this.clickListener, this);
+    // // sprite.body.motionState = p2.Body.KINEMATIC;// this.game.physics.p2.Body.KINEMATIC;
+    // sprite.body.mass = 1;
+    // // sprite.body.data.gravityScale = 0.125;
     return sprite;
   },
 
