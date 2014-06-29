@@ -10,13 +10,15 @@
 'use strict';
 
 var Physics = require('../../shared/physics')
-  , environment = require('../../shared/environment')
+  , Spirits = require('../../shared/spirits')
   ;
 
 function Entities(game) {
   this.game = game;
 
   this.physics = null;
+
+  this.spirits = null;
 
   this.entities = [];
 };
@@ -28,17 +30,16 @@ Entities.prototype = {
       restitution: config.restitution,
       gravity: config.gravity
     });
-    this.physics.addWallTop(0, 0);
-    this.physics.addWallBottom(0, this.game.height);
-    this.physics.addWallLeft(0, 0);
-    this.physics.addWallRight(this.game.width, 0);
+    this.spirits = new Spirits(this.physics);
+  },
+
+  addWalls: function(width, height) {
+    this.spirits.addWalls(width, height);
   },
 
   addPlayer: function(x, y) {
-    var sprite = this.game.add.sprite(x, y, 'balloon')
-      , shape = this.physics.shapes.rect(sprite.width, sprite.height);
-
-    sprite.spirit = this.physics.addBody(x, y, shape, 1, 0);;
+    var sprite = this.game.add.sprite(x, y, 'balloon');
+    sprite.spirit = this.spirits.addPlayer(x, y, sprite.width, sprite.height);
     sprite.anchor.set(0.5);
     sprite.inputEnabled = true;
 
@@ -48,15 +49,12 @@ Entities.prototype = {
   },
 
   addBlocks: function(width, height) {
-    var vertices = environment.createTerrain(width, height);
-    var batch = this.game.add.spriteBatch(this.game, null, 'voxels');
-    var size = 32;
+    var blocks = this.spirits.addBlocks(width, height)
+      , batch = this.game.add.spriteBatch(this.game, null, 'voxels');
 
-    for (var i = vertices.length - 1; i >= 0; i--) {
-      var shape = this.physics.shapes.rect(size, size)
-        , sprite = batch.create(vertices[i][0] * size, vertices[i][1] * size, 'box32');
-
-        sprite.spirit = this.physics.addBody(vertices[i][0] * size, vertices[i][1] * size, shape, 50);
+    for (var i = blocks.length - 1; i >= 0; i--) {
+        var sprite = batch.create(blocks[i].x, blocks[i].y, 'box32');
+        sprite.spirit = blocks[i];
         sprite.anchor.set(0.5);
 
         this.entities.push(sprite);
@@ -83,7 +81,6 @@ Entities.prototype = {
   },
 
 };
-
 
 /**
  * Exports

@@ -40,7 +40,9 @@ Play.prototype = {
 
     // connect to server
     this.gameclient = GameClient(this.onReceivePacket.bind(this));
-    this.gameclient.connect('dummy url');
+    this.gameclient.connect('dummy url', function() {
+      //TODO: Error handling
+    });
   },
   /**
    * Game update loop
@@ -113,6 +115,8 @@ Play.prototype = {
       case packets.GAME_JOINED:
         // create physics world
         this.gamefactory.setPhysics(data.physics);
+
+        this.gamefactory.addWalls(data.terrain.width, data.terrain.height);
 
         // add game objects
         this.voxels = this.gamefactory.addBlocks(20, 10);

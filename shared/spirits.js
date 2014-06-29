@@ -9,8 +9,6 @@
 
 'use strict';
 
-function Env() {};
-
 function createTerrainPoly(width, height) {
   var poly = []
     , amp = 1
@@ -62,8 +60,34 @@ function createHeightField(width, height) {
  * Exports
  */
 
-module.exports = {
-  createTerrain: function(width, height) {
-    return createHeightField(width, height);
-  }
+module.exports = function(physics) {
+  return {
+
+    addWalls: function(width, height) {
+      physics.addWallTop(0, 0);
+      physics.addWallBottom(0, height);
+      physics.addWallLeft(0, 0);
+      physics.addWallRight(width, 0);
+    },
+
+    addPlayer: function(x, y, w, h) {
+      var shape = physics.shapes.rect(w, h);
+      var spirit = physics.addBody(x, y, shape, 1, 0);;
+      return spirit;
+    },
+
+    addBlocks: function(width, height) {
+      var vertices = createHeightField(width, height)
+        , size = 32
+        , blocks = [];
+
+      for (var i = vertices.length - 1; i >= 0; i--) {
+        var shape = physics.shapes.rect(size, size);
+        var spirit = physics.addBody(vertices[i][0] * size, vertices[i][1] * size, shape, 50);
+        blocks.push(spirit);
+      }
+      return blocks;
+    }
+
+  };
 };

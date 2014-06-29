@@ -20,11 +20,11 @@ var packets = require('../../shared/packets');
 module.exports = function(listener) {
   return {
 
-    connect: function(url) {
+    connect: function(url, err) {
 
     },
 
-    send: function(packet, data) {
+    send: function(packet, data, err) {
 
     },
 

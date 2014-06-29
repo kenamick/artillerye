@@ -22,7 +22,7 @@ var packets = require('../../shared/packets');
 module.exports = function(listener) {
   return {
 
-    connect: function(url, data) {
+    connect: function(url, err) {
       var data = {
         server: {
           name: 'Mindfields'
@@ -31,7 +31,7 @@ module.exports = function(listener) {
       listener(packets.CONNECTED, data);
     },
 
-    send: function(packet, data) {
+    send: function(packet, data, err) {
 
       switch(packet) {
         /**
@@ -49,6 +49,10 @@ module.exports = function(listener) {
             player: {
               x: 150,
               y: 50
+            },
+            terrain: {
+              width: 960,
+              height: 640
             }
           };
           listener(packets.GAME_JOINED, data);
