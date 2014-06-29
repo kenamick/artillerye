@@ -47,9 +47,21 @@ Entities.prototype = {
     return sprite;
   },
 
-  addBlocks: function() {
+  addBlocks: function(width, height) {
+    var vertices = environment.createTerrain(width, height);
+    var batch = this.game.add.spriteBatch(this.game, null, 'voxels');
+    var size = 32;
 
+    for (var i = vertices.length - 1; i >= 0; i--) {
+      var shape = this.physics.shapes.rect(size, size)
+        , sprite = batch.create(vertices[i][0] * size, vertices[i][1] * size, 'box32');
 
+        sprite.spirit = this.physics.addBody(vertices[i][0] * size, vertices[i][1] * size, shape, 50);
+        sprite.anchor.set(0.5);
+
+        this.entities.push(sprite);
+    }
+    return batch;
   },
 
   /**

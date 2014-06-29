@@ -88,23 +88,6 @@ Play.prototype = {
     }
   },
 
-  createTerrain: function(vertices, vWidth) {
-    var sprite
-      , batch = this.game.add.spriteBatch(this.game, null, 'voxels');
-
-    for (var i = vertices.length - 1; i >= 0; i--) {
-        sprite = batch.create(vertices[i][0] * vWidth, vertices[i][1] * vWidth, 'box32');
-        this.game.physics.p2.enable(sprite, false);
-        // sprite.anchor.set(0, 0);
-        sprite.body.collideWorldBounds = true;
-        sprite.body.mass = 200;
-        // sprite.body.static = true;
-    }
-
-    // this.game.physics.p2.enable(voxels, true);
-    return batch;
-  },
-
   clickListener: function() {
     this.game.state.start('gameover');
   },
@@ -131,9 +114,8 @@ Play.prototype = {
         // create physics world
         this.gamefactory.setPhysics(data.physics);
 
-        // add terrain
-        // var vertices = Terrain.create(30, 10);
-        // this.voxels = this.createTerrain(vertices, 32);
+        // add game objects
+        this.voxels = this.gamefactory.addBlocks(20, 10);
 
         // add player sprite
         this.player = this.gamefactory.addPlayer(data.player.x, data.player.y);
