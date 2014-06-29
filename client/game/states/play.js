@@ -9,55 +9,35 @@
 
 'use strict';
 
+var EntitiesFactory = require('../entities.js')
+  , GameClient = require('../gameclient_mock.js')
+  , packets = require('../../../shared/packets');
+
 function Play() {}
 
 Play.prototype = {
 
   create: function() {
 
-    var gw = this.game.width;
-    var gh = this.game.height;
+    this.entities = new EntitiesFactory(this.game);
 
-    var Terrain = require('../../../shared/terrain');
-    var Physics = require('../../../shared/physics');
-
-    this.physics = new Physics({
-      restitution: 0.9,
-      gravity: {x: 0, y: 150}
-    });
-    this.physics.addWallTop(0, 0);
-    this.physics.addWallBottom(0, gh);
-    this.physics.addWallLeft(0, 0);
-    this.physics.addWallRight(gw, 0);
-
-    console.log(this.physics.world);
-
-    // enable P2 physics
-    // this.game.physics.startSystem(Phaser.Physics.P2JS);
-    // this.game.physics.p2.restitution = 0.9;
-    // this.game.physics.p2.gravity.y = 150;
-
-    // add backdrop
+    // add client graphics
     this.backdrop = this.game.add.sprite(0, 0, 'sky01');
-
-    // add terrain
-    var vertices = Terrain.create(30, 10);
-    // this.voxels = this.createTerrain(vertices, 32);
-
-    // add game tank sprite
-    this.player1 = this.createPlayer(150, 50);
-    this.player2 = this.createPlayer(350, 50);
-    this.player3 = this.createPlayer(550, 50);
-    this.player4 = this.createPlayer(750, 50);
-
-    // fps
+    // add fps counter
     this.game.time.advancedTiming = true;
     this.fpsText = this.game.add.text(
       20, 20, '', { font: '16px Arial', fill: '#ffffff' }
     );
 
+    // game has not yet started
+    this.gameStarted = false;
+
     // this.game.input.onDown.add(this.click, this);
     this.cursors = this.game.input.keyboard.createCursorKeys();
+
+    // connect to server
+    this.gameclient = GameClient(this.onReceivePacket.bind(this));
+    this.gameclient.connect('dummy url');
   },
 
   update: function(game) {
@@ -66,7 +46,10 @@ Play.prototype = {
       this.fpsText.setText(game.time.fps + ' FPS');
     }
 
-    this.physics.update();
+    if (!this.gameStarted)
+      return;
+
+    this.entities.update();
 
     // move player 1
     if (this.cursors.left.isDown) {
@@ -78,15 +61,15 @@ Play.prototype = {
     }
 
     if (this.cursors.up.isDown) {
-      this.player1.spirit.thrust(500);
+      this.player1.spirit.thrust(250);
     } else if (this.cursors.down.isDown) {
-      this.player1.spirit.reverse(200);
+      this.player1.spirit.reverse(10);
     }
 
     this.updatePlayer(this.player1);
-    this.updatePlayer(this.player2);
-    this.updatePlayer(this.player3);
-    this.updatePlayer(this.player4);
+    // this.updatePlayer(this.player2);
+    // this.updatePlayer(this.player3);
+    // this.updatePlayer(this.player4);
   },
 
   clickListener: function() {
@@ -109,27 +92,7 @@ Play.prototype = {
     sprite.rotation = sprite.spirit.angle;
   },
 
-  createPlayer: function(x, y) {
-    var sprite = this.game.add.sprite(x, y, 'balloon');
-    sprite.inputEnabled = true;
 
-    var shape = this.physics.shapes.rect(sprite.width, sprite.height);
-    var body = this.physics.addBody(x, y, shape, 1, 0);
-    body.velocity[0] = this.game.rnd.integerInRange(-5,10);
-    body.velocity[1] = this.game.rnd.integerInRange(-5,10);
-    sprite.spirit = body;
-    sprite.anchor.set(0.5);
-
-    // this.game.physics.p2.enable(sprite, false);
-    // sprite.body.collideWorldBounds = true;
-    // // sprite.body.fixedRotation = true;
-    // //this.sprite.body.velocity.x = this.game.rnd.integerInRange(-500,500);
-    // sprite.events.onInputDown.add(this.clickListener, this);
-    // // sprite.body.motionState = p2.Body.KINEMATIC;// this.game.physics.p2.Body.KINEMATIC;
-    // sprite.body.mass = 1;
-    // // sprite.body.data.gravityScale = 0.125;
-    return sprite;
-  },
 
   createTerrain: function(vertices, vWidth) {
     var sprite
@@ -146,7 +109,52 @@ Play.prototype = {
 
     // this.game.physics.p2.enable(voxels, true);
     return batch;
-  }
+  },
+
+  onReceivePacket: function(packet, data) {
+    console.log('-- New packet --', packet, data);
+
+    switch(packet) {
+      /**
+       * Connected to server
+       */
+      case packets.CONNECTED:
+        console.log('[client] Connected to', data.server.name);
+        this.gameclient.send(packets.JOIN_GAME, {
+          'name': 'Guest #1'
+        });
+      break;
+      /**
+       * New Game
+       */
+      case packets.GAME_JOINED:
+        // create physics world
+        this.entities.setPhysics(data.physics);
+
+        // add terrain
+        // var vertices = Terrain.create(30, 10);
+        // this.voxels = this.createTerrain(vertices, 32);
+
+        // add player sprite
+        this.player1 = this.entities.addPlayer(data.player.x, data.player.y);
+        // body.velocity[0] = this.game.rnd.integerInRange(-5,10);
+        // body.velocity[1] = this.game.rnd.integerInRange(-5,10);
+        // this.player2 = this.createPlayer(350, 50);
+        // this.player3 = this.createPlayer(550, 50);
+        // this.player4 = this.createPlayer(750, 50);
+
+        // all objects initalized => start game
+        this.gameStarted = true;
+        console.log(this);
+      break;
+      /**
+       * Unknown packet
+       */
+      default:
+        console.log('[client] Unknown packet', packet);
+      break;
+    }
+  },
 
 };
 
