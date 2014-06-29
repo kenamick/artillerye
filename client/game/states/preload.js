@@ -23,6 +23,7 @@ Preload.prototype = {
     this.load.setPreloadSprite(this.asset);
     this.load.image('sky01', 'assets/bgsky01.png');
     this.load.image('tank', 'assets/tank.png');
+    this.load.image('balloon', 'assets/balloon01.png');
     this.load.image('box16', 'assets/box_16x16.png');
     this.load.image('box32', 'assets/box_32x32.png');
 

@@ -27,6 +27,8 @@ Play.prototype = {
     });
     this.physics.addWallTop(0, 0);
     this.physics.addWallBottom(0, gh);
+    this.physics.addWallLeft(0, 0);
+    this.physics.addWallRight(gw, 0);
 
     console.log(this.physics.world);
 
@@ -54,7 +56,7 @@ Play.prototype = {
       20, 20, '', { font: '16px Arial', fill: '#ffffff' }
     );
 
-    this.game.input.onDown.add(this.click, this);
+    // this.game.input.onDown.add(this.click, this);
     this.cursors = this.game.input.keyboard.createCursorKeys();
   },
 
@@ -64,74 +66,56 @@ Play.prototype = {
       this.fpsText.setText(game.time.fps + ' FPS');
     }
 
-    // move player 1
-    // if (this.cursors.left.isDown) {
-    //   this.player1.body.rotateLeft(25);
-    // } else if (this.cursors.right.isDown) {
-    //   this.player1.body.rotateRight(25);
-    // } else {
-    //   this.player1.body.setZeroRotation();
-    // }
-
-    // if (this.cursors.up.isDown) {
-    //   this.player1.body.thrust(5000);
-    // } else if (this.cursors.down.isDown) {
-    //   this.player1.body.reverse(2000);
-    // }
-
     this.physics.update();
 
-    this.player1.x = this.player1.spirit.x;
-    this.player1.y = this.player1.spirit.y;
-    // console.log(this.player1.x, this.player1.y);
-    // console.log(this.player1.spirit.position[0],this.player1.spirit.position[1]);
-  },
+    // move player 1
+    if (this.cursors.left.isDown) {
+      this.player1.spirit.rotateLeft(25);
+    } else if (this.cursors.right.isDown) {
+      this.player1.spirit.rotateRight(25);
+    } else {
+      this.player1.spirit.setZeroRotation();
+    }
 
-  click: function(pointer) {
-    // var bodies = this.game.physics.p2.hitTest(pointer.position, [ this.terrain ]);
-    // if (bodies.length > 0) {
-    //   var dx = this.game.input.x - this.terrain.x;
-    //   var dy = this.game.input.y - this.terrain.y;
+    if (this.cursors.up.isDown) {
+      this.player1.spirit.thrust(500);
+    } else if (this.cursors.down.isDown) {
+      this.player1.spirit.reverse(200);
+    }
 
-    //   console.log('opaa ', dx, dy);
-
-    //   var ctx = this.terrainBM.context;
-    //   ctx.beginPath();
-    //   ctx.arc(dx, dy, 20, 0, 2 * Math.PI, false);
-    //   ctx.fillStyle = '#0F0F0F';
-    //   ctx.fill();
-
-    //   //  Because we're changing the context manually, we need to tell Phaser the texture is dirty.
-    //   //  You only need to do this in WebGL mode. In Canvas it's not needed.
-    //   this.terrainBM.dirty = true;
-    // }
+    this.updatePlayer(this.player1);
+    this.updatePlayer(this.player2);
+    this.updatePlayer(this.player3);
+    this.updatePlayer(this.player4);
   },
 
   clickListener: function() {
     this.game.state.start('gameover');
   },
 
-  shootListener: function() {
-    var dx = this.game.input.x - this.terrain.x
-      , dy = this.game.input.y - this.terrain.y
-      , ctx = this.terrainBM.context;
+  updatePlayer: function(sprite) {
+    // limit angle movement
+    var angle = sprite.spirit.angle;
+    if (angle > Math.PI/4) {
+      sprite.spirit.setZeroRotation();
+      sprite.spirit.angle = Math.PI / 4;
+    } else if (angle < -Math.PI/4) {
+      sprite.spirit.setZeroRotation();
+      sprite.spirit.angle = -Math.PI / 4;
+    }
 
-    ctx.beginPath();
-    ctx.arc(dx, dy, 20, 0, 2 * Math.PI, false);
-    ctx.fillStyle = '#000';
-    ctx.fill();
-    //  Because we're changing the context manually, we need to tell Phaser the texture is dirty.
-    //  You only need to do this in WebGL mode. In Canvas it's not needed.
-    this.terrainBM.dirty = true;
+    sprite.x = sprite.spirit.x;
+    sprite.y = sprite.spirit.y;
+    sprite.rotation = sprite.spirit.angle;
   },
 
   createPlayer: function(x, y) {
-    var sprite = this.game.add.sprite(x, y, 'tank');
+    var sprite = this.game.add.sprite(x, y, 'balloon');
     sprite.inputEnabled = true;
 
     var shape = this.physics.shapes.rect(sprite.width, sprite.height);
-    var body = this.physics.addBody(x, y, shape);
-    body.velocity[0] = 0;
+    var body = this.physics.addBody(x, y, shape, 1, 0);
+    body.velocity[0] = this.game.rnd.integerInRange(-5,10);
     body.velocity[1] = this.game.rnd.integerInRange(-5,10);
     sprite.spirit = body;
     sprite.anchor.set(0.5);
@@ -140,7 +124,6 @@ Play.prototype = {
     // sprite.body.collideWorldBounds = true;
     // // sprite.body.fixedRotation = true;
     // //this.sprite.body.velocity.x = this.game.rnd.integerInRange(-500,500);
-    // // sprite.body.velocity.y = this.game.rnd.integerInRange(50, 70);
     // sprite.events.onInputDown.add(this.clickListener, this);
     // // sprite.body.motionState = p2.Body.KINEMATIC;// this.game.physics.p2.Body.KINEMATIC;
     // sprite.body.mass = 1;
