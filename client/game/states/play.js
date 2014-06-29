@@ -23,7 +23,7 @@ Play.prototype = {
 
     this.physics = new Physics({
       restitution: 0.9,
-      gravity: {x: 0, y: -150}
+      gravity: {x: 0, y: 150}
     });
     this.physics.addWallTop(0, 0);
     this.physics.addWallBottom(0, gh);
@@ -58,10 +58,10 @@ Play.prototype = {
     this.cursors = this.game.input.keyboard.createCursorKeys();
   },
 
-  update: function() {
+  update: function(game) {
     // draw fps
-    if (this.game.time.fps !== 0) {
-      this.fpsText.setText(this.game.time.fps + ' FPS');
+    if (game.time.fps !== 0) {
+      this.fpsText.setText(game.time.fps + ' FPS');
     }
 
     // move player 1
@@ -81,10 +81,10 @@ Play.prototype = {
 
     this.physics.update();
 
-    this.player1.x = this.player1.spirit.position[0] * 20;
-    this.player1.y = this.player1.spirit.position[1] * 20;
+    this.player1.x = this.player1.spirit.x;
+    this.player1.y = this.player1.spirit.y;
     // console.log(this.player1.x, this.player1.y);
-    console.log(this.player1.spirit.position[0],this.player1.spirit.position[1]);
+    // console.log(this.player1.spirit.position[0],this.player1.spirit.position[1]);
   },
 
   click: function(pointer) {
@@ -132,7 +132,7 @@ Play.prototype = {
     var shape = this.physics.shapes.rect(sprite.width, sprite.height);
     var body = this.physics.addBody(x, y, shape);
     body.velocity[0] = 0;
-    body.velocity[1] = 0;
+    body.velocity[1] = this.game.rnd.integerInRange(-5,10);
     sprite.spirit = body;
     sprite.anchor.set(0.5);
 

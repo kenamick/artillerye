@@ -9,7 +9,8 @@
 
 'use strict';
 
-var p2 = require('p2');
+var p2 = require('p2')
+  , _ = require('lodash');
 
 /**
  * The fixed time step size to use.
@@ -32,6 +33,10 @@ function pxmi(v) {
   return v * -0.05;
 };
 
+/**
+ * Main physics object responsible for
+ * initializations and objects creation
+ */
 function Physics(config) {
   this.config = config || {};
 
@@ -52,7 +57,7 @@ Physics.prototype = {
     this.config.gravity = this.config.gravity || {x: 0, y: 0};
     this.config.gravity.x = pxm(-this.config.gravity.x);
     this.config.gravity.y = pxm(-this.config.gravity.y);
-    console.log(this.config.gravity);
+
     this.world = new p2.World({
     //   // doProfiling: true,
       gravity: [this.config.gravity.x, this.config.gravity.y],
@@ -69,7 +74,7 @@ Physics.prototype = {
   addWall: function(x, y, angle) {
     var planeShape = new p2.Plane()
       , plane = new p2.Body({
-          position: [pxm(x), pxm(y)],
+          position: [pxmi(x), pxmi(y)],
           mass: 0,
           angle: angle
         });
@@ -101,10 +106,11 @@ Physics.prototype = {
 
   addBody: function(x, y, shape, mass) {
     mass = mass || 1;
-    var body = new p2.Body({
+    var body = new MyBody({
       mass: mass,
-      position: [pxm(x), pxm(y)]
+      position: [pxmi(x), pxmi(y)]
     });
+    console.log(body);
     body.addShape(shape, null, Math.PI/2);
     this.world.addBody(body);
     return body;
@@ -117,11 +123,10 @@ Physics.prototype = {
       var timeSinceLastCall = now - this.lastCallTime;
       this.lastCallTime = now;
       this.world.step(DT, timeSinceLastCall, this.maxSubSteps);
-      // this.world.step(DT);
+      // this.world.step(game.time.physicsElapsed);
     }
   },
 };
-
 Object.defineProperty(Physics.prototype, "paused", {
   get: function () {
     return this.enabled;
@@ -135,7 +140,7 @@ Object.defineProperty(Physics.prototype, "paused", {
  * Create/Load new shapes
  */
 function Shapes(physics) {
-  this.p = physics;
+  // this.physics = physics;
 };
 
 Shapes.prototype = {
@@ -145,6 +150,28 @@ Shapes.prototype = {
   }
 
 };
+
+/**
+ * [Body description]
+ * @param {[type]} physics [description]
+ */
+function MyBody() {
+  p2.Body.apply(this, arguments);
+  // this.physics = physics;
+};
+
+_.extend(MyBody.prototype, p2.Body.prototype, {
+
+
+});
+Object.defineProperty(MyBody.prototype, "x", {
+  get: function () { return mpxi(this.position[0]); },
+  set: function (value) { this.position[0] = pxmi(value); }
+});
+Object.defineProperty(MyBody.prototype, "y", {
+  get: function () { return mpxi(this.position[1]); },
+  set: function (value) { this.position[1] = pxmi(value); }
+});
 
 /**
  * Exports
