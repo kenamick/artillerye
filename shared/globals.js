@@ -10,7 +10,21 @@
 'use strict';
 
 var Globals = {
-  debug: true
+  enableDebug: true,
+
+  debug: function() {
+    if (this.enableDebug) {
+      var args = Array.prototype.slice.call(arguments, 0);
+      console.log(args);
+    }
+  },
+
+  error: function() {
+    if (this.enableDebug) {
+      var args = Array.prototype.slice.call(arguments, 0);
+      console.error(args);
+    }
+  }
 
 };
 

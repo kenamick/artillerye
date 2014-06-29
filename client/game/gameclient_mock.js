@@ -50,9 +50,12 @@ module.exports = function(listener) {
               x: 150,
               y: 50
             },
-            terrain: {
+            screen: {
               width: 960,
               height: 640
+            },
+            level: {
+              blocks: [30, 5]
             }
           };
           listener(packets.GAME_JOINED, data);

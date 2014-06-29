@@ -70,6 +70,20 @@ module.exports = function(physics) {
       physics.addWallRight(width, 0);
     },
 
+    addGround: function(width, height) {
+      var blocks = []
+        , size = 64
+        , amount = width / size
+        , y = height / size - 1;
+
+      for (var i = amount - 1; i >= 0; i--) {
+        var shape = physics.shapes.rect(size, size);
+        var spirit = physics.addBody(i * size, y * size, shape, 100);
+        blocks.push(spirit);
+      }
+      return blocks;
+    },
+
     addPlayer: function(x, y, w, h) {
       var shape = physics.shapes.rect(w, h);
       var spirit = physics.addBody(x, y, shape, 1, 0);;

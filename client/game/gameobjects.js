@@ -25,6 +25,19 @@ function Entities(game) {
 
 Entities.prototype = {
 
+  _addBatch: function(batchName, blocks, spriteName) {
+    var batch = this.game.add.spriteBatch(this.game, null, batchName);
+
+    for (var i = blocks.length - 1; i >= 0; i--) {
+        var sprite = batch.create(blocks[i].x, blocks[i].y, spriteName);
+        sprite.spirit = blocks[i];
+        sprite.anchor.set(0.5);
+
+        this.entities.push(sprite);
+    }
+    return batch;
+  },
+
   setPhysics: function(config) {
     this.physics = new Physics({
       restitution: config.restitution,
@@ -35,6 +48,11 @@ Entities.prototype = {
 
   addWalls: function(width, height) {
     this.spirits.addWalls(width, height);
+  },
+
+  addGround: function(width, height) {
+    var blocks = this.spirits.addGround(width, height);
+    return this._addBatch('ground', blocks, 'ground64');
   },
 
   addPlayer: function(x, y) {
@@ -49,17 +67,8 @@ Entities.prototype = {
   },
 
   addBlocks: function(width, height) {
-    var blocks = this.spirits.addBlocks(width, height)
-      , batch = this.game.add.spriteBatch(this.game, null, 'voxels');
-
-    for (var i = blocks.length - 1; i >= 0; i--) {
-        var sprite = batch.create(blocks[i].x, blocks[i].y, 'box32');
-        sprite.spirit = blocks[i];
-        sprite.anchor.set(0.5);
-
-        this.entities.push(sprite);
-    }
-    return batch;
+    var blocks = this.spirits.addBlocks(width, height);
+    return this._addBatch('ground', blocks, 'box32');
   },
 
   /**

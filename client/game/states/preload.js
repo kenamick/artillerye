@@ -26,6 +26,7 @@ Preload.prototype = {
     this.load.image('balloon', 'assets/balloon01.png');
     this.load.image('box16', 'assets/box_16x16.png');
     this.load.image('box32', 'assets/box_32x32.png');
+    this.load.image('ground64', 'assets/ground_64x64.png');
 
   },
   create: function() {

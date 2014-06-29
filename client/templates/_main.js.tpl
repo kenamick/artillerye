@@ -9,8 +9,6 @@
 
 'use strict';
 
-var _globals = require('../../shared/globals');
-
 //global variables
 window.onload = function () {
   var game = new Phaser.Game(<%= gameWidth %>, <%= gameHeight %>, <%= gameRenderer %>, '<%= _.slugify(projectName) %>');

@@ -9,9 +9,11 @@
 
 'use strict';
 
-var GameFactory = require('../gameobjects.js')
-  , GameClient = require('../gameclient_mock.js')
-  , packets = require('../../../shared/packets');
+var _globals = require('../../../shared/globals')
+  , packets = require('../../../shared/packets')
+  , GameFactory = require('../gameobjects')
+  , GameClient = require('../gameclient_mock')
+  , Player = require('../player');
 
 function Play() {};
 
@@ -57,54 +59,20 @@ Play.prototype = {
       return;
 
     this.gamefactory.update();
-    this.updatePlayer(this.player);
-  },
-  /**
-   * Adjust player movement & constraints
-   */
-  updatePlayer: function(sprite) {
-
-    // player input
-    if (this.cursors.left.isDown) {
-      this.player.spirit.rotateLeft(25);
-    } else if (this.cursors.right.isDown) {
-      this.player.spirit.rotateRight(25);
-    } else {
-      this.player.spirit.setZeroRotation();
-    }
-
-    if (this.cursors.up.isDown) {
-      this.player.spirit.thrust(250);
-    } else if (this.cursors.down.isDown) {
-      this.player.spirit.reverse(10);
-    }
-
-    // limit angle movement
-    var angle = sprite.spirit.angle;
-    if (angle > Math.PI/4) {
-      sprite.spirit.setZeroRotation();
-      sprite.spirit.angle = Math.PI / 4;
-    } else if (angle < -Math.PI/4) {
-      sprite.spirit.setZeroRotation();
-      sprite.spirit.angle = -Math.PI / 4;
-    }
-  },
-
-  clickListener: function() {
-    this.game.state.start('gameover');
+    this.player.update(this.cursors);
   },
   /**
    * Handle server messages
    */
   onReceivePacket: function(packet, data) {
-    console.log('-- New packet --', packet, data);
+    _globals.debug('-- New packet --', packet, data);
 
     switch(packet) {
       /**
        * Connected to server
        */
       case packets.CONNECTED:
-        console.log('[client] Connected to', data.server.name);
+        _globals.debug('[client] Connected to', data.server.name);
         this.gameclient.send(packets.JOIN_GAME, {
           'name': 'Guest #1'
         });
@@ -116,13 +84,15 @@ Play.prototype = {
         // create physics world
         this.gamefactory.setPhysics(data.physics);
 
-        this.gamefactory.addWalls(data.terrain.width, data.terrain.height);
+        this.gamefactory.addWalls(data.screen.width, data.screen.height);
+        this.gamefactory.addGround(data.screen.width, data.screen.height);
 
         // add game objects
-        this.voxels = this.gamefactory.addBlocks(20, 10);
+        this.voxels = this.gamefactory.addBlocks(data.level.blocks[0], data.level.blocks[1]);
 
         // add player sprite
-        this.player = this.gamefactory.addPlayer(data.player.x, data.player.y);
+        var playerSprite = this.gamefactory.addPlayer(data.player.x, data.player.y);
+        this.player = new Player(playerSprite);
         // body.velocity[0] = this.game.rnd.integerInRange(-5,10);
         // body.velocity[1] = this.game.rnd.integerInRange(-5,10);
         // this.player2 = this.createPlayer(350, 50);
@@ -136,7 +106,7 @@ Play.prototype = {
        * Unknown packet
        */
       default:
-        console.log('[client] Unknown packet', packet);
+        _globals.debug('[client] Unknown packet', packet);
       break;
     }
   },
