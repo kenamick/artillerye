@@ -9,25 +9,28 @@
 
 'use strict';
 
-var EntitiesFactory = require('../entities.js')
+var GameFactory = require('../gameobjects.js')
   , GameClient = require('../gameclient_mock.js')
   , packets = require('../../../shared/packets');
 
-function Play() {}
+function Play() {};
 
 Play.prototype = {
 
   create: function() {
 
-    this.entities = new EntitiesFactory(this.game);
+    this.gamefactory = new GameFactory(this.game);
 
     // add client graphics
-    this.backdrop = this.game.add.sprite(0, 0, 'sky01');
-    // add fps counter
-    this.game.time.advancedTiming = true;
-    this.fpsText = this.game.add.text(
-      20, 20, '', { font: '16px Arial', fill: '#ffffff' }
-    );
+    {
+      this.backdrop = this.game.add.sprite(0, 0, 'sky01');
+
+      // add fps counter
+      this.game.time.advancedTiming = true;
+      this.fpsText = this.game.add.text(
+        20, 20, '', { font: '16px Arial', fill: '#ffffff' }
+      );
+    }
 
     // game has not yet started
     this.gameStarted = false;
@@ -39,7 +42,9 @@ Play.prototype = {
     this.gameclient = GameClient(this.onReceivePacket.bind(this));
     this.gameclient.connect('dummy url');
   },
-
+  /**
+   * Game update loop
+   */
   update: function(game) {
     // draw fps
     if (game.time.fps !== 0) {
@@ -49,34 +54,29 @@ Play.prototype = {
     if (!this.gameStarted)
       return;
 
-    this.entities.update();
+    this.gamefactory.update();
+    this.updatePlayer(this.player);
+  },
+  /**
+   * Adjust player movement & constraints
+   */
+  updatePlayer: function(sprite) {
 
-    // move player 1
+    // player input
     if (this.cursors.left.isDown) {
-      this.player1.spirit.rotateLeft(25);
+      this.player.spirit.rotateLeft(25);
     } else if (this.cursors.right.isDown) {
-      this.player1.spirit.rotateRight(25);
+      this.player.spirit.rotateRight(25);
     } else {
-      this.player1.spirit.setZeroRotation();
+      this.player.spirit.setZeroRotation();
     }
 
     if (this.cursors.up.isDown) {
-      this.player1.spirit.thrust(250);
+      this.player.spirit.thrust(250);
     } else if (this.cursors.down.isDown) {
-      this.player1.spirit.reverse(10);
+      this.player.spirit.reverse(10);
     }
 
-    this.updatePlayer(this.player1);
-    // this.updatePlayer(this.player2);
-    // this.updatePlayer(this.player3);
-    // this.updatePlayer(this.player4);
-  },
-
-  clickListener: function() {
-    this.game.state.start('gameover');
-  },
-
-  updatePlayer: function(sprite) {
     // limit angle movement
     var angle = sprite.spirit.angle;
     if (angle > Math.PI/4) {
@@ -86,13 +86,7 @@ Play.prototype = {
       sprite.spirit.setZeroRotation();
       sprite.spirit.angle = -Math.PI / 4;
     }
-
-    sprite.x = sprite.spirit.x;
-    sprite.y = sprite.spirit.y;
-    sprite.rotation = sprite.spirit.angle;
   },
-
-
 
   createTerrain: function(vertices, vWidth) {
     var sprite
@@ -111,6 +105,12 @@ Play.prototype = {
     return batch;
   },
 
+  clickListener: function() {
+    this.game.state.start('gameover');
+  },
+  /**
+   * Handle server messages
+   */
   onReceivePacket: function(packet, data) {
     console.log('-- New packet --', packet, data);
 
@@ -129,14 +129,14 @@ Play.prototype = {
        */
       case packets.GAME_JOINED:
         // create physics world
-        this.entities.setPhysics(data.physics);
+        this.gamefactory.setPhysics(data.physics);
 
         // add terrain
         // var vertices = Terrain.create(30, 10);
         // this.voxels = this.createTerrain(vertices, 32);
 
         // add player sprite
-        this.player1 = this.entities.addPlayer(data.player.x, data.player.y);
+        this.player = this.gamefactory.addPlayer(data.player.x, data.player.y);
         // body.velocity[0] = this.game.rnd.integerInRange(-5,10);
         // body.velocity[1] = this.game.rnd.integerInRange(-5,10);
         // this.player2 = this.createPlayer(350, 50);
@@ -145,7 +145,6 @@ Play.prototype = {
 
         // all objects initalized => start game
         this.gameStarted = true;
-        console.log(this);
       break;
       /**
        * Unknown packet

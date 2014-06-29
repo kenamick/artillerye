@@ -9,8 +9,8 @@
 
 'use strict';
 
-var Terrain = require('../../shared/terrain')
-  , Physics = require('../../shared/physics')
+var Physics = require('../../shared/physics')
+  , environment = require('../../shared/environment')
   ;
 
 function Entities(game) {
@@ -46,6 +46,12 @@ Entities.prototype = {
 
     return sprite;
   },
+
+  addBlocks: function() {
+
+
+  },
+
   /**
    * Update all entities positions for
    * which a physics body exists

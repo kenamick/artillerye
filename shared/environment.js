@@ -9,9 +9,7 @@
 
 'use strict';
 
-function Terrain() {
-
-};
+function Env() {};
 
 function createTerrainPoly(width, height) {
   var poly = []
@@ -65,7 +63,7 @@ function createHeightField(width, height) {
  */
 
 module.exports = {
-  create: function(width, height) {
+  createTerrain: function(width, height) {
     return createHeightField(width, height);
   }
 };
