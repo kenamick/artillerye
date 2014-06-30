@@ -15,8 +15,9 @@
  * running on server side.
  */
 
-var p2 = require('p2')
-  , _ = require('lodash');
+var _globals = require('./globals')
+  , _ = require('lodash')
+  , p2 = require('p2');
 
 /**
  * The fixed time step size to use.
@@ -65,18 +66,19 @@ Physics.prototype = {
     this.config.gravity.y = pxm(-this.config.gravity.y);
 
     this.world = new p2.World({
-    //   // doProfiling: true,
+      // doProfiling: true,
       gravity: [this.config.gravity.x, this.config.gravity.y],
       broadphase: new p2.SAPBroadphase()
     });
 
     /**
-     * The error tolerance, per constraint. If the total error is below this 
-     * limit, the solver will stop iterating. Set to zero for as good solution  
-     * as possible, but to something larger than zero to make computations 
+     * The error tolerance, per constraint. If the total error is below this
+     * limit, the solver will stop iterating. Set to zero for as good solution
+     * as possible, but to something larger than zero to make computations
      * faster.
      */
-    this.world.solver.tolerance = 0.001;
+    this.world.solver.tolerance = 0.01;
+    this.world.solver.iterations = 20;
 
     if (this.config.restitution)
       this.world.defaultContactMaterial.restitution = this.config.restitution;
@@ -122,7 +124,13 @@ Physics.prototype = {
       position: [pxmi(x), pxmi(y)]
     });
 
-    body.addShape(shape, null, angle || 0.0);
+    if (Object.prototype.toString.call(shape) === '[object Array]') {
+      var fp = body.fromPolygon(shape);
+      console.log('fronmpoly', fp);
+    } else {
+      body.addShape(shape, null, angle || 0.0);
+    }
+
     this.world.addBody(body);
     return body;
   },
@@ -137,6 +145,30 @@ Physics.prototype = {
       // this.world.step(game.time.physicsElapsed);
     }
   },
+
+  normalizeVertices: function(vertices) {
+    for (var i = vertices.length - 1; i >= 0; i--) {
+      vertices[i][0] = pxm(vertices[i][0]);
+      vertices[i][1] = pxm(vertices[i][1]);
+    };
+    return vertices;
+  },
+
+  mpx: function(v) {
+    return v *= 20;
+  },
+
+  pxm: function(v) {
+    return v * 0.05;
+  },
+
+  mpxi: function(v) {
+    return v *= -20;
+  },
+
+  pxmi: function(v) {
+    return v * -0.05;
+  }
 };
 Object.defineProperty(Physics.prototype, "paused", {
   get: function () {
@@ -159,22 +191,6 @@ Shapes.prototype = {
   rect: function(w, h) {
     return new p2.Rectangle(pxm(w), pxm(h));
   },
-
-  convex: function(w, h) {
-    w = pxm(w);
-    h = pxm(h);
-    var wt = w / 25
-      , ccw = [
-      [w - wt, 0], [wt, 0], // top
-      [wt, 0], [0, h / 2], // slope-left
-      [0, h / 2], [wt, h], // slope-right
-      [wt, h], [w - wt, h], // bottom
-      [w - wt, h], [w, h / 2], // slope-right
-      [w, h / 2], [w - wt, 0] // slope-left
-    ];
-    console.log(ccw);
-    return new p2.Convex(ccw);
-  }
 
 };
 

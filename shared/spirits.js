@@ -60,6 +60,10 @@ function createHeightField(width, height) {
  * Exports
  */
 
+function pxm(v) {
+  return v * 0.05;
+};
+
 module.exports = function(physics) {
   return {
 
@@ -78,7 +82,7 @@ module.exports = function(physics) {
 
       for (var i = amount - 1; i >= 0; i--) {
         var shape = physics.shapes.rect(size, size);
-        var spirit = physics.addBody(i * size, y * size, shape, 200);
+        var spirit = physics.addBody(i * size, y * size, shape, 100);
         // spirit.mass = 0;
         spirit.fixedRotation = true;
         blocks.push(spirit);
@@ -87,8 +91,20 @@ module.exports = function(physics) {
     },
 
     addPlayer: function(x, y, w, h) {
-      var shape = physics.shapes.convex(w, h);
-      var spirit = physics.addBody(x, y, shape, 25, 0.0); //-Math.PI / 2);
+      w = pxm(w);
+      h = pxm(h);
+      var wt = w / 25
+        , hh = h / 2
+        , ccw = [
+        /**
+         * Create a convex for the tank body
+         * /-----\
+         * \-----/
+         */
+        [wt, 0], [0, hh], [wt, h], [w - wt, h], [w, hh], [w - wt, 0]
+      ];
+      // var shape = physics.shapes.convex(w, h);
+      var spirit = physics.addBody(x, y, ccw, 25, 0.0); //-Math.PI / 2);
       return spirit;
     },
 
