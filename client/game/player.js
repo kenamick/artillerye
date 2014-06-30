@@ -15,30 +15,40 @@ var _globals = require('../../shared/globals')
   , GameClient = require('./gameclient_mock.js');
 
 function Player(sprite) {
-  
+
   this.sprite = sprite;
+
   this.inputWasDown = false;
+
+  this.destination = {move: false, target: {}};
 };
 
 Player.prototype = {
 
   update: function(input, cursors) {
-    var leftMost = this.sprite.x - 5
-      , rightMost = this.sprite.x + 5
-      , px = input.activePointer.x;
 
     if (input.activePointer.isDown) {
-      console.log('down');
-      this.inputWasDown = true; 
+      this.inputWasDown = true;
     } else if (input.activePointer.isUp) {
       if (this.inputWasDown) {
         this.inputWasDown = false;
-        console.log(px, leftMost, rightMost);
-        if (px > rightMost)
-          this.sprite.spirit.moveRight(25);
-        else if (px < leftMost)
-          this.sprite.spirit.moveLeft(25);
+
+        this.destination.move = true;
+        this.destination.target.x = input.activePointer.x;
+        // this.dest = Phaser.Math.distance(px, this.sprite.y, this.sprite.x, this.sprite.y)
       }
+    }
+
+    if (this.destination.move) {
+      var leftMost = this.sprite.x - 5
+        , rightMost = this.sprite.x + 5;
+
+      if (this.destination.target.x > rightMost)
+        this.sprite.spirit.moveRight(100);
+      else if (this.destination.target.x < leftMost)
+        this.sprite.spirit.moveLeft(100);
+
+      this.destination.move = false;
     }
 
     if (cursors.left.isDown) {

@@ -126,7 +126,6 @@ Physics.prototype = {
 
     if (Object.prototype.toString.call(shape) === '[object Array]') {
       var fp = body.fromPolygon(shape);
-      console.log('fronmpoly', fp);
     } else {
       body.addShape(shape, null, angle || 0.0);
     }
@@ -137,12 +136,12 @@ Physics.prototype = {
 
   update: function() {
     if(this.enabled) {
-      var now = Date.now() / 1000;
-      this.lastCallTime = this.lastCallTime || now;
-      var timeSinceLastCall = now - this.lastCallTime;
-      this.lastCallTime = now;
-      this.world.step(DT, timeSinceLastCall, this.maxSubSteps);
-      // this.world.step(game.time.physicsElapsed);
+      // var now = Date.now() / 1000;
+      // this.lastCallTime = this.lastCallTime || now;
+      // var timeSinceLastCall = now - this.lastCallTime;
+      // this.lastCallTime = now;
+      // this.world.step(DT, timeSinceLastCall, this.maxSubSteps);
+      this.world.step(DT);
     }
   },
 

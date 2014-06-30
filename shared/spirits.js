@@ -60,10 +60,6 @@ function createHeightField(width, height) {
  * Exports
  */
 
-function pxm(v) {
-  return v * 0.05;
-};
-
 module.exports = function(physics) {
   return {
 
@@ -91,8 +87,8 @@ module.exports = function(physics) {
     },
 
     addPlayer: function(x, y, w, h) {
-      w = pxm(w);
-      h = pxm(h);
+      w = physics.pxm(w);
+      h = physics.pxm(h);
       var wt = w / 25
         , hh = h / 2
         , ccw = [
