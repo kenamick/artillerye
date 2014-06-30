@@ -98,7 +98,7 @@ Physics.prototype = {
   },
 
   addWallTop: function(x, y) {
-    this.walls.top = this.addWall(x, y, -3.14159265358979);
+    this.walls.top = this.addWall(x, y, -_globals.math.PI);
     return this.walls.top;
   },
 
@@ -108,12 +108,12 @@ Physics.prototype = {
   },
 
   addWallLeft: function(x, y) {
-    this.walls.left = this.addWall(x, y, 1.5707963267948966);
+    this.walls.left = this.addWall(x, y, _globals.math.PI_2);
     return this.walls.left;
   },
 
   addWallRight: function(x, y) {
-    this.walls.right = this.addWall(x, y, -1.5707963267948966);
+    this.walls.right = this.addWall(x, y, -_globals.math.PI_2);
     return this.walls.right;
   },
 
@@ -242,7 +242,7 @@ _.extend(MyBody.prototype, p2.Body.prototype, {
     */
     thrust: function (speed, newAngle) {
         var magnitude = pxmi(-speed);
-        var angle = typeof newAngle !== "undefined" ? newAngle : this.angle + Math.PI / 2;
+        var angle = typeof newAngle !== "undefined" ? newAngle : this.angle + _globals.math.PI_2;
         this.force[0] += magnitude * Math.cos(angle);
         this.force[1] += magnitude * Math.sin(angle);
     },
@@ -252,7 +252,7 @@ _.extend(MyBody.prototype, p2.Body.prototype, {
     */
     reverse: function (speed, newAngle) {
         var magnitude = pxmi(-speed);
-        var angle = typeof newAngle !== "undefined" ? newAngle : this.angle + Math.PI / 2;
+        var angle = typeof newAngle !== "undefined" ? newAngle : this.angle + _globals.math.PI_2;
         this.force[0] -= magnitude * Math.cos(angle);
         this.force[1] -= magnitude * Math.sin(angle);
     },

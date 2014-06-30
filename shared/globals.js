@@ -24,6 +24,14 @@ var Globals = {
       var args = Array.prototype.slice.call(arguments, 0);
       console.error(args);
     }
+  },
+
+  math: {
+    PI:  3.14159265358979,
+    PI2: 6.28318530716,
+    PI_2: 1.5707963267948966,
+    PI_4: 0.3926990817,
+    PI3_2: 4.71238898037
   }
 
 };
