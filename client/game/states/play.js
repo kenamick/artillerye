@@ -40,6 +40,18 @@ Play.prototype = {
     // this.game.input.onDown.add(this.click, this);
     this.cursors = this.game.input.keyboard.createCursorKeys();
 
+    // run physics update
+    // var cb = function(callback) {
+    //   window.setTimeout(callback, 1000 / 40);
+    // };
+    // var updatePhysics = function() {
+    //   if (!this.gameStarted)
+    //     return;
+    //   this.gamefactory.update();
+    //   cb(updatePhysics);
+    // }.bind(this);
+    // cb(updatePhysics);
+
     // connect to server
     this.gameclient = GameClient(this.onReceivePacket.bind(this));
     this.gameclient.connect('dummy url', function() {
