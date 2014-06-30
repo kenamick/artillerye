@@ -86,7 +86,7 @@ module.exports = function(physics) {
 
     addPlayer: function(x, y, w, h) {
       var shape = physics.shapes.rect(w, h);
-      var spirit = physics.addBody(x, y, shape, 1, 0);;
+      var spirit = physics.addBody(x, y, shape, 25, 0);;
       return spirit;
     },
 

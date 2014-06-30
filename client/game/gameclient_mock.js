@@ -48,7 +48,7 @@ module.exports = function(listener) {
             },
             player: {
               x: 150,
-              y: 50
+              y: 500
             },
             screen: {
               width: 960,

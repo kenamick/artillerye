@@ -62,6 +62,14 @@ Play.prototype = {
     this.player.update(this.cursors);
   },
   /**
+   * Create artifcats after the game has been initialized
+   */
+  postCreate: function() {
+
+    this.gamefactory.addWater(64);
+
+  },
+  /**
    * Handle server messages
    */
   onReceivePacket: function(packet, data) {
@@ -88,7 +96,7 @@ Play.prototype = {
         this.gamefactory.addGround(data.screen.width, data.screen.height);
 
         // add game objects
-        this.voxels = this.gamefactory.addBlocks(data.level.blocks[0], data.level.blocks[1]);
+        // this.voxels = this.gamefactory.addBlocks(data.level.blocks[0], data.level.blocks[1]);
 
         // add player sprite
         var playerSprite = this.gamefactory.addPlayer(data.player.x, data.player.y);
@@ -98,6 +106,9 @@ Play.prototype = {
         // this.player2 = this.createPlayer(350, 50);
         // this.player3 = this.createPlayer(550, 50);
         // this.player4 = this.createPlayer(750, 50);
+
+        // create additional in-game objects
+        this.postCreate();
 
         // all objects initalized => start game
         this.gameStarted = true;

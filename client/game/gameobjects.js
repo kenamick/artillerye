@@ -55,8 +55,18 @@ Entities.prototype = {
     return this._addBatch('ground', blocks, 'ground64');
   },
 
+  addWater: function(size) {
+    var batch = this.game.add.spriteBatch(this.game, null, 'waterb')
+      , width = this.game.width / size
+      , dy = this.game.height - size / 2;
+    for (var i = 0; i < width; i++) {
+      var sprite = batch.create(i * size, dy, 'water');
+    }
+    return batch;  
+  },
+
   addPlayer: function(x, y) {
-    var sprite = this.game.add.sprite(x, y, 'balloon');
+    var sprite = this.game.add.sprite(x, y, 'tank');
     sprite.spirit = this.spirits.addPlayer(x, y, sprite.width, sprite.height);
     sprite.anchor.set(0.5);
     sprite.inputEnabled = true;
