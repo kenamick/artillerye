@@ -78,15 +78,17 @@ module.exports = function(physics) {
 
       for (var i = amount - 1; i >= 0; i--) {
         var shape = physics.shapes.rect(size, size);
-        var spirit = physics.addBody(i * size, y * size, shape, 100);
+        var spirit = physics.addBody(i * size, y * size, shape, 200);
+        // spirit.mass = 0;
+        spirit.fixedRotation = true;
         blocks.push(spirit);
       }
       return blocks;
     },
 
     addPlayer: function(x, y, w, h) {
-      var shape = physics.shapes.rect(w, h);
-      var spirit = physics.addBody(x, y, shape, 25, 0);;
+      var shape = physics.shapes.convex(w, h);
+      var spirit = physics.addBody(x, y, shape, 25, 0.0); //-Math.PI / 2);
       return spirit;
     },
 

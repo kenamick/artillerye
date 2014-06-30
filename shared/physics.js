@@ -69,12 +69,17 @@ Physics.prototype = {
       gravity: [this.config.gravity.x, this.config.gravity.y],
       broadphase: new p2.SAPBroadphase()
     });
-    // this.world.gravity[0] = this.config.gravity.x;
-    // this.world.gravity[1] = this.config.gravity.y;
+
+    /**
+     * The error tolerance, per constraint. If the total error is below this 
+     * limit, the solver will stop iterating. Set to zero for as good solution  
+     * as possible, but to something larger than zero to make computations 
+     * faster.
+     */
+    this.world.solver.tolerance = 0.001;
 
     if (this.config.restitution)
       this.world.defaultContactMaterial.restitution = this.config.restitution;
-
   },
 
   addWall: function(x, y, angle) {
@@ -153,6 +158,22 @@ Shapes.prototype = {
 
   rect: function(w, h) {
     return new p2.Rectangle(pxm(w), pxm(h));
+  },
+
+  convex: function(w, h) {
+    w = pxm(w);
+    h = pxm(h);
+    var wt = w / 25
+      , ccw = [
+      [w - wt, 0], [wt, 0], // top
+      [wt, 0], [0, h / 2], // slope-left
+      [0, h / 2], [wt, h], // slope-right
+      [wt, h], [w - wt, h], // bottom
+      [w - wt, h], [w, h / 2], // slope-right
+      [w, h / 2], [w - wt, 0] // slope-left
+    ];
+    console.log(ccw);
+    return new p2.Convex(ccw);
   }
 
 };
@@ -203,9 +224,9 @@ _.extend(MyBody.prototype, p2.Body.prototype, {
     * Applies a force to the Body that causes it to 'thrust' forwards, based on its current angle and the given speed.
     * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
     */
-    thrust: function (speed) {
+    thrust: function (speed, newAngle) {
         var magnitude = pxmi(-speed);
-        var angle = this.angle + Math.PI / 2;
+        var angle = typeof newAngle !== "undefined" ? newAngle : this.angle + Math.PI / 2;
         this.force[0] += magnitude * Math.cos(angle);
         this.force[1] += magnitude * Math.sin(angle);
     },
@@ -213,9 +234,9 @@ _.extend(MyBody.prototype, p2.Body.prototype, {
     * Applies a force to the Body that causes it to 'thrust' backwards (in reverse), based on its current angle and the given speed.
     * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
     */
-    reverse: function (speed) {
+    reverse: function (speed, newAngle) {
         var magnitude = pxmi(-speed);
-        var angle = this.angle + Math.PI / 2;
+        var angle = typeof newAngle !== "undefined" ? newAngle : this.angle + Math.PI / 2;
         this.force[0] -= magnitude * Math.cos(angle);
         this.force[1] -= magnitude * Math.sin(angle);
     },

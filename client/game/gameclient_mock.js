@@ -43,7 +43,7 @@ module.exports = function(listener) {
           var data = {
             session: 'abcdef09',
             physics: {
-              restitution: 0.9,
+              restitution: 0.75,
               gravity: {x: 0, y: 150}
             },
             player: {

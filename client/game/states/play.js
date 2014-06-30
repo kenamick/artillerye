@@ -59,7 +59,7 @@ Play.prototype = {
       return;
 
     this.gamefactory.update();
-    this.player.update(this.cursors);
+    this.player.update(this.game.input, this.cursors);
   },
   /**
    * Create artifcats after the game has been initialized
