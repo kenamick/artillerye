@@ -40,7 +40,7 @@ var Packets = {
    * Player updates tags
    */
   player: {
-    UPDATE_POSITION: 'pkp_updatepos'
+    MOVE: 'pkp_move'
   }
 };
 

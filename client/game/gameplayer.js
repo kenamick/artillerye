@@ -10,52 +10,54 @@
 'use strict';
 
 var _globals = require('../../shared/globals')
+  , _ = require('lodash')
   , packets = require('../../shared/packets')
-  , GameFactory = require('./gameobjects.js')
-  , GameClient = require('./gameclient_mock.js');
+  , Player = require('../../shared/player.js');
 
-function Player(sprite) {
+function GamePlayer(sprite, physics) {
 
   this.sprite = sprite;
 
   this.inputWasDown = false;
 
-  this.destination = {move: false, target: {}};
+  Player.call(this, sprite.spirit, physics);
 };
 
-Player.prototype = {
+_.extend(GamePlayer.prototype, Player.prototype, {
 
-  update: function(input, cursors) {
+  update: function(input, cursors, gameclient) {
 
     if (input.activePointer.isDown) {
       this.inputWasDown = true;
-    } else if (input.activePointer.isUp) {
-      if (this.inputWasDown) {
-        this.inputWasDown = false;
+    } else if (input.activePointer.isUp && this.inputWasDown) {
+      this.inputWasDown = false;
+      var data = {
+        target: {
+          x: input.activePointer.x,
+          y: 0
+        }
+      };
+      this.move(data);
 
-        this.destination.move = true;
-        this.destination.target.x = input.activePointer.x;
-        // this.dest = Phaser.Math.distance(px, this.sprite.y, this.sprite.x, this.sprite.y)
-      }
     }
 
-    if (this.destination.move) {
-      var leftMost = this.sprite.x - 5
-        , rightMost = this.sprite.x + 5;
+    // if (this.destination.move) {
+    //   var leftMost = this.sprite.x - 5
+    //     , rightMost = this.sprite.x + 5;
 
-      if (this.destination.target.x > rightMost)
-        this.sprite.spirit.moveRight(100);
-      else if (this.destination.target.x < leftMost)
-        this.sprite.spirit.moveLeft(100);
+    //   if (this.destination.target.x > rightMost)
+    //     this.sprite.spirit.moveRight(100);
+    //   else if (this.destination.target.x < leftMost)
+    //     this.sprite.spirit.moveLeft(100);
 
-      this.destination.move = false;
-    }
+    //   this.destination.move = false;
+    // }
 
-    if (cursors.left.isDown) {
-      this.sprite.spirit.reverse(1500, Math.PI);
-    } else if (cursors.right.isDown) {
-      this.sprite.spirit.thrust(2000, Math.PI);
-    }
+    // if (cursors.left.isDown) {
+    //   this.sprite.spirit.reverse(1500, Math.PI);
+    // } else if (cursors.right.isDown) {
+    //   this.sprite.spirit.thrust(2000, Math.PI);
+    // }
 
     // baloon player input
     // if (cursors.left.isDown) {
@@ -82,10 +84,10 @@ Player.prototype = {
     //   this.sprite.spirit.angle = -Math.PI / 4;
     // }
   }
-};
+});
 
 /**
  * Exports
  */
 
-module.exports = Player;
+module.exports = GamePlayer;

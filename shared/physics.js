@@ -324,6 +324,4 @@ Object.defineProperty(MyBody.prototype, "y", {
  * Exports
  */
 
-module.exports = function(config) {
-  return new Physics(config);
-};
+module.exports = Physics;

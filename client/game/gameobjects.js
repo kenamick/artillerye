@@ -11,6 +11,7 @@
 
 var Physics = require('../../shared/physics')
   , Spirits = require('../../shared/spirits')
+  , GamePlayer = require('./gameplayer')
   ;
 
 function Entities(game) {
@@ -62,7 +63,7 @@ Entities.prototype = {
     for (var i = 0; i < width; i++) {
       var sprite = batch.create(i * size, dy, 'water');
     }
-    return batch;  
+    return batch;
   },
 
   addPlayer: function(x, y) {
@@ -73,7 +74,8 @@ Entities.prototype = {
 
     this.entities.push(sprite);
 
-    return sprite;
+    var player = new GamePlayer(sprite, this.physics);
+    return player;
   },
 
   addBlocks: function(width, height) {

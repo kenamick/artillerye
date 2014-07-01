@@ -12,8 +12,7 @@
 var _globals = require('../../../shared/globals')
   , packets = require('../../../shared/packets')
   , GameFactory = require('../gameobjects')
-  , GameClient = require('../gameclient_mock')
-  , Player = require('../player');
+  , GameClient = require('../gameclient_mock');
 
 function Play() {};
 
@@ -71,7 +70,7 @@ Play.prototype = {
       return;
 
     this.gamefactory.update();
-    this.player.update(this.game.input, this.cursors);
+    this.player.update(this.game.input, this.cursors, this.gameclient);
   },
   /**
    * Create artifcats after the game has been initialized
@@ -111,8 +110,8 @@ Play.prototype = {
         // this.voxels = this.gamefactory.addBlocks(data.level.blocks[0], data.level.blocks[1]);
 
         // add player sprite
-        var playerSprite = this.gamefactory.addPlayer(data.player.x, data.player.y);
-        this.player = new Player(playerSprite);
+        this.player = this.gamefactory.addPlayer(data.player.x, data.player.y);
+        console.log(this.player);
         // body.velocity[0] = this.game.rnd.integerInRange(-5,10);
         // body.velocity[1] = this.game.rnd.integerInRange(-5,10);
         // this.player2 = this.createPlayer(350, 50);
