@@ -31,6 +31,7 @@ _.extend(GamePlayer.prototype, Player.prototype, {
       this.inputWasDown = true;
     } else if (input.activePointer.isUp && this.inputWasDown) {
       this.inputWasDown = false;
+
       var data = {
         target: {
           x: input.activePointer.x,
@@ -39,19 +40,12 @@ _.extend(GamePlayer.prototype, Player.prototype, {
       };
       this.move(data);
 
+      // notify server
+      // gameclient.send(packets.UPDATE_PLAYER, {
+      //   tag: packets.player.MOVE,
+      //   data: data
+      // });
     }
-
-    // if (this.destination.move) {
-    //   var leftMost = this.sprite.x - 5
-    //     , rightMost = this.sprite.x + 5;
-
-    //   if (this.destination.target.x > rightMost)
-    //     this.sprite.spirit.moveRight(100);
-    //   else if (this.destination.target.x < leftMost)
-    //     this.sprite.spirit.moveLeft(100);
-
-    //   this.destination.move = false;
-    // }
 
     // if (cursors.left.isDown) {
     //   this.sprite.spirit.reverse(1500, Math.PI);

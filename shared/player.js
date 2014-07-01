@@ -9,8 +9,9 @@
 
 'use strict';
 
-var _globals = require('./globals')
-  , _ = require('lodash');
+var _ = require('lodash')
+  , _globals = require('./globals')
+  , packets = require('./packets');
 
 
 function Player(spirit, physics) {

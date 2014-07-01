@@ -60,6 +60,11 @@ module.exports = function(listener) {
           };
           listener(packets.GAME_JOINED, data);
         break;
+
+        case packets.UPDATE_PLAYER:
+          listener(packets.PLAYER_UPDATED, data);
+        break;
+
         /**
          * Unknown packet
          */

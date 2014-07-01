@@ -111,12 +111,6 @@ Play.prototype = {
 
         // add player sprite
         this.player = this.gamefactory.addPlayer(data.player.x, data.player.y);
-        console.log(this.player);
-        // body.velocity[0] = this.game.rnd.integerInRange(-5,10);
-        // body.velocity[1] = this.game.rnd.integerInRange(-5,10);
-        // this.player2 = this.createPlayer(350, 50);
-        // this.player3 = this.createPlayer(550, 50);
-        // this.player4 = this.createPlayer(750, 50);
 
         // create additional in-game objects
         this.postCreate();
@@ -124,6 +118,11 @@ Play.prototype = {
         // all objects initalized => start game
         this.gameStarted = true;
       break;
+
+      case packets.PLAYER_UPDATED:
+        this.player.onReceivePacket(data.tag, data.data);
+      break;
+
       /**
        * Unknown packet
        */
