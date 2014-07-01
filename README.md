@@ -3,14 +3,13 @@ _.o0 Artillerye 0o._
 
 HTML5/Javascript multiplayer arcade game. 
 
-You command a balloon that attacks targets on ground or enemy ballons.
+You command a tank unit that has to destory the enemy by shooting projectiles.
 
 # Controls
-Collect as many carrots as possible in **3 minutes**. Use the controls to move and repel opponents.
 
-  * **Arrow keys** - Control your balloon position.
-  * **Z (or Y or Space)** - Drop bombs.
-  * **Enter** - Send chat message.
+Use the **Mouse** to move and shoot.
+
+Use **Enter** to send a chat message.
 
 # Open Source Libraries
 The following open source javascript libraries:
