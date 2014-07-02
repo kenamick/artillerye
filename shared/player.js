@@ -20,10 +20,15 @@ function Player(spirit, physics) {
   this.spirit = spirit;
   this.physics = physics;
   this.spirits = require('./spirits')(physics);
-
 };
 
 Player.prototype = {
+
+  /**
+   * Callbacks
+   */
+  onMove: function() {},
+  onShoot: function() {},
 
   move: function(data) {
     var x = this.physics.mpxi(this.spirit.position[0])
@@ -41,17 +46,18 @@ Player.prototype = {
 
   shoot: function(data) {
     var angle = data.angle
-      , speed = this.physics.mpxi(Math.min(data.speed, _globals.BULLET_SPEED));
+      , speed = this.physics.pxm(Math.min(data.speed, _globals.BULLET_SPEED));
 
     var spirit = this.spirits.addBullet(
       this.physics.pxmi(this.spirit.position[0]),
       this.physics.pxmi(this.spirit.position[1]),
       32, 32);
-
+    console.log(speed);
+    spirit.rotation = -this.spirit.rotation;
     spirit.position[0] = this.spirit.position[0];
-    spirit.position[1] = this.spirit.position[1];
-    spirit.velocity.x = Math.cos(angle) * speed;
-    spirit.velocity.y = Math.sin(angle) * speed;
+    spirit.position[1] = this.spirit.position[1] - this.physics.pxmi(34);
+    spirit.velocity[0] = Math.cos(angle) * speed;
+    spirit.velocity[1] = Math.sin(angle) * speed;
 
     return spirit;
   },

@@ -108,7 +108,7 @@ Entities.prototype = {
     }
 
     bullet.revive();
-    // bullet.reset(x, y);
+    bullet.reset(0, 0);
     bullet.rotation = 0;
 
     bullet.spirit = spirit;

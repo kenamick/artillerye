@@ -70,37 +70,6 @@ _.extend(GamePlayer.prototype, Player.prototype, {
         });
       }
     }
-
-    // if (cursors.left.isDown) {
-    //   this.sprite.spirit.reverse(1500, Math.PI);
-    // } else if (cursors.right.isDown) {
-    //   this.sprite.spirit.thrust(2000, Math.PI);
-    // }
-
-    // baloon player input
-    // if (cursors.left.isDown) {
-    //   this.sprite.spirit.rotateLeft(25);
-    // } else if (cursors.right.isDown) {
-    //   this.sprite.spirit.rotateRight(25);
-    // } else {
-    //   this.sprite.spirit.setZeroRotation();
-    // }
-
-    // if (cursors.up.isDown) {
-    //   this.sprite.spirit.thrust(250);
-    // } else if (cursors.down.isDown) {
-    //   this.sprite.spirit.reverse(10);
-    // }
-
-    // // limit angle movement
-    // var angle = this.sprite.spirit.angle;
-    // if (angle > Math.PI/4) {
-    //   this.sprite.spirit.setZeroRotation();
-    //   this.sprite.spirit.angle = Math.PI / 4;
-    // } else if (angle < -Math.PI/4) {
-    //   this.sprite.spirit.setZeroRotation();
-    //   this.sprite.spirit.angle = -Math.PI / 4;
-    // }
   },
 
   onShoot: function(spirit) {
