@@ -115,6 +115,12 @@ module.exports = function(physics) {
         blocks.push(spirit);
       }
       return blocks;
+    },
+
+    addBullet: function(x, y, w, h) {
+      var shape = physics.shapes.rect(w, h)
+        , spirit = physics.addBody(x, y, shape, 10);
+      return spirit;
     }
 
   };

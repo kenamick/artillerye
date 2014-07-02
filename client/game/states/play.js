@@ -70,7 +70,7 @@ Play.prototype = {
       return;
 
     this.gamefactory.update();
-    this.player.update(this.game.input, this.cursors, this.gameclient);
+    this.player.update(this.game, this.gameclient);
   },
   /**
    * Create artifcats after the game has been initialized
@@ -105,8 +105,9 @@ Play.prototype = {
 
         this.gamefactory.addWalls(data.screen.width, data.screen.height);
         this.gamefactory.addGround(data.screen.width, data.screen.height);
-
+        
         // add game objects
+        this.gamefactory.addBullets(_globals.MAX_BULLETS);
         // this.voxels = this.gamefactory.addBlocks(data.level.blocks[0], data.level.blocks[1]);
 
         // add player sprite
@@ -114,7 +115,7 @@ Play.prototype = {
 
         // create additional in-game objects
         this.postCreate();
-
+        
         // all objects initalized => start game
         this.gameStarted = true;
       break;

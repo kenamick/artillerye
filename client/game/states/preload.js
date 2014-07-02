@@ -28,6 +28,7 @@ Preload.prototype = {
     this.load.image('box32', 'assets/box_32x32.png');
     this.load.image('ground64', 'assets/ground_64x64.png');
     this.load.image('water', 'assets/water.png');
+    this.load.image('bullet', 'assets/bullet.png');
 
   },
   create: function() {

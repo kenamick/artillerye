@@ -39,6 +39,19 @@ Player.prototype = {
     }
   },
 
+  shoot: function(data) {
+    var angle = data.angle
+      , speed = this.physics.mpxi(Math.min(data.speed, _globals.BULLET_SPEED));
+
+    var spirit = this.spirits.addBullet(x, y, 32, 32);
+    spirit.position[0] = this.spirit.position[0];
+    spirit.position[1] = this.spirit.position[1];
+    spirit.velocity.x = Math.cos(angle) * speed;
+    spirit.velocity.y = Math.sin(angle) * speed;
+
+    return spirit;
+  },
+
   /**
    * Handle server messages
    */
@@ -46,12 +59,14 @@ Player.prototype = {
     _globals.debug('[player] New packet --', packet, data);
 
    switch(packet) {
-      /**
-       * Connected to server
-       */
+
       case packets.player.MOVE:
         this.move(data);
       break;
+
+      case packets.player.SHOOT:
+        this.shoot(data);
+      break;      
       /**
        * Unknown packet
        */

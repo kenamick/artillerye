@@ -10,6 +10,19 @@
 'use strict';
 
 var Globals = {
+
+  /**
+   * Global constants
+   */
+  
+  PLAYER_SHOOT_DELAY: 300,
+  BULLET_SPEED: 800,
+  MAX_BULLETS: 20,
+
+  /**
+   * Debugging
+   */
+  
   enableDebug: true,
 
   debug: function() {
@@ -26,6 +39,10 @@ var Globals = {
     }
   },
 
+  /**
+   * Math constants
+   */
+  
   math: {
     PI:  3.14159265358979,
     PI2: 6.28318530716,

@@ -21,6 +21,8 @@ function Entities(game) {
 
   this.spirits = null;
 
+  this.bulletsGroup = null;
+
   this.entities = [];
 };
 
@@ -74,7 +76,7 @@ Entities.prototype = {
 
     this.entities.push(sprite);
 
-    var player = new GamePlayer(sprite, this.physics);
+    var player = new GamePlayer(sprite, this);
     return player;
   },
 
@@ -82,6 +84,38 @@ Entities.prototype = {
     var blocks = this.spirits.addBlocks(width, height);
     return this._addBatch('ground', blocks, 'box32');
   },
+
+  addBullets: function(amount) {
+    var group = this.game.add.group()
+      , bullet;
+
+    for(var i = 0; i < amount; i++) {
+      bullet = this.game.add.sprite(0, 0, 'bullet');
+      group.add(bullet);
+
+      bullet.anchor.set(0.5, 0.5);
+      bullet.kill();
+    }
+
+    this.bulletsGroup = group;
+    return group;
+  },
+
+  addBullet: function(spirit) {
+    var bullet = this.bulletsGroup.getFirstDead();
+    if (!bullet) {
+      throw "Bullets not available!"
+    }
+
+    bullet.revive();
+    bullet.reset(x, y);
+    bullet.rotation = 0;
+
+    bullet.spirit = spirit;
+    this.entities.push(bullet);
+    
+    return bullet;
+  }
 
   /**
    * Update all entities positions for

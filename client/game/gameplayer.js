@@ -14,37 +14,65 @@ var _globals = require('../../shared/globals')
   , packets = require('../../shared/packets')
   , Player = require('../../shared/player.js');
 
-function GamePlayer(sprite, physics) {
+function GamePlayer(sprite, gamefactory) {
 
   this.sprite = sprite;
 
+  this.gamefactory = gamefactory;
+
   this.inputWasDown = false;
 
-  Player.call(this, sprite.spirit, physics);
+  this.lastShootAt = 0;
+
+  Player.call(this, sprite.spirit, gamefactory.physics);
 };
 
 _.extend(GamePlayer.prototype, Player.prototype, {
 
-  update: function(input, cursors, gameclient) {
+  update: function(game, gameclient) {
+    var input = game.input;
+
+    // Movement
+    
+    // if (input.activePointer.isDown) {
+    //   this.inputWasDown = true;
+    // } else if (input.activePointer.isUp && this.inputWasDown) {
+    //   this.inputWasDown = false;
+
+    //   var data = {
+    //     target: {
+    //       x: input.activePointer.x,
+    //       y: 0
+    //     }
+    //   };
+    //   this.move(data);
+
+    //   notify server
+    //   gameclient.send(packets.UPDATE_PLAYER, {
+    //     tag: packets.player.MOVE,
+    //     data: data
+    //   });
+    // }
+
+    // Shoot
 
     if (input.activePointer.isDown) {
-      this.inputWasDown = true;
-    } else if (input.activePointer.isUp && this.inputWasDown) {
-      this.inputWasDown = false;
+      if (game.time.now - this.lastShootAt >_globals.PLAYER_SHOOT_DELAY) {
+        this.lastShootAt = game.time.now;
 
-      var data = {
-        target: {
-          x: input.activePointer.x,
-          y: 0
-        }
-      };
-      this.move(data);
+        var data = {
+          target: {
+            angle: _globals.math.PI_2,
+            speed: _globals.BULLET_SPEED
+          }
+        };
 
-      // notify server
-      // gameclient.send(packets.UPDATE_PLAYER, {
-      //   tag: packets.player.MOVE,
-      //   data: data
-      // });
+        // notify server
+        gameclient.send(packets.UPDATE_PLAYER, {
+          tag: packets.player.SHOOT,
+          data: data
+        });
+      }
     }
 
     // if (cursors.left.isDown) {
@@ -77,7 +105,13 @@ _.extend(GamePlayer.prototype, Player.prototype, {
     //   this.sprite.spirit.setZeroRotation();
     //   this.sprite.spirit.angle = -Math.PI / 4;
     // }
+  },
+
+  shoot: function(data) {
+    var spirit = parent.shoot(data);
+    this.gamefactory.addBullet(spirit);
   }
+
 });
 
 /**
