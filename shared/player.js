@@ -17,9 +17,9 @@ var _ = require('lodash')
 function Player(spirit, physics) {
   this.parent = this;
 
-  this.physics = physics;
-
   this.spirit = spirit;
+  this.physics = physics;
+  this.spirits = require('./spirits')(physics);
 
 };
 
@@ -43,7 +43,11 @@ Player.prototype = {
     var angle = data.angle
       , speed = this.physics.mpxi(Math.min(data.speed, _globals.BULLET_SPEED));
 
-    var spirit = this.spirits.addBullet(x, y, 32, 32);
+    var spirit = this.spirits.addBullet(
+      this.physics.pxmi(this.spirit.position[0]),
+      this.physics.pxmi(this.spirit.position[1]),
+      32, 32);
+
     spirit.position[0] = this.spirit.position[0];
     spirit.position[1] = this.spirit.position[1];
     spirit.velocity.x = Math.cos(angle) * speed;
@@ -61,12 +65,12 @@ Player.prototype = {
    switch(packet) {
 
       case packets.player.MOVE:
-        this.move(data);
+        this.onMove(this.move(data));
       break;
 
       case packets.player.SHOOT:
-        this.shoot(data);
-      break;      
+        this.onShoot(this.shoot(data));
+      break;
       /**
        * Unknown packet
        */

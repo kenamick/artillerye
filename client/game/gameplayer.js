@@ -16,15 +16,13 @@ var _globals = require('../../shared/globals')
 
 function GamePlayer(sprite, gamefactory) {
 
+  Player.call(this, sprite.spirit, gamefactory.physics);
+
   this.sprite = sprite;
-
   this.gamefactory = gamefactory;
-
   this.inputWasDown = false;
-
   this.lastShootAt = 0;
 
-  Player.call(this, sprite.spirit, gamefactory.physics);
 };
 
 _.extend(GamePlayer.prototype, Player.prototype, {
@@ -33,7 +31,7 @@ _.extend(GamePlayer.prototype, Player.prototype, {
     var input = game.input;
 
     // Movement
-    
+
     // if (input.activePointer.isDown) {
     //   this.inputWasDown = true;
     // } else if (input.activePointer.isUp && this.inputWasDown) {
@@ -61,10 +59,8 @@ _.extend(GamePlayer.prototype, Player.prototype, {
         this.lastShootAt = game.time.now;
 
         var data = {
-          target: {
-            angle: _globals.math.PI_2,
-            speed: _globals.BULLET_SPEED
-          }
+          angle: _globals.math.PI_2,
+          speed: _globals.BULLET_SPEED
         };
 
         // notify server
@@ -107,8 +103,7 @@ _.extend(GamePlayer.prototype, Player.prototype, {
     // }
   },
 
-  shoot: function(data) {
-    var spirit = parent.shoot(data);
+  onShoot: function(spirit) {
     this.gamefactory.addBullet(spirit);
   }
 

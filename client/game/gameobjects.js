@@ -108,14 +108,14 @@ Entities.prototype = {
     }
 
     bullet.revive();
-    bullet.reset(x, y);
+    // bullet.reset(x, y);
     bullet.rotation = 0;
 
     bullet.spirit = spirit;
     this.entities.push(bullet);
-    
+
     return bullet;
-  }
+  },
 
   /**
    * Update all entities positions for
