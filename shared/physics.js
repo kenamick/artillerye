@@ -67,8 +67,8 @@ Physics.prototype = {
 
     this.world = new p2.World({
       // doProfiling: true,
-      gravity: [this.config.gravity.x, this.config.gravity.y],
-      broadphase: new p2.SAPBroadphase()
+      gravity: [this.config.gravity.x, this.config.gravity.y]
+      // broadphase: new p2.SAPBroadphase()
     });
 
     /**
