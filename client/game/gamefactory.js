@@ -14,7 +14,7 @@ var Physics = require('../../shared/physics')
   , GamePlayer = require('./gameplayer')
   ;
 
-function Entities(game) {
+function Factory(game) {
   this.game = game;
 
   this.physics = null;
@@ -26,7 +26,7 @@ function Entities(game) {
   this.entities = [];
 };
 
-Entities.prototype = {
+Factory.prototype = {
 
   _addBatch: function(batchName, blocks, spriteName) {
     var batch = this.game.add.spriteBatch(this.game, null, batchName);
@@ -149,5 +149,5 @@ Entities.prototype = {
  */
 
 module.exports = function(game) {
-  return new Entities(game);
+  return new Factory(game);
 };

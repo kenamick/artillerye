@@ -7,21 +7,92 @@
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nd/4.0/.
  */
 
-'use strict';
+ 'use strict';
 
-var _globals = require('./globals')
-  , _ = require('lodash');
+var _ = require('lodash')
+  , _globals = require('./globals')
+  , Physics = require('./physics')
+  , Spirits = require('./spirits');
 
+ function GameProc(data) {
+  this.physics = null;
+ };
 
-function GameProc() {
+ GameProc.prototype = {
 
-};
+  update: function() {
 
-GameProc.prototype = {
+  },
 
-	onNewGame: function(settings, cb) {
+  initGame: function(cb) {
+    var data = {
+      physics: {
+        restitution: 0.75,
+        gravity: {x: 0, y: 150}
+      },
+      player: {
+        x: 150,
+        y: 500
+      },
+      level: {
+        blocks: [30, 5]
+      }
+    };
 
-	},
+    var config = data.physics;
+
+    // this.physics = new Physics({
+    //   restitution: config.restitution,
+    //   gravity: config.gravity
+    // });
+    // this.spirits = new Spirits(this.physics);    
+
+    cb(data);
+  },
+
+  updatePlayer: function() {
+
+  },
+
+  onImpact: function(event) {
+    // type: "impact",
+    // bodyA : null,
+    // bodyB : null,
+    // shapeA : null,
+    // shapeB : null,
+    // contactEquation : null,
+
+    /**
+     * Handy collision helper.
+     * We always know that that the bodyA in the callback
+     * corresponds to maskA passed. 
+     */
+    var isCollide = function(bodyA, bodyB, maskA, maskB, cb) {
+      var shapeA = bodyA.shapes[0]
+        , shapeB = bodyB.shapes[0];
+
+      if (shapeA.collisionGroup == maskA && shapeB.collisionGroup == maskB) {
+        cb(bodyA, bodyB);
+      } else if (shapeA.collisionGroup == maskB && shapeB.collisionGroup == maskA) {
+        cb(bodyB, bodyA);
+      } else {
+        cb(false);
+      }
+    }
+
+    isCollide(event.bodyA, event.bodyB, _globals.masks.BULLET, _globals.masks.GROUND, 
+      function(bodyA, bodyB) {
+        if (!bodyA)
+          return;
+
+        // TODO: remove body from local physics
+        // 
+        // listener(packets.BULLET_HIT, data);
+
+        console.log('bullet collides with ground! ', bodyA.id, bodyB.id);
+
+    });
+  }  
 
 };
 
@@ -29,4 +100,4 @@ GameProc.prototype = {
  * Exports
  */
 
-module.exports = GameProc;
+ module.exports = GameProc;

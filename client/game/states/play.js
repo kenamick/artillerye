@@ -11,8 +11,8 @@
 
 var _globals = require('../../../shared/globals')
   , packets = require('../../../shared/packets')
-  , GameFactory = require('../gameobjects')
-  , GameClient = require('../gameclient_mock');
+  , GameFactory = require('../gamefactory')
+  , GameClient = require('../fakegameclient');
 
 function Play() {};
 
@@ -88,16 +88,7 @@ Play.prototype = {
 
     switch(packet) {
       /**
-       * Connected to server
-       */
-      case packets.CONNECTED:
-        _globals.debug('[client] Connected to', data.server.name);
-        this.gameclient.send(packets.JOIN_GAME, {
-          'name': 'Guest #1'
-        });
-      break;
-      /**
-       * New Game
+       * Joined game
        */
       case packets.GAME_JOINED:
         // create physics world
@@ -106,7 +97,8 @@ Play.prototype = {
         this.gamefactory.addWalls(data.screen.width, data.screen.height);
         this.gamefactory.addGround(data.screen.width, data.screen.height);
 
-        this.gamefactory.physics.setImpactHandler(this.gameclient.dummyHandler);
+        // XXX - FAKE DATA
+        this.gameclient._setFakeData(this.gamefactory.physics);
 
         // add game objects
         this.gamefactory.addBullets(_globals.MAX_BULLETS);

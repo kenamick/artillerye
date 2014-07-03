@@ -15,28 +15,27 @@ var Packets = {
    */
   CONNECTED: 'pk_connected',
   /**
-   * Client asks to join a game
+   * Client: asks to join a game
    */
   JOIN_GAME: 'pk_join',
   /**
-   * Server has joined client to a game
+   * Server: Client joined game
    */
   GAME_JOINED: 'pk_gamejoined',
   /**
-   * Client updates it's player's position
+   * Client: Updates player position
    */
   UPDATE_PLAYER: 'pk_updateplr',
   /**
-   * Server informs clients that some player's
-   * data has been updated
+   * Server: A player has been updated
    */
   PLAYER_UPDATED: 'pk_plrupdated',
   /**
-   * Bullet hit
+   * Server: Bullet hit something
    */
   BULLET_HIT: 'pk_bullethit',
   /**
-   * Client quits game
+   * Client: quits game
    */
   QUIT_GAME: 'pk_quit',
 
