@@ -152,6 +152,30 @@ Physics.prototype = {
     };
     return vertices;
   },
+  /**
+   * Defines collision mask for all shapes in a body and sets the groups
+   * this body collides with.
+   * @param {[p2.Body]} body
+   * @param {[Number]} mask 
+   * @param {[Array]} collisionMasks
+   */
+  setBodyCollision: function(body, mask, collisionMasks) {
+    var shapes = body.shapes;
+    for (var i = shapes.length - 1; i >= 0; i--) {
+      shapes[i].collisionGroup = mask;
+      console.log("set collide grp ", mask);
+      /**
+       * Set the groups this shapes collides with
+       */
+      if (collisionMasks) {
+        shapes[i].collisionMask = collisionMasks[collisionMasks.length - 1];
+        for (var j = collisionMasks.length - 2; j >= 0; j--) {
+          shapes[i].collisionMask |= collisionMasks[j];
+        }
+      }
+
+    }
+  },
 
   mpx: function(v) {
     return v *= 20;

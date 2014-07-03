@@ -12,6 +12,24 @@
 var _ = require('lodash')
   , _globals = require('./globals');
 
+var masks = {
+  DEFAULT: 1,
+  WALL: 2,
+  GROUND: 4,
+  BLOCK: 8,
+  PLAYER: 16,
+  BULLET: 32,
+};
+
+function getAllMasks(skipId) {
+  var result = [];
+  for (var i in masks) {
+    if (skipId !== masks[i])
+      result.push(masks[i]);
+  }
+  return result;
+};
+
 function createTerrainPoly(width, height) {
   var poly = []
     , amp = 1
@@ -67,10 +85,14 @@ module.exports = function(physics) {
   return {
 
     addWalls: function(width, height) {
-      physics.addWallTop(0, 0);
-      physics.addWallBottom(0, height);
-      physics.addWallLeft(0, 0);
-      physics.addWallRight(width, 0);
+      physics.setBodyCollision(
+        physics.addWallTop(0, 0), masks.WALL, getAllMasks(masks.WALL));
+      physics.setBodyCollision(
+        physics.addWallBottom(0, height), masks.WALL, getAllMasks(masks.WALL));
+      physics.setBodyCollision(
+        physics.addWallLeft(0, 0), masks.WALL,getAllMasks(masks.WALL));
+      physics.setBodyCollision(
+        physics.addWallRight(width, 0), masks.WALL, getAllMasks(masks.WALL));
     },
 
     addGround: function(width, height) {
@@ -86,8 +108,11 @@ module.exports = function(physics) {
 
         // spirit.mass = 0;
         spirit.fixedRotation = true;
+        physics.setBodyCollision(spirit, masks.GROUND, getAllMasks());
+
         blocks.push(spirit);
       }
+      
       return blocks;
     },
 
@@ -107,6 +132,8 @@ module.exports = function(physics) {
       // var shape = physics.shapes.convex(w, h);
       var spirit = physics.addBody(x, y, ccw, _globals.WEIGHT_PLAYER, 0.0); //-Math.PI / 2);
       spirit.fixedRotation = true;
+      physics.setBodyCollision(spirit, masks.PLAYER, getAllMasks());
+
       return spirit;
     },
 
@@ -121,15 +148,20 @@ module.exports = function(physics) {
           vertices[i][0] * size, vertices[i][1] * size, 
           shape, _globals.WEIGHT_BLOCK);
 
+        physics.setBodyCollision(spirit, masks.BLOCK, getAllMasks());
         blocks.push(spirit);
       }
+
       return blocks;
     },
 
     addBullet: function(x, y) {
       var shape = physics.shapes.rect(
-        _globals.BULLET_WIDTH, _globals.BULLET_HEIGHT);
+        _globals.WIDTH_BULLET, _globals.HEIGHT_BULLET);
+
       var spirit = physics.addBody(x, y, shape, _globals.WEIGHT_BULLET);
+      physics.setBodyCollision(spirit, masks.BULLET, getAllMasks(masks.BULLET));
+
       return spirit;
     }
 
