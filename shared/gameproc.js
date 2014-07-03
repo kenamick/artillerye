@@ -1,3 +1,4 @@
+
 /**
  * Artillerye
  *
@@ -14,11 +15,11 @@ var _ = require('lodash')
   , Physics = require('./physics')
   , Spirits = require('./spirits');
 
- function GameProc(data) {
+function GameProc(data) {
   this.physics = null;
- };
+};
 
- GameProc.prototype = {
+GameProc.prototype = {
 
   update: function() {
 
@@ -45,7 +46,7 @@ var _ = require('lodash')
     //   restitution: config.restitution,
     //   gravity: config.gravity
     // });
-    // this.spirits = new Spirits(this.physics);    
+    // this.spirits = new Spirits(this.physics);
 
     cb(data);
   },
@@ -62,37 +63,19 @@ var _ = require('lodash')
     // shapeB : null,
     // contactEquation : null,
 
-    /**
-     * Handy collision helper.
-     * We always know that that the bodyA in the callback
-     * corresponds to maskA passed. 
-     */
-    var isCollide = function(bodyA, bodyB, maskA, maskB, cb) {
-      var shapeA = bodyA.shapes[0]
-        , shapeB = bodyB.shapes[0];
-
-      if (shapeA.collisionGroup == maskA && shapeB.collisionGroup == maskB) {
-        cb(bodyA, bodyB);
-      } else if (shapeA.collisionGroup == maskB && shapeB.collisionGroup == maskA) {
-        cb(bodyB, bodyA);
-      } else {
-        cb(false);
-      }
-    }
-
-    isCollide(event.bodyA, event.bodyB, _globals.masks.BULLET, _globals.masks.GROUND, 
+    isCollide(event.bodyA, event.bodyB, _globals.masks.BULLET, _globals.masks.GROUND,
       function(bodyA, bodyB) {
         if (!bodyA)
           return;
 
         // TODO: remove body from local physics
-        // 
+        //
         // listener(packets.BULLET_HIT, data);
 
         console.log('bullet collides with ground! ', bodyA.id, bodyB.id);
 
     });
-  }  
+  }
 
 };
 

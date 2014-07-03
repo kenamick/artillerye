@@ -95,7 +95,7 @@ module.exports = function(physics) {
 
       for (var i = amount - 1; i >= 0; i--) {
         var shape = physics.shapes.rect(size, size);
-        var spirit = physics.addBody(i * size, y * size, shape, 
+        var spirit = physics.addBody(i * size, y * size, shape,
           _globals.WEIGHT_GROUND);
 
         // spirit.mass = 0;
@@ -104,7 +104,7 @@ module.exports = function(physics) {
 
         blocks.push(spirit);
       }
-      
+
       return blocks;
     },
 
@@ -137,7 +137,7 @@ module.exports = function(physics) {
       for (var i = vertices.length - 1; i >= 0; i--) {
         var shape = physics.shapes.rect(size, size);
         var spirit = physics.addBody(
-          vertices[i][0] * size, vertices[i][1] * size, 
+          vertices[i][0] * size, vertices[i][1] * size,
           shape, _globals.WEIGHT_BLOCK);
 
         physics.setBodyCollision(spirit, masks.BLOCK, getAllMasks());
@@ -155,7 +155,15 @@ module.exports = function(physics) {
       physics.setBodyCollision(spirit, masks.BULLET, getAllMasks(masks.BULLET));
 
       return spirit;
-    }
+    },
+
+    remove: function(spirit) {
+      physics.world.removeBody(spirit);
+    },
+
+    masks: masks,
+
+    getAllMasks: getAllMasks,
 
   };
 };

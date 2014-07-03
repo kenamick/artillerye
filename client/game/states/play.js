@@ -94,11 +94,10 @@ Play.prototype = {
         // create physics world
         this.gamefactory.initPhysics(data.physics);
 
+        this.gamefactory.physics.setImpactHandler(this.onImpact.bind(this));
+
         this.gamefactory.addWalls(data.screen.width, data.screen.height);
         this.gamefactory.addGround(data.screen.width, data.screen.height);
-
-        // XXX - FAKE DATA
-        this.gameclient._setFakeData(this.gamefactory.physics);
 
         // add game objects
         this.gamefactory.addBullets(_globals.MAX_BULLETS);
@@ -126,6 +125,25 @@ Play.prototype = {
       break;
     }
   },
+
+  onImpact: function(event) {
+    var self = this
+      , physics = this.gamefactory.physics;
+
+    physics.isCollide(event.bodyA, event.bodyB, _globals.masks.BULLET,
+      function(bodyA, bodyB, cgA, cgB) {
+        if (!bodyA)
+          return;
+
+        if (cgB === _globals.masks.PLAYER) {
+          console.log(cgB, _globals.masks.PLAYER, bodyB.id, self.player.spirit.id);
+          //bodyB.id !== self.player.spirit.id) {
+          // enemy player damage
+        } else {
+          self.gamefactory.removeBullet(bodyA);
+        }
+    });
+  }
 
 };
 

@@ -14,7 +14,7 @@ var Globals = {
   /**
    * Global constants
    */
-  
+
   PLAYER_SHOOT_DELAY: 300,
   BULLET_SPEED: 400,
   MAX_BULLETS: 20,
@@ -32,7 +32,7 @@ var Globals = {
   /**
    * Debugging
    */
-  
+
   enableDebug: true,
 
   debug: function() {
@@ -52,20 +52,20 @@ var Globals = {
   /**
    * Collisions masks
    */
-  
+
   masks: {
     DEFAULT: 1,
     WALL: 2,
     GROUND: 4,
     BLOCK: 8,
     PLAYER: 16,
-    BULLET: 32,
+    BULLET: 32
   },
 
   /**
    * Math constants
    */
-  
+
   math: {
     PI:  3.14159265358979,
     PI2: 6.28318530716,

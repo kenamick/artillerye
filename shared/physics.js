@@ -156,7 +156,7 @@ Physics.prototype = {
    * Defines collision mask for all shapes in a body and sets the groups
    * this body collides with.
    * @param {[p2.Body]} body
-   * @param {[Number]} mask 
+   * @param {[Number]} mask
    * @param {[Array]} collisionMasks
    */
   setBodyCollision: function(body, mask, collisionMasks) {
@@ -181,6 +181,38 @@ Physics.prototype = {
    */
   setImpactHandler: function(callback) {
     this.world.on("impact", callback);
+  },
+  /**
+   * Handy collision helper.
+   * After collision, we always know that bodyA in the callback
+   * corresponds to the collision group 'cgA' passed.
+   */
+  isCollide: function(bodyA, bodyB, cgA, cgB, cb) {
+    var shapeA = bodyA.shapes[0]
+      , shapeB = bodyB.shapes[0];
+
+    if (!cb) {
+      cb = cgB; // typeof cgB === 'function' ? cgB : cb;
+      cgB = null;
+    }
+
+    if (cgA && cgB) {
+      if (shapeA.collisionGroup === cgA && shapeB.collisionGroup === cgB) {
+        cb(bodyA, bodyB, shapeA.collisionGroup, shapeB.collisionGroup);
+      } else if (shapeA.collisionGroup === cgB && shapeB.collisionGroup === cgA) {
+        cb(bodyB, bodyA, shapeB.collisionGroup, shapeA.collisionGroup);
+      } else {
+        cb(false);
+      }
+    } else {
+      if (shapeA.collisionGroup === cgA) {
+        cb(bodyA, bodyB, shapeA.collisionGroup, shapeB.collisionGroup);
+      } else if (shapeB.collisionGroup === cgA) {
+        cb(bodyB, bodyA, shapeB.collisionGroup, shapeA.collisionGroup);
+      } else {
+        cb(false);
+      }
+    }
   },
 
   mpx: function(v) {

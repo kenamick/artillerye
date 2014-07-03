@@ -39,7 +39,7 @@ Factory.prototype = {
         this.entities.push(sprite);
     }
     return batch;
-  },  
+  },
 
   initPhysics: function(config) {
     this.physics = new Physics({
@@ -111,10 +111,17 @@ Factory.prototype = {
     bullet.reset(0, 0);
     bullet.rotation = 0;
 
+    spirit.parent = bullet;
     bullet.spirit = spirit;
     this.entities.push(bullet);
 
     return bullet;
+  },
+
+  removeBullet: function(spirit) {
+    var bullet = spirit.parent;
+    this.spirits.remove(spirit);
+    bullet.kill();
   },
 
   /**
