@@ -51,14 +51,13 @@ Player.prototype = {
     var spirit = this.spirits.addBullet(
       this.physics.pxmi(this.spirit.position[0]),
       this.physics.pxmi(this.spirit.position[1]),
-      32, 32);
-    console.log(speed);
+      16, 10);
+
     spirit.rotation = -this.spirit.rotation;
     spirit.position[0] = this.spirit.position[0];
-    spirit.position[1] = this.spirit.position[1] - this.physics.pxmi(34);
+    spirit.position[1] = this.spirit.position[1] - this.physics.pxmi(8);
     spirit.velocity[0] = Math.cos(angle) * speed;
     spirit.velocity[1] = Math.sin(angle) * speed;
-
     return spirit;
   },
 

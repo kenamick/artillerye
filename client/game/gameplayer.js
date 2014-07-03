@@ -58,8 +58,14 @@ _.extend(GamePlayer.prototype, Player.prototype, {
       if (game.time.now - this.lastShootAt >_globals.PLAYER_SHOOT_DELAY) {
         this.lastShootAt = game.time.now;
 
+        var angle = this.gamefactory.physics.atan2(
+          input.activePointer.x, input.activePointer.y, 
+          this.sprite.x, this.sprite.y);
+
+        console.log(angle);
+
         var data = {
-          angle: _globals.math.PI_2,
+          angle: angle,
           speed: _globals.BULLET_SPEED
         };
 

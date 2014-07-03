@@ -9,6 +9,11 @@
 
 'use strict';
 
+var WEIGHT_GROUND = 100
+  , WEIGHT_PLAYER = 80
+  , WEIGHT_BULLET = 10
+  , WEIGHT_BLOCK = 90;
+
 function createTerrainPoly(width, height) {
   var poly = []
     , amp = 1
@@ -78,7 +83,7 @@ module.exports = function(physics) {
 
       for (var i = amount - 1; i >= 0; i--) {
         var shape = physics.shapes.rect(size, size);
-        var spirit = physics.addBody(i * size, y * size, shape, 100);
+        var spirit = physics.addBody(i * size, y * size, shape, WEIGHT_GROUND);
         // spirit.mass = 0;
         spirit.fixedRotation = true;
         blocks.push(spirit);
@@ -100,7 +105,8 @@ module.exports = function(physics) {
         [wt, 0], [0, hh], [wt, h], [w - wt, h], [w, hh], [w - wt, 0]
       ];
       // var shape = physics.shapes.convex(w, h);
-      var spirit = physics.addBody(x, y, ccw, 25, 0.0); //-Math.PI / 2);
+      var spirit = physics.addBody(x, y, ccw, WEIGHT_PLAYER, 0.0); //-Math.PI / 2);
+      spirit.fixedRotation = true;
       return spirit;
     },
 
@@ -111,7 +117,10 @@ module.exports = function(physics) {
 
       for (var i = vertices.length - 1; i >= 0; i--) {
         var shape = physics.shapes.rect(size, size);
-        var spirit = physics.addBody(vertices[i][0] * size, vertices[i][1] * size, shape, 50);
+        var spirit = physics.addBody(
+          vertices[i][0] * size, vertices[i][1] * size, 
+          shape, WEIGHT_BLOCK);
+
         blocks.push(spirit);
       }
       return blocks;
@@ -119,7 +128,7 @@ module.exports = function(physics) {
 
     addBullet: function(x, y, w, h) {
       var shape = physics.shapes.rect(w, h)
-        , spirit = physics.addBody(x, y, shape, 10);
+        , spirit = physics.addBody(x, y, shape, WEIGHT_BULLET);
       return spirit;
     }
 

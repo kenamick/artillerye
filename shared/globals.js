@@ -16,7 +16,7 @@ var Globals = {
    */
   
   PLAYER_SHOOT_DELAY: 300,
-  BULLET_SPEED: 800,
+  BULLET_SPEED: 400,
   MAX_BULLETS: 20,
 
   /**

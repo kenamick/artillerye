@@ -130,9 +130,16 @@ Entities.prototype = {
       if (sprite.spirit) {
         sprite.x = sprite.spirit.x;
         sprite.y = sprite.spirit.y;
-        sprite.rotation = sprite.spirit.angle;
+
+        if (!sprite.spirit.fixedRotation)
+          sprite.rotation = sprite.spirit.angle;
       }
     }
+
+    this.bulletsGroup.forEachAlive(function(bullet) {
+      bullet.spirit.alignRotationToVel();
+    });
+
   },
 
 };

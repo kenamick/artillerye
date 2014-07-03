@@ -167,6 +167,14 @@ Physics.prototype = {
 
   pxmi: function(v) {
     return v * -0.05;
+  },
+
+  atan2: function(x, y, dx, dy) {
+    x = pxm(x);
+    y = pxm(y);
+    dx = pxm(dx);
+    dy = pxm(dy);
+    return Math.atan2(dy - y, dx - x);
   }
 };
 Object.defineProperty(Physics.prototype, "paused", {
@@ -203,113 +211,118 @@ function MyBody() {
 };
 
 _.extend(MyBody.prototype, p2.Body.prototype, {
-   /**
-    * This will rotate the Body by the given speed to the left (counter-clockwise).
-    */
-    rotateLeft: function (speed) {
-        this.angularVelocity = pxm(-speed);
-    },
-    /**
-    * This will rotate the Body by the given speed to the left (clockwise).
-    */
-    rotateRight: function (speed) {
-        this.angularVelocity = pxm(speed);
-    },
-    /**
-    * Moves the Body forwards based on its current angle and the given speed.
-    * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
-    */
-    moveForward: function (speed) {
-        var magnitude = pxmi(-speed);
-        var angle = this.angle + Math.PI / 2;
-        this.velocity[0] = magnitude * Math.cos(angle);
-        this.velocity[1] = magnitude * Math.sin(angle);
-    },
-    /**
-    * Moves the Body backwards based on its current angle and the given speed.
-    * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
-    */
-    moveBackward: function (speed) {
-        var magnitude = pxmi(-speed);
-        var angle = this.angle + Math.PI / 2;
-        this.velocity[0] = -(magnitude * Math.cos(angle));
-        this.velocity[1] = -(magnitude * Math.sin(angle));
-    },
-    /**
-    * Applies a force to the Body that causes it to 'thrust' forwards, based on its current angle and the given speed.
-    * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
-    */
-    thrust: function (speed, newAngle) {
-        var magnitude = pxmi(-speed);
-        var angle = typeof newAngle !== "undefined" ? newAngle : this.angle + _globals.math.PI_2;
-        this.force[0] += magnitude * Math.cos(angle);
-        this.force[1] += magnitude * Math.sin(angle);
-    },
-    /**
-    * Applies a force to the Body that causes it to 'thrust' backwards (in reverse), based on its current angle and the given speed.
-    * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
-    */
-    reverse: function (speed, newAngle) {
-        var magnitude = pxmi(-speed);
-        var angle = typeof newAngle !== "undefined" ? newAngle : this.angle + _globals.math.PI_2;
-        this.force[0] -= magnitude * Math.cos(angle);
-        this.force[1] -= magnitude * Math.sin(angle);
-    },
-    /**
-    * If this Body is dynamic then this will move it to the left by setting its x velocity to the given speed.
-    * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
-    */
-    moveLeft: function (speed) {
-        this.velocity[0] = pxmi(-speed);
-    },
-    /**
-    * If this Body is dynamic then this will move it to the right by setting its x velocity to the given speed.
-    * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
-    */
-    moveRight: function (speed) {
-        this.velocity[0] = pxmi(speed);
-    },
-    /**
-    * If this Body is dynamic then this will move it up by setting its y velocity to the given speed.
-    * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
-    */
-    moveUp: function (speed) {
-        this.velocity[1] = pxmi(-speed);
-    },
-    /**
-    * If this Body is dynamic then this will move it down by setting its y velocity to the given speed.
-    * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
-    */
-    moveDown: function (speed) {
-        this.velocity[1] = pxmi(speed);
-    },
-   // /**
-   //  * Sets the force on the body to zero.
-   //  */
-   //  setZeroForce: function () {
-   //      this.setZeroForce();
-   //  },
-    /**
-    * If this Body is dynamic then this will zero its angular velocity.
-    */
-    setZeroRotation: function () {
-        this.angularVelocity = 0;
-    },
-    /**
-    * If this Body is dynamic then this will zero its velocity on both axis.
-    */
-    setZeroVelocity: function () {
-        this.velocity[0] = 0;
-        this.velocity[1] = 0;
-    },
-    /**
-    * Sets the Body damping and angularDamping to zero.
-    */
-    setZeroDamping: function () {
-        this.damping = 0;
-        this.angularDamping = 0;
-    }
-
+  /**
+   * Align facing to velocity vector
+   */
+  alignRotationToVel: function() {
+    this.angle = Math.PI + Math.atan2(this.velocity[1], this.velocity[0]);
+  },
+  /**
+  * This will rotate the Body by the given speed to the left (counter-clockwise).
+  */
+  rotateLeft: function (speed) {
+      this.angularVelocity = pxm(-speed);
+  },
+  /**
+  * This will rotate the Body by the given speed to the left (clockwise).
+  */
+  rotateRight: function (speed) {
+      this.angularVelocity = pxm(speed);
+  },
+  /**
+  * Moves the Body forwards based on its current angle and the given speed.
+  * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
+  */
+  moveForward: function (speed) {
+      var magnitude = pxmi(-speed);
+      var angle = this.angle + Math.PI / 2;
+      this.velocity[0] = magnitude * Math.cos(angle);
+      this.velocity[1] = magnitude * Math.sin(angle);
+  },
+  /**
+  * Moves the Body backwards based on its current angle and the given speed.
+  * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
+  */
+  moveBackward: function (speed) {
+      var magnitude = pxmi(-speed);
+      var angle = this.angle + Math.PI / 2;
+      this.velocity[0] = -(magnitude * Math.cos(angle));
+      this.velocity[1] = -(magnitude * Math.sin(angle));
+  },
+  /**
+  * Applies a force to the Body that causes it to 'thrust' forwards, based on its current angle and the given speed.
+  * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
+  */
+  thrust: function (speed, newAngle) {
+      var magnitude = pxmi(-speed);
+      var angle = typeof newAngle !== "undefined" ? newAngle : this.angle + _globals.math.PI_2;
+      this.force[0] += magnitude * Math.cos(angle);
+      this.force[1] += magnitude * Math.sin(angle);
+  },
+  /**
+  * Applies a force to the Body that causes it to 'thrust' backwards (in reverse), based on its current angle and the given speed.
+  * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
+  */
+  reverse: function (speed, newAngle) {
+      var magnitude = pxmi(-speed);
+      var angle = typeof newAngle !== "undefined" ? newAngle : this.angle + _globals.math.PI_2;
+      this.force[0] -= magnitude * Math.cos(angle);
+      this.force[1] -= magnitude * Math.sin(angle);
+  },
+  /**
+  * If this Body is dynamic then this will move it to the left by setting its x velocity to the given speed.
+  * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
+  */
+  moveLeft: function (speed) {
+      this.velocity[0] = pxmi(-speed);
+  },
+  /**
+  * If this Body is dynamic then this will move it to the right by setting its x velocity to the given speed.
+  * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
+  */
+  moveRight: function (speed) {
+      this.velocity[0] = pxmi(speed);
+  },
+  /**
+  * If this Body is dynamic then this will move it up by setting its y velocity to the given speed.
+  * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
+  */
+  moveUp: function (speed) {
+      this.velocity[1] = pxmi(-speed);
+  },
+  /**
+  * If this Body is dynamic then this will move it down by setting its y velocity to the given speed.
+  * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
+  */
+  moveDown: function (speed) {
+      this.velocity[1] = pxmi(speed);
+  },
+ // /**
+ //  * Sets the force on the body to zero.
+ //  */
+ //  setZeroForce: function () {
+ //      this.setZeroForce();
+ //  },
+  /**
+  * If this Body is dynamic then this will zero its angular velocity.
+  */
+  setZeroRotation: function () {
+      this.angularVelocity = 0;
+  },
+  /**
+  * If this Body is dynamic then this will zero its velocity on both axis.
+  */
+  setZeroVelocity: function () {
+      this.velocity[0] = 0;
+      this.velocity[1] = 0;
+  },
+  /**
+  * Sets the Body damping and angularDamping to zero.
+  */
+  setZeroDamping: function () {
+      this.damping = 0;
+      this.angularDamping = 0;
+  }
 });
 Object.defineProperty(MyBody.prototype, "x", {
   get: function () { return mpxi(this.position[0]); },
