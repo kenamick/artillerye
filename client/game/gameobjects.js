@@ -39,9 +39,9 @@ Entities.prototype = {
         this.entities.push(sprite);
     }
     return batch;
-  },
+  },  
 
-  setPhysics: function(config) {
+  initPhysics: function(config) {
     this.physics = new Physics({
       restitution: config.restitution,
       gravity: config.gravity

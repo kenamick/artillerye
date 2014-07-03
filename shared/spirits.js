@@ -10,16 +10,8 @@
 'use strict';
 
 var _ = require('lodash')
-  , _globals = require('./globals');
-
-var masks = {
-  DEFAULT: 1,
-  WALL: 2,
-  GROUND: 4,
-  BLOCK: 8,
-  PLAYER: 16,
-  BULLET: 32,
-};
+  , _globals = require('./globals')
+  , masks = _globals.masks;
 
 function getAllMasks(skipId) {
   var result = [];

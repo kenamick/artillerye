@@ -175,14 +175,12 @@ Physics.prototype = {
 
     }
   },
-
+  /**
+   * Set callback that will be triggered whenever a collision occurs
+   * @param {Function} callback [description]
+   */
   setImpactHandler: function(callback) {
-    this.world.on("impact", function(event) {
-      var bodyA = event.bodyA;
-      var bodyB = event.bodyB;
-
-      //TODO: only on server side?
-    });
+    this.world.on("impact", callback);
   },
 
   mpx: function(v) {

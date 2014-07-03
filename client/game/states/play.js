@@ -101,10 +101,12 @@ Play.prototype = {
        */
       case packets.GAME_JOINED:
         // create physics world
-        this.gamefactory.setPhysics(data.physics);
+        this.gamefactory.initPhysics(data.physics);
 
         this.gamefactory.addWalls(data.screen.width, data.screen.height);
         this.gamefactory.addGround(data.screen.width, data.screen.height);
+
+        this.gamefactory.physics.setImpactHandler(this.gameclient.dummyHandler);
 
         // add game objects
         this.gamefactory.addBullets(_globals.MAX_BULLETS);

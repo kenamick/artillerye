@@ -32,6 +32,10 @@ var Packets = {
    */
   PLAYER_UPDATED: 'pk_plrupdated',
   /**
+   * Bullet hit
+   */
+  BULLET_HIT: 'pk_bullethit',
+  /**
    * Client quits game
    */
   QUIT_GAME: 'pk_quit',
