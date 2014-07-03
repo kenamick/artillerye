@@ -265,9 +265,9 @@ _.extend(MyBody.prototype, p2.Body.prototype, {
   * Moves the Body forwards based on its current angle and the given speed.
   * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
   */
-  moveForward: function (speed) {
+  moveForward: function (speed, newAngle) {
       var magnitude = pxmi(-speed);
-      var angle = this.angle + Math.PI / 2;
+      var angle = typeof newAngle !== "undefined" ? newAngle : this.angle + _globals.math.PI_2;
       this.velocity[0] = magnitude * Math.cos(angle);
       this.velocity[1] = magnitude * Math.sin(angle);
   },
@@ -275,9 +275,9 @@ _.extend(MyBody.prototype, p2.Body.prototype, {
   * Moves the Body backwards based on its current angle and the given speed.
   * The speed is represented in pixels per second. So a value of 100 would move 100 pixels in 1 second (1000ms).
   */
-  moveBackward: function (speed) {
+  moveBackward: function (speed, newAngle) {
       var magnitude = pxmi(-speed);
-      var angle = this.angle + Math.PI / 2;
+      var angle = typeof newAngle !== "undefined" ? newAngle : this.angle + _globals.math.PI_2;
       this.velocity[0] = -(magnitude * Math.cos(angle));
       this.velocity[1] = -(magnitude * Math.sin(angle));
   },
