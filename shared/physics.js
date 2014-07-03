@@ -163,7 +163,6 @@ Physics.prototype = {
     var shapes = body.shapes;
     for (var i = shapes.length - 1; i >= 0; i--) {
       shapes[i].collisionGroup = mask;
-      console.log("set collide grp ", mask);
       /**
        * Set the groups this shapes collides with
        */
@@ -175,6 +174,15 @@ Physics.prototype = {
       }
 
     }
+  },
+
+  setImpactHandler: function(callback) {
+    this.world.on("impact", function(event) {
+      var bodyA = event.bodyA;
+      var bodyB = event.bodyB;
+
+      //TODO: only on server side?
+    });
   },
 
   mpx: function(v) {
