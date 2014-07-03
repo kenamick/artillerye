@@ -50,8 +50,7 @@ Player.prototype = {
 
     var spirit = this.spirits.addBullet(
       this.physics.pxmi(this.spirit.position[0]),
-      this.physics.pxmi(this.spirit.position[1]),
-      16, 10);
+      this.physics.pxmi(this.spirit.position[1]));
 
     spirit.rotation = -this.spirit.rotation;
     spirit.position[0] = this.spirit.position[0];

@@ -9,10 +9,8 @@
 
 'use strict';
 
-var WEIGHT_GROUND = 100
-  , WEIGHT_PLAYER = 80
-  , WEIGHT_BULLET = 10
-  , WEIGHT_BLOCK = 90;
+var _ = require('lodash')
+  , _globals = require('./globals');
 
 function createTerrainPoly(width, height) {
   var poly = []
@@ -77,13 +75,15 @@ module.exports = function(physics) {
 
     addGround: function(width, height) {
       var blocks = []
-        , size = 64
+        , size = _globals.WIDTH_GROUND
         , amount = width / size
         , y = height / size - 1;
 
       for (var i = amount - 1; i >= 0; i--) {
         var shape = physics.shapes.rect(size, size);
-        var spirit = physics.addBody(i * size, y * size, shape, WEIGHT_GROUND);
+        var spirit = physics.addBody(i * size, y * size, shape, 
+          _globals.WEIGHT_GROUND);
+
         // spirit.mass = 0;
         spirit.fixedRotation = true;
         blocks.push(spirit);
@@ -105,30 +105,31 @@ module.exports = function(physics) {
         [wt, 0], [0, hh], [wt, h], [w - wt, h], [w, hh], [w - wt, 0]
       ];
       // var shape = physics.shapes.convex(w, h);
-      var spirit = physics.addBody(x, y, ccw, WEIGHT_PLAYER, 0.0); //-Math.PI / 2);
+      var spirit = physics.addBody(x, y, ccw, _globals.WEIGHT_PLAYER, 0.0); //-Math.PI / 2);
       spirit.fixedRotation = true;
       return spirit;
     },
 
     addBlocks: function(width, height) {
       var vertices = createHeightField(width, height)
-        , size = 32
+        , size = _globas.WIDTH_BLOCK
         , blocks = [];
 
       for (var i = vertices.length - 1; i >= 0; i--) {
         var shape = physics.shapes.rect(size, size);
         var spirit = physics.addBody(
           vertices[i][0] * size, vertices[i][1] * size, 
-          shape, WEIGHT_BLOCK);
+          shape, _globals.WEIGHT_BLOCK);
 
         blocks.push(spirit);
       }
       return blocks;
     },
 
-    addBullet: function(x, y, w, h) {
-      var shape = physics.shapes.rect(w, h)
-        , spirit = physics.addBody(x, y, shape, WEIGHT_BULLET);
+    addBullet: function(x, y) {
+      var shape = physics.shapes.rect(
+        _globals.BULLET_WIDTH, _globals.BULLET_HEIGHT);
+      var spirit = physics.addBody(x, y, shape, _globals.WEIGHT_BULLET);
       return spirit;
     }
 
