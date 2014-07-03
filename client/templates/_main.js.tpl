@@ -9,7 +9,6 @@
 
 'use strict';
 
-//global variables
 window.onload = function () {
   var game = new Phaser.Game(<%= gameWidth %>, <%= gameHeight %>, <%= gameRenderer %>, '<%= _.slugify(projectName) %>');
 

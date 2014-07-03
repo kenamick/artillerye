@@ -45,15 +45,14 @@ Player.prototype = {
   },
 
   shoot: function(data) {
-    var angle = data.angle
-      , magnitude = this.physics.pxm(Math.min(data.speed, _globals.BULLET_SPEED));
+    var magnitude = Math.min(data.speed, _globals.BULLET_SPEED);
 
     var spirit = this.spirits.addBullet(
       this.physics.mpxi(this.spirit.position[0]),
       this.physics.mpxi(this.spirit.position[1]) - 8);
 
     // spirit.rotation = -this.spirit.rotation;
-    spirit.moveForward(data.speed, data.angle);
+    spirit.moveForward(magnitude, data.angle);
     return spirit;
   },
 

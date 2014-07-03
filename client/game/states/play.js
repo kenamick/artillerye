@@ -136,7 +136,7 @@ Play.prototype = {
           return;
 
         if (cgB === _globals.masks.PLAYER) {
-          console.log(cgB, _globals.masks.PLAYER, bodyB.id, self.player.spirit.id);
+          // console.log(cgB, _globals.masks.PLAYER, bodyB.id, self.player.spirit.id);
           //bodyB.id !== self.player.spirit.id) {
           // enemy player damage
         } else {
