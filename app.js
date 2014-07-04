@@ -50,7 +50,7 @@ var httpServer = http.createServer(app).listen(app.get('port'), function(){
 // socket.io
 
 var gamesList = [];
-var io = SocketIO(httpServer).of('/game');
+var io = SocketIO(httpServer).of('/loosecannon');
 
 /**
  * Send a packet to server. Compress & serialize, if needed.

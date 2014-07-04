@@ -13,7 +13,7 @@ var _globals = require('../../../shared/globals')
   , packets = require('../../../shared/packets')
   , GameFactory = require('../gamefactory');
 
-var server_url = 'http://localhost:3000/game';
+var server_url = 'http://localhost:3000/loosecannon';
 
 function Play() {};
 

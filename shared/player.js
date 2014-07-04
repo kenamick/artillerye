@@ -86,6 +86,14 @@ Player.prototype = {
   }
 
 };
+Object.defineProperty(Player.prototype, "enableAI", {
+  get: function () {
+    return this.enableAI;
+  },
+  set: function (value) {
+    this.enableAI = value;
+  }
+});
 
 /**
  * Exports
