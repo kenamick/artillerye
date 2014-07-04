@@ -11,12 +11,14 @@
  'use strict';
 
 var _ = require('lodash')
-  , _globals = require('./globals')
-  , packets = require('./packets')
-  , Physics = require('./physics')
-  , Spirits = require('./spirits');
+  , _globals = require('../shared/globals')
+  , packets = require('../shared/packets')
+  , Physics = require('../shared/physics')
+  , Spirits = require('../shared/spirits')
+  , Player = require('../shared/player');
 
-function GameProc(data) {
+function GameProc(send) {
+  this.send = send;
   this.physics = null;
   this.clients = [];
 
@@ -52,6 +54,8 @@ GameProc.prototype = {
   },
 
   joinClient: function(socket) {
+    this.socket = socket;
+
     var data = {
       server: {
         name: 'Mindfields'
@@ -62,8 +66,10 @@ GameProc.prototype = {
         height: 640
       }
     };
-    _.extend(data, this.config)
-    socket.emit(packets.GAME_JOINED, data);
+    _.extend(data, this.config);
+
+    // notify player
+    this.send(socket, packets.GAME_JOINED, data);
 
     // adjust callbacks
     socket.on(packets.UPDATE_PLAYER, this.updatePlayer);

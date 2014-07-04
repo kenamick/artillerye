@@ -13,11 +13,11 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , SocketIO = require('socket.io')
-  , routes = require('./routes')
-  , user = require('./routes/user')
+  , routes = require('./server')
+  , user = require('./server/user')
   , _globals = require('./shared/globals')
   , packets = require('./shared/packets')
-  , GameProc = require('./shared/gameproc');
+  , GameProc = require('./server/gameproc');
 
 
 var app = express();
@@ -52,11 +52,18 @@ var httpServer = http.createServer(app).listen(app.get('port'), function(){
 var gamesList = [];
 var io = SocketIO(httpServer).of('/game');
 
+/**
+ * Send a packet to server. Compress & serialize, if needed.
+ */
+var send = function(socket, packet, data) {
+  socket.emit(packet, data);
+};
+
 io.on('connection', function(socket) {
   _globals.debug('Socket connected.');
 
   // send player some server info
-  socket.emit(packets.CONNECTED, {
+  send(socket, packets.CONNECTED, {
     server: {
       name: 'Mindfields'
     }
@@ -78,7 +85,7 @@ io.on('connection', function(socket) {
      * Create new game
      */
     if (gamesList.length < _globals.MAX_GAMES) {
-      var game = new GameProc();
+      var game = new GameProc(send);
       game.initGame();
       game.joinClient(socket);
       gamesList.push(game);

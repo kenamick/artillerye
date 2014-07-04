@@ -11,9 +11,9 @@
 
 var _globals = require('../../../shared/globals')
   , packets = require('../../../shared/packets')
-  , GameFactory = require('../gamefactory')
-  , GameClient = require('../fakegameclient')
-  , GameClientReal = require('../gameclient');
+  , GameFactory = require('../gamefactory');
+
+var server_url = 'http://localhost:3000/game';
 
 function Play() {};
 
@@ -52,14 +52,29 @@ Play.prototype = {
     // }.bind(this);
     // cb(updatePhysics);
 
-    // connect to server
-    // this.gameclient = GameClient(this.onReceivePacket.bind(this));
-    // this.gameclient.connect('dummy url', function() {
-    //   //TODO: Error handling
-    // });
+    // this.gameclient = GameClientReal(this);
+    // this.gameclient.connect('http://localhost:3000/game');
 
-    this.gameclient = GameClientReal(this);
-    this.gameclient.connect('http://localhost:3000/game');
+    /**
+     * Connect to server and join a game
+     */
+
+    var socket = io.connect(server_url);
+    var self = this;
+
+    socket.on(packets.CONNECTED, function (data) {
+      console.log('Connected to server' + data.server.name)
+    });
+
+    socket.on(packets.GAME_JOINED, function (data) {
+      // hack
+      if (self.gameStarted)
+        location.reload();
+
+      self.onGameJoined(data);
+    });
+
+    this.socket = socket;
   },
   /**
    * Game update loop
@@ -74,7 +89,7 @@ Play.prototype = {
       return;
 
     this.gamefactory.update();
-    this.player.update(this.game, this.gameclient);
+    this.player.update(this.game, this.sendPacket.bind(this));
   },
   /**
    * Create artifcats after the game has been initialized
@@ -83,6 +98,12 @@ Play.prototype = {
 
     this.gamefactory.addWater(64);
 
+  },
+  /**
+   * Send a packet to server. Compress & serialize, if needed.
+   */
+  sendPacket: function(packet, data) {
+    this.socket.emit(packet, data);
   },
   /**
    * Joined game
@@ -102,6 +123,7 @@ Play.prototype = {
 
     // add player sprite
     this.player = this.gamefactory.addPlayer(data.player.x, data.player.y);
+    this.player.setSocket(this.socket);
 
     // create additional in-game objects
     this.postCreate();

@@ -14,9 +14,10 @@ var _ = require('lodash')
   , packets = require('./packets');
 
 
-function Player(spirit, physics) {
+function Player(socket, spirit, physics) {
   this.parent = this;
 
+  this.socket = socket;
   this.spirit = spirit;
   this.physics = physics;
   this.spirits = require('./spirits')(physics);
@@ -78,6 +79,10 @@ Player.prototype = {
         _globals.debug('[player] Unknown packet', packet);
       break;
     }
+  },
+
+  setSocket: function(s) {
+    this.socket = s;
   }
 
 };

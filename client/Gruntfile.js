@@ -25,8 +25,7 @@ module.exports = function (grunt) {
             'game/**/*.js',
             '!game/main.js',
             'config.json',
-            '../shared/*.js',
-            '!../shared/gameproc.js'
+            '../shared/*.js'
         ],
         options: {
           spawn: false,

@@ -16,7 +16,7 @@ var _globals = require('../../shared/globals')
 
 function GamePlayer(sprite, gamefactory) {
 
-  Player.call(this, sprite.spirit, gamefactory.physics);
+  Player.call(this, null, sprite.spirit, gamefactory.physics);
 
   this.sprite = sprite;
   this.gamefactory = gamefactory;
@@ -27,7 +27,7 @@ function GamePlayer(sprite, gamefactory) {
 
 _.extend(GamePlayer.prototype, Player.prototype, {
 
-  update: function(game, gameclient) {
+  update: function(game, send) {
     var input = game.input;
 
     // Movement
@@ -59,7 +59,7 @@ _.extend(GamePlayer.prototype, Player.prototype, {
         this.lastShootAt = game.time.now;
 
         var angle = this.gamefactory.physics.atan2(
-          input.activePointer.x, input.activePointer.y, 
+          input.activePointer.x, input.activePointer.y,
           this.sprite.x, this.sprite.y);
 
         console.log(angle);
@@ -70,7 +70,7 @@ _.extend(GamePlayer.prototype, Player.prototype, {
         };
 
         // notify server
-        gameclient.send(packets.UPDATE_PLAYER, {
+        send(packets.UPDATE_PLAYER, {
           tag: packets.player.SHOOT,
           data: data
         });
