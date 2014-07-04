@@ -21,7 +21,13 @@ module.exports = function(listener) {
   return {
 
     connect: function(url, err) {
+      var socket = io.connect(url);
+      socket.on('news', function (data) {
+        console.log(data);
+        socket.emit('my other event', { my: 'data' });
+      });
 
+      this.socket = socket;
     },
 
     send: function(packet, data, err) {

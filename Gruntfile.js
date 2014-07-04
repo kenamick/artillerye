@@ -8,15 +8,15 @@ module.exports = function (grunt) {
   // load all grunt tasks
   require('load-grunt-tasks')(grunt);
 
-  var reloadPort = 35729, files;
+  var reloadPort = 35727, files;
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    develop: {
-      server: {
-        file: 'app.js'
-      }
-    },
+    // develop: {
+    //   server: {
+    //     file: 'app.js'
+    //   }
+    // },
     watch: {
       options: {
         nospawn: true,
@@ -24,10 +24,11 @@ module.exports = function (grunt) {
       },
       server: {
         files: [
+          'Gruntfile.js',
           'app.js',
           'routes/*.js'
         ],
-        tasks: ['develop', 'delayed-livereload']
+        tasks: ['develop'], //, 'delayed-livereload']
       }/*,
       js: {
         files: ['public/js/*.js'],
@@ -47,6 +48,17 @@ module.exports = function (grunt) {
           livereload: reloadPort
         }
       }*/
+    },
+    nodemon: {
+      dev: {
+        script: 'app.js',
+        options: {
+          args: ['dev'],
+          // nodeArgs: ['--debug'],
+          watchedExtensions: ['js', 'json'],
+          ignoredFiles: ['node_modules/**', 'client/**'],
+        }
+      }      
     }
   });
 
@@ -69,5 +81,5 @@ module.exports = function (grunt) {
     }, 500);
   });
 
-  grunt.registerTask('default', ['develop', 'watch']);
+  grunt.registerTask('default', ['nodemon']);
 };

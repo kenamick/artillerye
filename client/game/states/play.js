@@ -12,7 +12,8 @@
 var _globals = require('../../../shared/globals')
   , packets = require('../../../shared/packets')
   , GameFactory = require('../gamefactory')
-  , GameClient = require('../fakegameclient');
+  , GameClient = require('../fakegameclient')
+  , GameClientReal = require('../gameclient');
 
 function Play() {};
 
@@ -56,6 +57,11 @@ Play.prototype = {
     this.gameclient.connect('dummy url', function() {
       //TODO: Error handling
     });
+
+    this.gameclient2 = GameClientReal(this.onReceivePacket.bind(this));
+    this.gameclient2.connect('http://localhost:3000/game', function() {
+      //TODO: Error handling
+    });    
   },
   /**
    * Game update loop
