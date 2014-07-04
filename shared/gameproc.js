@@ -12,11 +12,27 @@
 
 var _ = require('lodash')
   , _globals = require('./globals')
+  , packets = require('./packets')
   , Physics = require('./physics')
   , Spirits = require('./spirits');
 
 function GameProc(data) {
   this.physics = null;
+  this.clients = [];
+
+  this.config = {
+    physics: {
+      restitution: 0.75,
+      gravity: {x: 0, y: 150}
+    },
+    player: {
+      x: 150,
+      y: 500
+    },
+    level: {
+      blocks: [30, 5]
+    }
+  };
 };
 
 GameProc.prototype = {
@@ -26,33 +42,36 @@ GameProc.prototype = {
   },
 
   initGame: function(cb) {
-    var data = {
-      physics: {
-        restitution: 0.75,
-        gravity: {x: 0, y: 150}
-      },
-      player: {
-        x: 150,
-        y: 500
-      },
-      level: {
-        blocks: [30, 5]
-      }
-    };
-
-    var config = data.physics;
+    var config = this.config.physics;
 
     // this.physics = new Physics({
     //   restitution: config.restitution,
     //   gravity: config.gravity
     // });
     // this.spirits = new Spirits(this.physics);
-
-    cb(data);
   },
 
-  updatePlayer: function() {
+  joinClient: function(socket) {
+    var data = {
+      server: {
+        name: 'Mindfields'
+      },
+      session: 'abcdef09',
+      screen: {
+        width: 960,
+        height: 640
+      }
+    };
+    _.extend(data, this.config)
+    socket.emit(packets.GAME_JOINED, data);
 
+    // adjust callbacks
+    socket.on(packets.UPDATE_PLAYER, this.updatePlayer);
+  },
+
+  updatePlayer: function(data) {
+    console.log('new player vevent', data);
+    // socket.emit(packets.PLAYER_UPDATED, data);
   },
 
   onImpact: function(event) {
@@ -75,6 +94,10 @@ GameProc.prototype = {
         console.log('bullet collides with ground! ', bodyA.id, bodyB.id);
 
     });
+  },
+
+  isFull: function() {
+    return this.clients.length >= _globals.MAX_CLIENTS;
   }
 
 };

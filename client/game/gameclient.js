@@ -17,21 +17,29 @@ var packets = require('../../shared/packets');
  * Exports
  */
 
-module.exports = function(listener) {
+module.exports = function(gamePlay) {
   return {
 
-    connect: function(url, err) {
+    connect: function(url) {
       var socket = io.connect(url);
-      socket.on('news', function (data) {
-        console.log(data);
-        socket.emit('my other event', { my: 'data' });
+      this.socket = socket;
+
+      socket.on(packets.CONNECTED, function (data) {
+        console.log('Connected to server' + data.server.name)
       });
 
-      this.socket = socket;
+      socket.on(packets.GAME_JOINED, function (data) {
+        // hack
+        if (gamePlay.gameStarted)
+          location.reload();
+
+        gamePlay.onGameJoined(data);
+      });
     },
 
     send: function(packet, data, err) {
-
+      console.log('[client][send pck]', packet, data);
+      this.socket.emit(packet, data);
     },
 
   };

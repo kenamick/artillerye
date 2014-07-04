@@ -53,15 +53,13 @@ Play.prototype = {
     // cb(updatePhysics);
 
     // connect to server
-    this.gameclient = GameClient(this.onReceivePacket.bind(this));
-    this.gameclient.connect('dummy url', function() {
-      //TODO: Error handling
-    });
+    // this.gameclient = GameClient(this.onReceivePacket.bind(this));
+    // this.gameclient.connect('dummy url', function() {
+    //   //TODO: Error handling
+    // });
 
-    this.gameclient2 = GameClientReal(this.onReceivePacket.bind(this));
-    this.gameclient2.connect('http://localhost:3000/game', function() {
-      //TODO: Error handling
-    });    
+    this.gameclient = GameClientReal(this);
+    this.gameclient.connect('http://localhost:3000/game');
   },
   /**
    * Game update loop
@@ -87,51 +85,39 @@ Play.prototype = {
 
   },
   /**
-   * Handle server messages
+   * Joined game
    */
-  onReceivePacket: function(packet, data) {
-    _globals.debug('-- New packet --', packet, data);
+  onGameJoined: function(data) {
+    // create physics world
+    this.gamefactory.initPhysics(data.physics);
 
-    switch(packet) {
-      /**
-       * Joined game
-       */
-      case packets.GAME_JOINED:
-        // create physics world
-        this.gamefactory.initPhysics(data.physics);
+    this.gamefactory.physics.setImpactHandler(this.onImpact.bind(this));
 
-        this.gamefactory.physics.setImpactHandler(this.onImpact.bind(this));
+    this.gamefactory.addWalls(data.screen.width, data.screen.height);
+    this.gamefactory.addGround(data.screen.width, data.screen.height);
 
-        this.gamefactory.addWalls(data.screen.width, data.screen.height);
-        this.gamefactory.addGround(data.screen.width, data.screen.height);
+    // add game objects
+    this.gamefactory.addBullets(_globals.MAX_BULLETS);
+    // this.voxels = this.gamefactory.addBlocks(data.level.blocks[0], data.level.blocks[1]);
 
-        // add game objects
-        this.gamefactory.addBullets(_globals.MAX_BULLETS);
-        // this.voxels = this.gamefactory.addBlocks(data.level.blocks[0], data.level.blocks[1]);
+    // add player sprite
+    this.player = this.gamefactory.addPlayer(data.player.x, data.player.y);
 
-        // add player sprite
-        this.player = this.gamefactory.addPlayer(data.player.x, data.player.y);
+    // create additional in-game objects
+    this.postCreate();
 
-        // create additional in-game objects
-        this.postCreate();
-
-        // all objects initalized => start game
-        this.gameStarted = true;
-      break;
-
-      case packets.PLAYER_UPDATED:
-        this.player.onReceivePacket(data.tag, data.data);
-      break;
-
-      /**
-       * Unknown packet
-       */
-      default:
-        _globals.debug('[client] Unknown packet', packet);
-      break;
-    }
+    // all objects initalized => start game
+    this.gameStarted = true;
   },
-
+  /**
+   * Update player props
+   */
+  onPlayerUpdated: function(data) {
+    this.player.onReceivePacket(data.tag, data.data);
+  },
+  /**
+   * Resolve local client collisions
+   */
   onImpact: function(event) {
     var self = this
       , physics = this.gamefactory.physics;

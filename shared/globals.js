@@ -15,6 +15,9 @@ var Globals = {
    * Global constants
    */
 
+  MAX_GAMES: 50,
+  MAX_CLIENTS: 3,
+
   PLAYER_SHOOT_DELAY: 300,
   BULLET_SPEED: 400,
   MAX_BULLETS: 20,

@@ -10,11 +10,15 @@
 'use strict';
 
 var express = require('express')
-  , routes = require('./routes')
-  , user = require('./routes/user')
   , http = require('http')
   , path = require('path')
-  , SocketIO = require('socket.io');
+  , SocketIO = require('socket.io')
+  , routes = require('./routes')
+  , user = require('./routes/user')
+  , _globals = require('./shared/globals')
+  , packets = require('./shared/packets')
+  , GameProc = require('./shared/gameproc');
+
 
 var app = express();
 
@@ -44,11 +48,41 @@ var httpServer = http.createServer(app).listen(app.get('port'), function(){
 });
 
 // socket.io
+
+var gamesList = [];
 var io = SocketIO(httpServer).of('/game');
+
 io.on('connection', function(socket) {
-  console.log('new socket 12');
-  socket.emit('news', { hello: 'world' });
-  socket.on('my other event', function(data) {
-    console.log('new event', data);
+  _globals.debug('Socket connected.');
+
+  // send player some server info
+  socket.emit(packets.CONNECTED, {
+    server: {
+      name: 'Mindfields'
+    }
   });
+
+  // search for free game
+  var foundGame = false;
+
+  for (var i = 0, count = gamesList.length; i < count; i++) {
+    if (!gamesList[i].isFull()) {
+      gamesList[i].joinClient(socket);
+      foundGame = true;
+      break;
+    }
+  }
+
+  if (!foundGame) {
+    /**
+     * Create new game
+     */
+    if (gamesList.length < _globals.MAX_GAMES) {
+      var game = new GameProc();
+      game.initGame();
+      game.joinClient(socket);
+      gamesList.push(game);
+    }
+  }
+
 });
