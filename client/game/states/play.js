@@ -73,6 +73,9 @@ Play.prototype = {
 
       self.onGameJoined(data);
     });
+    socket.on(packets.PLAYER_UPDATED, function (data) {
+      self.player.onReceivePacket(data.tag, data.data);
+    });
 
     this.socket = socket;
   },

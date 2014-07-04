@@ -56,6 +56,7 @@ var io = SocketIO(httpServer).of('/game');
  * Send a packet to server. Compress & serialize, if needed.
  */
 var send = function(socket, packet, data) {
+  console.log('sending packet', packet, data);
   socket.emit(packet, data);
 };
 

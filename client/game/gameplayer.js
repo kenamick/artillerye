@@ -9,8 +9,8 @@
 
 'use strict';
 
-var _globals = require('../../shared/globals')
-  , _ = require('lodash')
+var _ = require('lodash')
+  , _globals = require('../../shared/globals')
   , packets = require('../../shared/packets')
   , Player = require('../../shared/player.js');
 

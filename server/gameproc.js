@@ -69,15 +69,15 @@ GameProc.prototype = {
     _.extend(data, this.config);
 
     // notify player
-    this.send(socket, packets.GAME_JOINED, data);
+    this.send(this.socket, packets.GAME_JOINED, data);
 
     // adjust callbacks
-    socket.on(packets.UPDATE_PLAYER, this.updatePlayer);
+    socket.on(packets.UPDATE_PLAYER, this.updatePlayer.bind(this));
   },
 
   updatePlayer: function(data) {
-    console.log('new player vevent', data);
-    // socket.emit(packets.PLAYER_UPDATED, data);
+    // TODO: mirror
+    this.send(this.socket, packets.PLAYER_UPDATED, data);
   },
 
   onImpact: function(event) {
