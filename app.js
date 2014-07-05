@@ -53,11 +53,16 @@ var gamesList = [];
 var io = SocketIO(httpServer).of('/loosecannon');
 
 /**
- * Send a packet to server. Compress & serialize, if needed.
+ * Send a packet. Compress & serialize, if needed.
  */
 var send = function(socket, packet, data) {
-  console.log('sending packet', packet, data);
-  socket.emit(packet, data);
+  if (typeof socket === 'string') {
+    console.log('emit to room', socket, packet);
+    io.to(socket).emit(packet, data);
+  } else {
+    console.log('sending packet', packet);
+    socket.emit(packet, data);
+  }
 };
 
 io.on('connection', function(socket) {

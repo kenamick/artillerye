@@ -60,7 +60,11 @@ Player.prototype = {
 
   setSocket: function(s) {
     this.socket = s;
-  }
+  },
+
+  getId: function() {
+    return this.socket.id;
+  },
 
 };
 Object.defineProperty(Player.prototype, "ai", {

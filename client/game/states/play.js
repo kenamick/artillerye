@@ -80,6 +80,11 @@ Play.prototype = {
     socket.on(packets.PLAYER_SHOOT, function (data) {
       self.player.onShoot(data);
     });
+    socket.on('disconnect', function () {
+      _globals.debug('!!Disconnected!!');
+      self.gameStarted = false;
+      //TODO: bring player back to lobby
+    });
 
     this.socket = socket;
   },

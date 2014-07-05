@@ -11,6 +11,7 @@
  'use strict';
 
 var _ = require('lodash')
+  , uuid = require('node-uuid')
   , _globals = require('../shared/globals')
   , packets = require('../shared/packets')
   , Physics = require('../shared/physics')()
@@ -45,7 +46,9 @@ GameProc.prototype = {
   },
 
   initGame: function() {
-    _globals.debug('!!!Created New Game!!!');
+    this.gameid = uuid.v1();
+
+    _globals.debug('!!!Created New Game!!!', this.gameid);
 
     // init server side physics
     this.physics = Physics.create({
@@ -102,9 +105,12 @@ GameProc.prototype = {
       // Send player back to lobby.
     }
 
-    _.extend(data, this.config);
+    // join game room
+    socket.join(this.gameid);
 
-    // notify player
+    // send game inital info to player
+    // TODO: send game state!
+    _.extend(data, this.config);
     this.send(socket, packets.GAME_JOINED, data);
 
     // adjust callbacks
@@ -112,6 +118,17 @@ GameProc.prototype = {
 
     socket.on(packets.PLAYER_SHOOT, function (data) {
       self.send(socket, packets.PLAYER_SHOOT, data);
+    });
+    socket.on('disconnect', function () {
+      /**
+       * A player quits game. Set AI control to his entity.
+       */
+      for (var i = 0; i < self.players.length; i++) {
+        if (!self.players[i].ai && self.players[i].getId() == socket.id) {
+          console.log('Player Quit! ' + socket.id);
+          self.players[i].ai = true;
+        }
+      };
     });
   },
 
