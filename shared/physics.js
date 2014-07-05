@@ -40,6 +40,14 @@ function pxmi(v) {
   return v * -0.05;
 };
 
+function atan2(x, y, dx, dy) {
+  x = pxm(x);
+  y = pxm(y);
+  dx = pxm(dx);
+  dy = pxm(dy);
+  return Math.atan2(dy - y, dx - x);
+};
+
 /**
  * Main physics object responsible for
  * initializations and objects creation
@@ -215,29 +223,6 @@ Physics.prototype = {
     }
   },
 
-  mpx: function(v) {
-    return v *= 20;
-  },
-
-  pxm: function(v) {
-    return v * 0.05;
-  },
-
-  mpxi: function(v) {
-    return v *= -20;
-  },
-
-  pxmi: function(v) {
-    return v * -0.05;
-  },
-
-  atan2: function(x, y, dx, dy) {
-    x = pxm(x);
-    y = pxm(y);
-    dx = pxm(dx);
-    dy = pxm(dy);
-    return Math.atan2(dy - y, dx - x);
-  }
 };
 Object.defineProperty(Physics.prototype, "paused", {
   get: function () {
@@ -399,4 +384,21 @@ Object.defineProperty(MyBody.prototype, "y", {
  * Exports
  */
 
-module.exports = Physics;
+module.exports = function() {
+  return {
+
+    create: function(config) {
+      return new Physics(config);
+    },
+
+    mpx: mpx,
+
+    pxm: pxm,
+
+    mpxi: mpxi,
+
+    pxmi: pxmi,
+
+    atan2: atan2
+  };
+};

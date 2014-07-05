@@ -12,11 +12,12 @@
 var _ = require('lodash')
   , _globals = require('../../shared/globals')
   , packets = require('../../shared/packets')
-  , Player = require('../../shared/player.js');
+  , Player = require('../../shared/player.js')
+  , Physics = require('../../shared/physics')();
 
 function GamePlayer(sprite, gamefactory) {
 
-  Player.call(this, null, sprite.spirit, gamefactory.physics);
+  Player.call(this, null, sprite.spirit);
 
   this.sprite = sprite;
   this.gamefactory = gamefactory;
@@ -58,7 +59,7 @@ _.extend(GamePlayer.prototype, Player.prototype, {
       if (game.time.now - this.lastShootAt >_globals.PLAYER_SHOOT_DELAY) {
         this.lastShootAt = game.time.now;
 
-        var angle = this.gamefactory.physics.atan2(
+        var angle = Physics.atan2(
           input.activePointer.x, input.activePointer.y,
           this.sprite.x, this.sprite.y);
 

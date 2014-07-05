@@ -11,7 +11,8 @@
 
 var _ = require('lodash')
   , _globals = require('./globals')
-  , masks = _globals.masks;
+  , masks = _globals.masks
+  , Physics = require('./physics')();
 
 function getAllMasks(skipId) {
   var result = [];
@@ -109,8 +110,8 @@ module.exports = function(physics) {
     },
 
     addPlayer: function(x, y, w, h) {
-      w = physics.pxm(w);
-      h = physics.pxm(h);
+      w = Physics.pxm(w);
+      h = Physics.pxm(h);
       var wt = w / 25
         , hh = h / 2
         , ccw = [

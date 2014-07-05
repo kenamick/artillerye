@@ -9,7 +9,7 @@
 
 'use strict';
 
-var Physics = require('../../shared/physics')
+var Physics = require('../../shared/physics')()
   , Spirits = require('../../shared/spirits')
   , GamePlayer = require('./gameplayer')
   ;
@@ -42,11 +42,11 @@ Factory.prototype = {
   },
 
   initPhysics: function(config) {
-    this.physics = new Physics({
+    this.physics = Physics.create({
       restitution: config.restitution,
       gravity: config.gravity
     });
-    this.spirits = new Spirits(this.physics);
+    this.spirits = Spirits(this.physics);
   },
 
   addWalls: function(width, height) {

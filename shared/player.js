@@ -11,7 +11,8 @@
 
 var _ = require('lodash')
   , _globals = require('./globals')
-  , packets = require('./packets');
+  , packets = require('./packets')
+  , Physics = require('./physics')();
 
 
 function Player(socket, spirit, physics) {
@@ -20,7 +21,6 @@ function Player(socket, spirit, physics) {
   this.socket = socket;
   this.enableAI = typeof socket === 'undefined';
   this.spirit = spirit;
-  this.physics = physics;
   this.spirits = require('./spirits')(physics);
 };
 
@@ -33,7 +33,7 @@ Player.prototype = {
   onShoot: function() {},
 
   move: function(data) {
-    var x = this.physics.mpxi(this.spirit.position[0])
+    var x = Physics.mpxi(this.spirit.position[0])
       , dx = data.target.x
       , leftMost = x - 5
       , rightMost = x + 5;
@@ -50,8 +50,8 @@ Player.prototype = {
     var magnitude = Math.min(data.speed, _globals.BULLET_SPEED);
 
     var spirit = this.spirits.addBullet(
-      this.physics.mpxi(this.spirit.position[0]),
-      this.physics.mpxi(this.spirit.position[1]) - 8);
+      Physics.mpxi(this.spirit.position[0]),
+      Physics.mpxi(this.spirit.position[1]) - 8);
 
     // spirit.rotation = -this.spirit.rotation;
     spirit.moveForward(magnitude, data.angle);
@@ -97,18 +97,18 @@ Object.defineProperty(Player.prototype, "ai", {
 });
 Object.defineProperty(Player.prototype, "x", {
   get: function () {
-    return this.physics.mpxi(this.spirit.position[0]);
+    return Physics.mpxi(this.spirit.position[0]);
   },
   set: function (value) {
-    this.spirit.position[0] = this.physics.pxmi(value);
+    this.spirit.position[0] = Physics.pxmi(value);
   }
 });
 Object.defineProperty(Player.prototype, "y", {
   get: function () {
-    return this.physics.mpxi(this.spirit.position[1]);
+    return Physics.mpxi(this.spirit.position[1]);
   },
   set: function (value) {
-    this.spirit.position[1] = this.physics.pxmi(value);
+    this.spirit.position[1] = Physics.pxmi(value);
   }
 });
 

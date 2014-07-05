@@ -13,7 +13,7 @@
 var _ = require('lodash')
   , _globals = require('../shared/globals')
   , packets = require('../shared/packets')
-  , Physics = require('../shared/physics')
+  , Physics = require('../shared/physics')()
   , Spirits = require('../shared/spirits')
   , Player = require('../shared/player');
 
@@ -48,11 +48,11 @@ GameProc.prototype = {
     _globals.debug('!!!Created New Game!!!');
 
     // init server side physics
-    this.physics = new Physics({
+    this.physics = Physics.create({
       restitution: this.config.physics.restitution,
       gravity: this.config.physics.gravity
     });
-    this.spirits = new Spirits(this.physics);
+    this.spirits = Spirits(this.physics);
 
     // add players slots
     // initially all are AI controlled
@@ -60,7 +60,7 @@ GameProc.prototype = {
       var spirit = this.spirits.addPlayer(this.config.players[i][0], this.config.players[i][1],
         _globals.WIDTH_PLAYER, _globals.HEIGHT_PLAYER);
 
-      var player = new Player(null, spirit, this.physics);
+      var player = new Player(null, spirit);
       player.ai = true;
 
       this.players.push(player);
