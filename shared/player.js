@@ -62,8 +62,9 @@ Player.prototype = {
     this.socket = s;
   },
 
-  getId: function() {
-    return this.socket.id;
+  getSocketId: function() {
+    if (this.socket)
+      return this.socket.id;
   },
 
 };

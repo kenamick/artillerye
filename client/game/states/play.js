@@ -13,7 +13,7 @@ var _globals = require('../../../shared/globals')
   , packets = require('../../../shared/packets')
   , GameFactory = require('../gamefactory');
 
-var server_url = 'http://localhost:3000/loosecannon';
+var server_url = 'http://192.168.1.101:3000/loosecannon';
 
 function Play() {};
 
@@ -78,7 +78,15 @@ Play.prototype = {
       self.onGameJoined(data);
     });
     socket.on(packets.PLAYER_SHOOT, function (data) {
-      self.player.onShoot(data);
+      console.log(data);
+      if (data.pid === self.player.id) {
+        self.player.onShoot(data);
+      } else {
+        for (var i = self.enemies.length - 1; i >= 0; i--) {
+          if (self.enemies[i].id === data.pid)
+            self.enemies[i].onShoot(data);
+        }
+      }
     });
     socket.on('disconnect', function () {
       _globals.debug('!!Disconnected!!');
@@ -95,7 +103,9 @@ Play.prototype = {
     // draw fps
     if (game.time.fps !== 0) {
       this.fpsText.setText('fps: ' + game.time.fps);
-      this.txtName.setText('name: ' + this.player.name);
+      if (this.player) {
+        this.txtName.setText('name: ' + this.player.name);
+      }
     }
 
     if (!this.gameStarted)
@@ -136,12 +146,16 @@ Play.prototype = {
 
     // add enemy sprites
     for (var i = 0, count = data.enemies.length; i < count; i++) {
-      var enemy = this.gamefactory.addPlayer(data.enemies[i].x, data.enemies[i].y);
-      this.enemies.push(enemy);
+      var enemy = data.enemies[i];
+      var enemyEntity = this.gamefactory.addPlayer(enemy.x, enemy.y);
+      enemyEntity.name = enemy.name;
+      enemyEntity.id = enemy.id;
+      this.enemies.push(enemyEntity);
     }
 
     // add player sprite
     this.player = this.gamefactory.addPlayer(data.player.x, data.player.y);
+    this.player.id = data.player.id;
     this.player.name = data.player.name;
     this.player.setSocket(this.socket);
 

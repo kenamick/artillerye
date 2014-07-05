@@ -64,6 +64,7 @@ GameProc.prototype = {
         _globals.WIDTH_PLAYER, _globals.HEIGHT_PLAYER);
 
       var player = new Player(null, spirit, this.spirits);
+      player.id = (i + 1);
       player.ai = true;
 
       this.players.push(player);
@@ -81,21 +82,23 @@ GameProc.prototype = {
 
     for (var i = 0; i < this.players.length; i++) {
       var player = this.players[i];
+      var entity = {
+        id: player.id,
+        name: 'Player ' + (i+1),
+        x: player.x,
+        y: player.y
+      };
 
       if (!found && player.ai) {
         player.ai = false;
         player.setSocket(socket);
 
-        data.player.name = 'ME';
-        data.player.x = player.x;
-        data.player.y = player.y;
+        entity.name = 'ME';
+        data.player = entity;
+
         found = true;
       } else {
-        data.enemies.push({
-          name: 'Player ' + i,
-          x: player.x,
-          y: player.y
-        });
+        data.enemies.push(entity);
       }
     };
 
@@ -117,15 +120,18 @@ GameProc.prototype = {
     var self = this;
 
     socket.on(packets.PLAYER_SHOOT, function (data) {
-      self.send(socket, packets.PLAYER_SHOOT, data);
+      self.runIfExists(socket.id, data.pid, function (player) {
+        console.log('emitting bullet');
+        self.send(self.gameid, packets.PLAYER_SHOOT, data);
+      });
     });
     socket.on('disconnect', function () {
       /**
        * A player quits game. Set AI control to his entity.
        */
       for (var i = 0; i < self.players.length; i++) {
-        if (!self.players[i].ai && self.players[i].getId() == socket.id) {
-          console.log('Player Quit! ' + socket.id);
+        if (!self.players[i].ai && self.players[i].getSocketId() == socket.id) {
+          _globals.debug('Player Quit! ' + socket.id);
           self.players[i].ai = true;
         }
       };
@@ -160,7 +166,17 @@ GameProc.prototype = {
         return false;
     };
     return true;
-  }
+  },
+
+  runIfExists: function(socketId, playerId, callback) {
+    for (var i = this.players.length - 1; i >= 0; i--) {
+      if (this.players[i].getSocketId() === socketId
+        && this.players[i].id === playerId) {
+
+        callback && callback(this.players[i]);
+      }
+    }
+  },
 
 };
 

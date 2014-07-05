@@ -66,6 +66,7 @@ _.extend(GamePlayer.prototype, Player.prototype, {
         console.log(angle);
 
         var data = {
+          pid: this.id,
           angle: angle,
           speed: _globals.BULLET_SPEED
         };
