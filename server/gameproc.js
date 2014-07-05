@@ -20,20 +20,21 @@ var _ = require('lodash')
 function GameProc(send) {
   this.send = send;
   this.physics = null;
-  this.clients = [];
+  this.players = [];
 
+  /**
+   * Current game state
+   */
   this.config = {
     physics: {
       restitution: 0.75,
       gravity: {x: 0, y: 150}
     },
-    player: {
-      x: 150,
-      y: 500
-    },
-    level: {
-      blocks: [30, 5]
-    }
+    players: [
+      [150, 500],
+      [450, 500],
+      [750, 500]
+    ]
   };
 };
 
@@ -43,33 +44,51 @@ GameProc.prototype = {
 
   },
 
-  initGame: function(cb) {
-    var config = this.config.physics;
+  initGame: function() {
+    _globals.debug('!!!Created New Game!!!');
 
-    // this.physics = new Physics({
-    //   restitution: config.restitution,
-    //   gravity: config.gravity
-    // });
-    // this.spirits = new Spirits(this.physics);
+    // init server side physics
+    this.physics = new Physics({
+      restitution: this.config.physics.restitution,
+      gravity: this.config.physics.gravity
+    });
+    this.spirits = new Spirits(this.physics);
+
+    // add players slots
+    // initially all are AI controlled
+    for (var i = 0; i < _globals.MAX_CLIENTS; i++) {
+      var spirit = this.spirits.addPlayer(this.config.players[i][0], this.config.players[i][1],
+        _globals.WIDTH_PLAYER, _globals.HEIGHT_PLAYER);
+
+      var player = new Player(null, spirit, this.physics);
+      player.ai = true;
+
+      this.players.push(player);
+    }
   },
 
   joinClient: function(socket) {
-    this.socket = socket;
+    var data = {};
 
-    var data = {
-      server: {
-        name: 'Mindfields'
-      },
-      session: 'abcdef09',
-      screen: {
-        width: 960,
-        height: 640
+    // find empty AI slot
+    for (var i = 0; i < this.players.length; i++) {
+      var player = this.players[i];
+      if (player.ai) {
+        player.ai = false;
+        player.setSocket(socket);
+
+        data.player = {
+          x: player.x,
+          y: player.y
+        };
+        break;
       }
     };
+
     _.extend(data, this.config);
 
     // notify player
-    this.send(this.socket, packets.GAME_JOINED, data);
+    this.send(socket, packets.GAME_JOINED, data);
 
     // adjust callbacks
     socket.on(packets.UPDATE_PLAYER, this.updatePlayer.bind(this));
@@ -103,7 +122,11 @@ GameProc.prototype = {
   },
 
   isFull: function() {
-    return this.clients.length >= _globals.MAX_CLIENTS;
+    for (var i = this.players.length - 1; i >= 0; i--) {
+      if (this.players[i].ai)
+        return false;
+    };
+    return true;
   }
 
 };

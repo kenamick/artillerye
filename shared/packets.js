@@ -23,6 +23,10 @@ var Packets = {
    */
   GAME_JOINED: 'pk_gamejoined',
   /**
+   * Server: Send game state update to player(s)
+   */
+  GAME_STATE: 'pk_gamestate',
+  /**
    * Client: Updates player position
    */
   UPDATE_PLAYER: 'pk_updateplr',

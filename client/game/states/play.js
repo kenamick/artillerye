@@ -117,17 +117,25 @@ Play.prototype = {
 
     this.gamefactory.physics.setImpactHandler(this.onImpact.bind(this));
 
-    this.gamefactory.addWalls(data.screen.width, data.screen.height);
-    this.gamefactory.addGround(data.screen.width, data.screen.height);
+    this.gamefactory.addWalls(_globals.SCREEN_WIDTH, _globals.SCREEN_HEIGHT);
+    this.gamefactory.addGround(_globals.SCREEN_WIDTH, _globals.SCREEN_HEIGHT);
 
     // add game objects
     this.gamefactory.addBullets(_globals.MAX_BULLETS);
     // this.voxels = this.gamefactory.addBlocks(data.level.blocks[0], data.level.blocks[1]);
 
     // add player sprite
+    // for (var i = 0, count = data.players.length; i < count; i++) {
+    //   var player = this.gamefactory.addPlayer(data.players[i][0], data.players[i][1]);
+    //   // hack
+    //   if (i === 0) {
+    //     this.player = player;
+    //     this.player.setSocket(this.socket);
+    //   }
+    // }
     this.player = this.gamefactory.addPlayer(data.player.x, data.player.y);
     this.player.setSocket(this.socket);
-
+    console.log('game created');
     // create additional in-game objects
     this.postCreate();
 

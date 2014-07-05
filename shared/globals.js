@@ -14,6 +14,8 @@ var Globals = {
   /**
    * Global constants
    */
+  SCREEN_WIDTH: 960,
+  SCREEN_HEIGHT: 640,
 
   MAX_GAMES: 50,
   MAX_CLIENTS: 3,
@@ -26,6 +28,8 @@ var Globals = {
   HEIGHT_BULLET: 10,
   WIDTH_GROUND: 64,
   WIDTH_BLOCK: 32,
+  WIDTH_PLAYER: 45,
+  HEIGHT_PLAYER: 28,
 
   WEIGHT_GROUND: 100,
   WEIGHT_PLAYER: 80,

@@ -18,6 +18,7 @@ function Player(socket, spirit, physics) {
   this.parent = this;
 
   this.socket = socket;
+  this.enableAI = typeof socket === 'undefined';
   this.spirit = spirit;
   this.physics = physics;
   this.spirits = require('./spirits')(physics);
@@ -86,12 +87,28 @@ Player.prototype = {
   }
 
 };
-Object.defineProperty(Player.prototype, "enableAI", {
+Object.defineProperty(Player.prototype, "ai", {
   get: function () {
     return this.enableAI;
   },
   set: function (value) {
     this.enableAI = value;
+  }
+});
+Object.defineProperty(Player.prototype, "x", {
+  get: function () {
+    return this.physics.mpxi(this.spirit.position[0]);
+  },
+  set: function (value) {
+    this.spirit.position[0] = this.physics.pxmi(value);
+  }
+});
+Object.defineProperty(Player.prototype, "y", {
+  get: function () {
+    return this.physics.mpxi(this.spirit.position[1]);
+  },
+  set: function (value) {
+    this.spirit.position[1] = this.physics.pxmi(value);
   }
 });
 

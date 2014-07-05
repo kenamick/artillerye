@@ -62,12 +62,12 @@ Physics.prototype = {
 
   init: function() {
     this.config.gravity = this.config.gravity || {x: 0, y: 0};
-    this.config.gravity.x = pxm(-this.config.gravity.x);
-    this.config.gravity.y = pxm(-this.config.gravity.y);
+    var gx = pxm(-this.config.gravity.x)
+      , gy = pxm(-this.config.gravity.y);
 
     this.world = new p2.World({
       // doProfiling: true,
-      gravity: [this.config.gravity.x, this.config.gravity.y]
+      gravity: [gx, gy]
       // broadphase: new p2.SAPBroadphase()
     });
 
