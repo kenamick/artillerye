@@ -25,15 +25,15 @@ var Packets = {
   /**
    * Server: Send game state update to player(s)
    */
-  GAME_STATE: 'pk_gamestate',
+  UPDATE_GAME_STATE: 'pk_ugs',
   /**
-   * Client: Updates player position
+   * Client: Player fires cannon
    */
-  UPDATE_PLAYER: 'pk_updateplr',
+  PLAYER_MOVE: 'pkp_move',
   /**
-   * Server: A player has been updated
+   * Client: Player moves on screen
    */
-  PLAYER_UPDATED: 'pk_plrupdated',
+  PLAYER_SHOOT: 'pkp_shoot',
   /**
    * Server: Bullet hit something
    */
@@ -43,13 +43,6 @@ var Packets = {
    */
   QUIT_GAME: 'pk_quit',
 
-  /**
-   * Player updates tags
-   */
-  player: {
-    MOVE: 'pkp_move',
-    SHOOT: 'pkp_shoot'
-  }
 };
 
 module.exports = Packets;

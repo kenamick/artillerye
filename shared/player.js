@@ -14,14 +14,14 @@ var _ = require('lodash')
   , packets = require('./packets')
   , Physics = require('./physics')();
 
-
-function Player(socket, spirit, physics) {
+function Player(socket, spirit, spirits) {
   this.parent = this;
 
   this.socket = socket;
   this.enableAI = typeof socket === 'undefined';
   this.spirit = spirit;
-  this.spirits = require('./spirits')(physics);
+  this.spirits = spirits;
+  this.name = 'Unknown';
 };
 
 Player.prototype = {
@@ -56,30 +56,6 @@ Player.prototype = {
     // spirit.rotation = -this.spirit.rotation;
     spirit.moveForward(magnitude, data.angle);
     return spirit;
-  },
-
-  /**
-   * Handle server messages
-   */
-  onReceivePacket: function(packet, data) {
-    _globals.debug('[player] New packet --', packet, data);
-
-   switch(packet) {
-
-      case packets.player.MOVE:
-        this.onMove(this.move(data));
-      break;
-
-      case packets.player.SHOOT:
-        this.onShoot(this.shoot(data));
-      break;
-      /**
-       * Unknown packet
-       */
-      default:
-        _globals.debug('[player] Unknown packet', packet);
-      break;
-    }
   },
 
   setSocket: function(s) {

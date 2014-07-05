@@ -60,7 +60,7 @@ GameProc.prototype = {
       var spirit = this.spirits.addPlayer(this.config.players[i][0], this.config.players[i][1],
         _globals.WIDTH_PLAYER, _globals.HEIGHT_PLAYER);
 
-      var player = new Player(null, spirit);
+      var player = new Player(null, spirit, this.spirits);
       player.ai = true;
 
       this.players.push(player);
@@ -68,22 +68,39 @@ GameProc.prototype = {
   },
 
   joinClient: function(socket) {
-    var data = {};
+    var data = {
+      player: {},
+      enemies: []
+    };
 
     // find empty AI slot
+    var found = false;
+
     for (var i = 0; i < this.players.length; i++) {
       var player = this.players[i];
-      if (player.ai) {
+
+      if (!found && player.ai) {
         player.ai = false;
         player.setSocket(socket);
 
-        data.player = {
+        data.player.name = 'ME';
+        data.player.x = player.x;
+        data.player.y = player.y;
+        found = true;
+      } else {
+        data.enemies.push({
+          name: 'Player ' + i,
           x: player.x,
           y: player.y
-        };
-        break;
+        });
       }
     };
+
+    if (!found) {
+      // TODO:
+      // Someone else has already joined.
+      // Send player back to lobby.
+    }
 
     _.extend(data, this.config);
 
@@ -91,12 +108,11 @@ GameProc.prototype = {
     this.send(socket, packets.GAME_JOINED, data);
 
     // adjust callbacks
-    socket.on(packets.UPDATE_PLAYER, this.updatePlayer.bind(this));
-  },
+    var self = this;
 
-  updatePlayer: function(data) {
-    // TODO: mirror
-    this.send(this.socket, packets.PLAYER_UPDATED, data);
+    socket.on(packets.PLAYER_SHOOT, function (data) {
+      self.send(socket, packets.PLAYER_SHOOT, data);
+    });
   },
 
   onImpact: function(event) {

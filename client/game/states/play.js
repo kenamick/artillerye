@@ -28,11 +28,15 @@ Play.prototype = {
       this.backdrop = this.game.add.sprite(0, 0, 'sky01');
 
       // add fps counter
+      var font = { font: '14px Arial', fill: '#ffffff' };
       this.game.time.advancedTiming = true;
-      this.fpsText = this.game.add.text(
-        20, 20, '', { font: '16px Arial', fill: '#ffffff' }
-      );
+      this.fpsText = this.game.add.text(5, 5, '', font);
+      this.txtName = this.game.add.text(5, 16, '', font);
     }
+
+    // sprites & in-game objects
+    this.player = null;
+    this.enemies = [];
 
     // game has not yet started
     this.gameStarted = false;
@@ -73,8 +77,8 @@ Play.prototype = {
 
       self.onGameJoined(data);
     });
-    socket.on(packets.PLAYER_UPDATED, function (data) {
-      self.player.onReceivePacket(data.tag, data.data);
+    socket.on(packets.PLAYER_SHOOT, function (data) {
+      self.player.onShoot(data);
     });
 
     this.socket = socket;
@@ -85,7 +89,8 @@ Play.prototype = {
   update: function(game) {
     // draw fps
     if (game.time.fps !== 0) {
-      this.fpsText.setText(game.time.fps + ' FPS');
+      this.fpsText.setText('fps: ' + game.time.fps);
+      this.txtName.setText('name: ' + this.player.name);
     }
 
     if (!this.gameStarted)
@@ -124,18 +129,19 @@ Play.prototype = {
     this.gamefactory.addBullets(_globals.MAX_BULLETS);
     // this.voxels = this.gamefactory.addBlocks(data.level.blocks[0], data.level.blocks[1]);
 
+    // add enemy sprites
+    for (var i = 0, count = data.enemies.length; i < count; i++) {
+      var enemy = this.gamefactory.addPlayer(data.enemies[i].x, data.enemies[i].y);
+      this.enemies.push(enemy);
+    }
+
     // add player sprite
-    // for (var i = 0, count = data.players.length; i < count; i++) {
-    //   var player = this.gamefactory.addPlayer(data.players[i][0], data.players[i][1]);
-    //   // hack
-    //   if (i === 0) {
-    //     this.player = player;
-    //     this.player.setSocket(this.socket);
-    //   }
-    // }
     this.player = this.gamefactory.addPlayer(data.player.x, data.player.y);
+    this.player.name = data.player.name;
     this.player.setSocket(this.socket);
-    console.log('game created');
+
+    _globals.debug('Joined game:', data.player.x, data.player.y);
+
     // create additional in-game objects
     this.postCreate();
 

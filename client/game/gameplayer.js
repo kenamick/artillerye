@@ -17,7 +17,7 @@ var _ = require('lodash')
 
 function GamePlayer(sprite, gamefactory) {
 
-  Player.call(this, null, sprite.spirit);
+  Player.call(this, null, sprite.spirit, gamefactory.spirits);
 
   this.sprite = sprite;
   this.gamefactory = gamefactory;
@@ -71,16 +71,18 @@ _.extend(GamePlayer.prototype, Player.prototype, {
         };
 
         // notify server
-        send(packets.UPDATE_PLAYER, {
-          tag: packets.player.SHOOT,
-          data: data
-        });
+        send(packets.PLAYER_SHOOT, data);
       }
     }
   },
 
-  onShoot: function(spirit) {
-    this.gamefactory.addBullet(spirit);
+  onMove: function (data) {
+    this.move(data);
+  },
+
+  onShoot: function (data) {
+    var bullet = this.shoot(data);
+    this.gamefactory.addBullet(bullet);
   }
 
 });
