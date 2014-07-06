@@ -108,6 +108,12 @@ Play.prototype = {
 
     this.gamefactory.update();
     this.player.update(this.game, this.sendPacket.bind(this));
+    this.player.render(this.game);
+
+    // render names
+    for (var i = this.enemies.length - 1; i >= 0; i--) {
+      this.enemies[i].render(this.game);
+    };
   },
   /**
    * Create artifcats after the game has been initialized

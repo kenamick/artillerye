@@ -21,7 +21,7 @@ function Player(socket, spirit, spirits) {
   this.enableAI = typeof socket === 'undefined';
   this.spirit = spirit;
   this.spirits = spirits;
-  this.name = 'Unknown';
+  this.nametag = 'Unknown';
 };
 
 Player.prototype = {
@@ -31,6 +31,7 @@ Player.prototype = {
    */
   onMove: function() {},
   onShoot: function() {},
+  onUpdatePosition: function() {},
 
   move: function(data) {
     var x = Physics.mpxi(this.spirit.position[0])
@@ -82,6 +83,7 @@ Object.defineProperty(Player.prototype, "x", {
   },
   set: function (value) {
     this.spirit.position[0] = Physics.pxmi(value);
+    // this.onUpdatePosition(value, null);
   }
 });
 Object.defineProperty(Player.prototype, "y", {
@@ -90,6 +92,7 @@ Object.defineProperty(Player.prototype, "y", {
   },
   set: function (value) {
     this.spirit.position[1] = Physics.pxmi(value);
+    // this.onUpdatePosition(null, value);
   }
 });
 

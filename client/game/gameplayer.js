@@ -24,9 +24,17 @@ function GamePlayer(sprite, gamefactory) {
   this.inputWasDown = false;
   this.lastShootAt = 0;
 
+  this.nameFont = { font: '12px Arial', fill: '#ffffff' };
+  this.txtName = this.gamefactory.game.add.text(this.sprite.x, this.sprite.y ,
+    this.nametag, this.nameFont);
 };
 
 _.extend(GamePlayer.prototype, Player.prototype, {
+
+  render: function(game) {
+    this.txtName.x = this.sprite.x - this.txtName.width / 2;
+    this.txtName.y = this.sprite.y - _globals.HEIGHT_PLAYER - 2;
+  },
 
   update: function(game, send) {
     var input = game.input;
@@ -124,8 +132,17 @@ _.extend(GamePlayer.prototype, Player.prototype, {
   onShoot: function (data) {
     var bullet = this.shoot(data);
     this.gamefactory.addBullet(bullet);
-  }
+  },
 
+});
+Object.defineProperty(GamePlayer.prototype, "name", {
+  get: function () {
+    return this.nametag;
+  },
+  set: function (value) {
+    this.nametag = value;
+    this.txtName.setText(value);
+  }
 });
 
 /**
