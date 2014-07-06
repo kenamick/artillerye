@@ -193,7 +193,18 @@ Play.prototype = {
           self.gamefactory.removeBullet(bodyA);
         }
     });
-  }
+  },
+
+  forPlayer: function(pid, callback) {
+    if (pid === this.player.id) {
+      callback(this.player);
+    } else {
+      for (var i = this.enemies.length - 1; i >= 0; i--) {
+        if (this.enemies[i].id === pid)
+          callback(this.enemies[i]);
+      }
+    }
+  },
 
 };
 

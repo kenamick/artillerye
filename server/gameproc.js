@@ -120,7 +120,7 @@ GameProc.prototype = {
     var self = this;
 
     socket.on(packets.PLAYER_SHOOT, function (data) {
-      self.runIfExists(socket.id, data.pid, function (player) {
+      self.forPlayer(socket.id, data.pid, function (player) {
         console.log('emitting bullet');
         self.send(self.gameid, packets.PLAYER_SHOOT, data);
       });
@@ -168,7 +168,7 @@ GameProc.prototype = {
     return true;
   },
 
-  runIfExists: function(socketId, playerId, callback) {
+  forPlayer: function(socketId, playerId, callback) {
     for (var i = this.players.length - 1; i >= 0; i--) {
       if (this.players[i].getSocketId() === socketId
         && this.players[i].id === playerId) {
