@@ -59,20 +59,32 @@ _.extend(GamePlayer.prototype, Player.prototype, {
       if (game.time.now - this.lastShootAt >_globals.PLAYER_SHOOT_DELAY) {
         this.lastShootAt = game.time.now;
 
-        var angle = Physics.atan2(
-          input.activePointer.x, input.activePointer.y,
-          this.sprite.x, this.sprite.y);
+        var touchX = input.activePointer.x
+          , touchY = input.activePointer.y;
 
-        console.log(angle);
+        if (this.trajectory) {
+          var dist = Phaser.Math.distance(this.trajectory.dx, this.trajectory.dy,
+            touchX, touchY);
 
-        var data = {
-          pid: this.id,
-          angle: angle,
-          speed: _globals.BULLET_SPEED
-        };
+          if (dist < 20) {
+            // notify server
+            var data = {
+              pid: this.id,
+              angle: Physics.atan2(touchX, touchY, this.sprite.x, this.sprite.y),
+              speed: _globals.BULLET_SPEED
+            };
+            send(packets.PLAYER_SHOOT, data);
+          }
 
-        // notify server
-        send(packets.PLAYER_SHOOT, data);
+          this.gamefactory.removeTrajectory(this.trajectory);
+          this.trajectory = null;
+        }
+
+        if (!this.trajectory) {
+          this.trajectory = this.gamefactory.addTrajectory(this.sprite.x, this.sprite.y,
+            input.activePointer.x, input.activePointer.y);
+        }
+
       }
     }
   },

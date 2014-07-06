@@ -9,21 +9,24 @@
 
 'use strict';
 
-var Physics = require('../../shared/physics')()
+var _globals = require('../../shared/globals')
+  , Physics = require('../../shared/physics')()
   , Spirits = require('../../shared/spirits')
   , GamePlayer = require('./gameplayer')
   ;
 
 function Factory(game) {
   this.game = game;
-
   this.physics = null;
-
   this.spirits = null;
 
+  // bullets sprite batch
   this.bulletsGroup = null;
-
+  // sprite entities that need updating
   this.entities = [];
+  // list of player shoot trajectories on screen
+  this.trajectories = [];
+
 };
 
 Factory.prototype = {
@@ -124,6 +127,39 @@ Factory.prototype = {
     bullet.kill();
   },
 
+  addTrajectory: function(sx, sy, dx, dy) {
+    var bitmap = this.game.add.bitmapData(this.game.width, this.game.height);
+    bitmap.context.fillStyle = 'rgb(255, 255, 255)';
+    bitmap.context.strokeStyle = 'rgb(255, 255, 255)';
+    var sprite = this.game.add.image(0, 0, bitmap);
+
+    var trajectory = {
+      id: sx + sy + dx + dy,
+      acitve: true,
+      sprite: sprite,
+      bitmap: bitmap,
+      timeOffset: 0,
+      sx: sx,
+      sy: sy,
+      dx: dx,
+      dy: dy
+    };
+
+    this.trajectories.push(trajectory);
+    return trajectory;
+  },
+
+  removeTrajectory: function(trajectory) {
+    for (var i = this.trajectories.length - 1; i >= 0; i--) {
+      if (this.trajectories[i].id === trajectory.id) {
+        this.trajectories[i].sprite.kill();
+        this.trajectories.splice(i, 1);
+        return true;
+      }
+    }
+    return false;
+  },
+
   /**
    * Update all entities positions for
    * which a physics body exists
@@ -146,6 +182,47 @@ Factory.prototype = {
     this.bulletsGroup.forEachAlive(function(bullet) {
       bullet.spirit.alignRotationToVel();
     });
+
+    for (var i = this.trajectories.length - 1; i >= 0; i--) {
+      var trajectory = this.trajectories[i];
+      var context = trajectory.bitmap.context;
+
+      context.clearRect(0, 0, this.game.width, this.game.height);
+      context.fillStyle = 'rgba(255, 255, 255, 0.5)';
+
+      var MARCH_SPEED = 40;
+      var RADIUS = 40;
+
+      trajectory.timeOffset += 1.0 / MARCH_SPEED; //(1000 * MARCH_SPEED / 60);
+      if (trajectory.timeOffset >= 1)
+        trajectory.timeOffset = 0;
+
+      var phi = Phaser.Math.angleBetween(trajectory.dx, trajectory.dy,
+        trajectory.sx, trajectory.sy);
+      var ddx = trajectory.dx + Math.cos(phi) * RADIUS;
+      var ddy = trajectory.dy + Math.sin(phi) * RADIUS;
+
+      context.setLineDash([2 + trajectory.timeOffset, 3]);
+      context.beginPath();
+      context.lineWidth = 1;
+      context.moveTo(trajectory.sx, trajectory.sy);
+      context.lineTo(ddx, ddy);
+      context.stroke();
+      context.closePath();
+
+      context.setLineDash([0, 0]);
+      context.beginPath();
+      context.arc(trajectory.dx, trajectory.dy, RADIUS, 0, _globals.math.PI2);
+      context.stroke();
+      context.closePath();
+
+      context.beginPath();
+      context.arc(trajectory.dx, trajectory. dy, RADIUS - 15, 0, _globals.math.PI2);
+      context.closePath();
+      context.fill();
+
+      trajectory.bitmap.dirty = true;
+    }
 
   },
 
