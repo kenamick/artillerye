@@ -74,7 +74,7 @@ Play.prototype = {
     socket.on(packets.GAME_JOINED, function (data) {
       // hack
       if (self.gameStarted)
-        location.reload();
+        window.location.reload();
 
       self.onGameJoined(data);
     });
@@ -120,7 +120,7 @@ Play.prototype = {
    */
   postCreate: function() {
 
-    this.gamefactory.addWater(64);
+    this.gamefactory.addWater(_globals.TILE_SIZE);
 
   },
   /**

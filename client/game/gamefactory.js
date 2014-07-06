@@ -66,11 +66,16 @@ Factory.prototype = {
 
   addWater: function(size) {
     var batch = this.game.add.spriteBatch(this.game, null, 'waterb')
-      , width = this.game.width / size
+      , width = this.game.width / size + 1
       , dy = this.game.height - size / 2;
+
     for (var i = 0; i < width; i++) {
       var sprite = batch.create(i * size, dy, 'water');
+      // each tile moves east, tween repeats
+      var tween = this.game.add.tween(sprite).to({x: i * size - _globals.TILE_SIZE},
+        3125, Phaser.Easing.Linear.In, true, 0, Number.MAX_VALUE);
     }
+
     return batch;
   },
 

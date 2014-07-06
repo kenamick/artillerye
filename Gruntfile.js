@@ -56,9 +56,9 @@ module.exports = function (grunt) {
           args: ['dev'],
           // nodeArgs: ['--debug'],
           watchedExtensions: ['js', 'json'],
-          ignoredFiles: ['node_modules/**', 'client/**'],
+          ignore: ['node_modules/**', 'client/**'],
         }
-      }      
+      }
     }
   });
 
