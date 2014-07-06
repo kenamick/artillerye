@@ -232,27 +232,33 @@ Factory.prototype = {
       context.stroke();
       context.closePath();
 
-      context.setLineDash([0, 0]);
-
-      // power shot
+      // power
       context.beginPath();
       context.arc(trajectory.dx, trajectory.dy, POWER_RADIUS, 0, _globals.math.PI2);
       context.stroke();
       context.closePath();
+      context.fillStyle = 'rgba(255, 15, 15, 0.75)';
       context.beginPath();
       context.arc(trajectory.dx, trajectory.dy, trajectory.powerRadius, 0, _globals.math.PI2);
       context.closePath();
       context.fill();
+
+      context.setLineDash([0, 0]);
+
       // shoot
       context.beginPath();
       context.arc(trajectory.shootx, trajectory.shooty, SHOOT_RADIUS, 0, _globals.math.PI2);
       context.stroke();
       context.closePath();
       // context.strokeStyle = 'rgba(25, 225, 25, 0.5)';
-
-      context.fillStyle = 'rgba(25, 225, 25, 0.5)';
+      var radialGradient = context.createRadialGradient(
+        trajectory.shootx, trajectory.shooty, SHOOT_RADIUS / 4,
+        trajectory.shootx + 10, trajectory.shooty + 10, SHOOT_RADIUS * 2);
+      radialGradient.addColorStop(0, "#1EFF1E");
+      radialGradient.addColorStop(1, "#0C230C");
+      context.fillStyle = radialGradient; //'rgba(25, 225, 25, 0.5)';
       context.beginPath();
-      context.arc(trajectory.shootx, trajectory.shooty, SHOOT_RADIUS - 10, 0, _globals.math.PI2);
+      context.arc(trajectory.shootx, trajectory.shooty, SHOOT_RADIUS, 0, _globals.math.PI2);
       context.stroke();
       context.closePath();
       context.fill();
