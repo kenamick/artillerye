@@ -56,36 +56,64 @@ _.extend(GamePlayer.prototype, Player.prototype, {
     // Shoot
 
     if (input.activePointer.isDown) {
-      if (game.time.now - this.lastShootAt >_globals.PLAYER_SHOOT_DELAY) {
+
+      var touchX = input.activePointer.x
+        , touchY = input.activePointer.y
+        , trajectoryUpdate = false;
+
+
+      if (this.trajectory) {
+        // increase power value
+        var dist = Phaser.Math.distance(this.trajectory.dx, this.trajectory.dy, touchX, touchY);
+        if (dist < _globals.HUD_POWER_BUTTON_RADIUS) {
+          this.gamefactory.updateTrajectory();
+          trajectoryUpdate = true;
+        }
+      }
+
+      if (game.time.now - this.lastShootAt >_globals.TOUCH_DELAY) {
         this.lastShootAt = game.time.now;
 
-        var touchX = input.activePointer.x
-          , touchY = input.activePointer.y;
+        var add = true;
 
         if (this.trajectory) {
-          var dist = Phaser.Math.distance(this.trajectory.dx, this.trajectory.dy,
-            touchX, touchY);
+          add = false;
 
-          if (dist < 20) {
-            // notify server
-            var data = {
-              pid: this.id,
-              angle: Physics.atan2(touchX, touchY, this.sprite.x, this.sprite.y),
-              speed: _globals.BULLET_SPEED
-            };
-            send(packets.PLAYER_SHOOT, data);
+          if (!trajectoryUpdate) {
+            // fire?
+            dist = Phaser.Math.distance(this.trajectory.shootx, this.trajectory.shooty,
+              touchX, touchY);
+
+            if (dist < _globals.HUD_SHOOT_BUTTON_RADIUS) {
+              // notify server
+              var data = {
+                pid: this.id,
+                angle: Physics.atan2(touchX, touchY, this.sprite.x, this.sprite.y),
+                speed: this.trajectory.power
+              };
+              send(packets.PLAYER_SHOOT, data);
+
+              // remove marker
+              this.gamefactory.removeTrajectory();
+              this.trajectory = null;
+            } else {
+              // player clicked elsewhere on the map
+              // remove trajectory marker
+              this.gamefactory.removeTrajectory();
+              this.trajectory = null;
+            }
           }
-
-          this.gamefactory.removeTrajectory(this.trajectory);
-          this.trajectory = null;
         }
 
-        if (!this.trajectory) {
+        if (add) {
           this.trajectory = this.gamefactory.setTrajectory(this.sprite.x, this.sprite.y,
             input.activePointer.x, input.activePointer.y);
         }
 
       }
+    } else if (input.activePointer.isUp) {
+      // TODO:
+
     }
   },
 

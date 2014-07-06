@@ -15,6 +15,9 @@ var _globals = require('../../shared/globals')
   , GamePlayer = require('./gameplayer')
   ;
 
+var POWER_RADIUS = _globals.HUD_POWER_BUTTON_RADIUS
+  , SHOOT_RADIUS = _globals.HUD_SHOOT_BUTTON_RADIUS;
+
 function Factory(game) {
   this.game = game;
   this.physics = null;
@@ -135,17 +138,43 @@ Factory.prototype = {
       this.trajectory.sprite = this.game.add.image(0, 0, this.trajectory.bitmap);
     }
 
-    if (!this.trajectory.sprite.alive) {
-      this.trajectory.sprite.revive();
-    }
-
     this.trajectory.sx = sx;
     this.trajectory.sy = sy;
     this.trajectory.dx = dx;
     this.trajectory.dy = dy;
     this.trajectory.timeOffset = 0;
+    this.trajectory.power = 0;
+    this.trajectory.powerRadius = 0;
+    this.updateTrajectory(_globals.MAX_BULLET_SPEED / 25);
+
+    var phi = Phaser.Math.angleBetween(dx, dy, sx, sy);
+
+    // power surface point
+    this.trajectory.pspx = dx + Math.cos(phi) * (POWER_RADIUS + SHOOT_RADIUS * 2);
+    this.trajectory.pspy = dy + Math.sin(phi) * (POWER_RADIUS + SHOOT_RADIUS * 2);
+    // shoot
+    this.trajectory.shootx = dx + Math.cos(phi) * (POWER_RADIUS + SHOOT_RADIUS);
+    this.trajectory.shooty = dy + Math.sin(phi) * (POWER_RADIUS + SHOOT_RADIUS);
+
+    if (!this.trajectory.sprite.alive) {
+      this.trajectory.sprite.revive();
+      // clear previous drawing
+      this.trajectory.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
+      this.trajectory.bitmap.dirty = true;
+    }
 
     return this.trajectory;
+  },
+
+  updateTrajectory: function(value) {
+    if (typeof value === 'undefined') {
+      this.trajectory.power += 500 * this.game.time.physicsElapsed;
+    } else {
+      this.trajectory.power = value;
+    }
+    this.trajectory.power = Math.min(this.trajectory.power, _globals.MAX_BULLET_SPEED);
+    this.trajectory.powerRadius = Phaser.Math.mapLinear(this.trajectory.power,
+      0, _globals.MAX_BULLET_SPEED, 0, POWER_RADIUS);
   },
 
   removeTrajectory: function() {
@@ -190,33 +219,41 @@ Factory.prototype = {
       context.fillStyle = 'rgba(255, 255, 255, 0.5)';
 
       var MARCH_SPEED = 40;
-      var RADIUS = 40;
 
       trajectory.timeOffset += 1.0 / MARCH_SPEED; //(1000 * MARCH_SPEED / 60);
       if (trajectory.timeOffset >= 1)
         trajectory.timeOffset = 0;
 
-      var phi = Phaser.Math.angleBetween(trajectory.dx, trajectory.dy,
-        trajectory.sx, trajectory.sy);
-      var ddx = trajectory.dx + Math.cos(phi) * RADIUS;
-      var ddy = trajectory.dy + Math.sin(phi) * RADIUS;
-
       context.setLineDash([2 + trajectory.timeOffset, 3]);
       context.beginPath();
       context.lineWidth = 1;
       context.moveTo(trajectory.sx, trajectory.sy);
-      context.lineTo(ddx, ddy);
+      context.lineTo(trajectory.pspx, trajectory.pspy);
       context.stroke();
       context.closePath();
 
       context.setLineDash([0, 0]);
+
+      // power shot
       context.beginPath();
-      context.arc(trajectory.dx, trajectory.dy, RADIUS, 0, _globals.math.PI2);
+      context.arc(trajectory.dx, trajectory.dy, POWER_RADIUS, 0, _globals.math.PI2);
       context.stroke();
       context.closePath();
-
       context.beginPath();
-      context.arc(trajectory.dx, trajectory. dy, RADIUS - 15, 0, _globals.math.PI2);
+      context.arc(trajectory.dx, trajectory.dy, trajectory.powerRadius, 0, _globals.math.PI2);
+      context.closePath();
+      context.fill();
+      // shoot
+      context.beginPath();
+      context.arc(trajectory.shootx, trajectory.shooty, SHOOT_RADIUS, 0, _globals.math.PI2);
+      context.stroke();
+      context.closePath();
+      // context.strokeStyle = 'rgba(25, 225, 25, 0.5)';
+
+      context.fillStyle = 'rgba(25, 225, 25, 0.5)';
+      context.beginPath();
+      context.arc(trajectory.shootx, trajectory.shooty, SHOOT_RADIUS - 10, 0, _globals.math.PI2);
+      context.stroke();
       context.closePath();
       context.fill();
 

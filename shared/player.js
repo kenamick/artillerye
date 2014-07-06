@@ -47,7 +47,7 @@ Player.prototype = {
   },
 
   shoot: function(data) {
-    var magnitude = Math.min(data.speed, _globals.BULLET_SPEED);
+    var magnitude = Math.min(data.speed, _globals.MAX_BULLET_SPEED);
 
     var spirit = this.spirits.addBullet(
       Physics.mpxi(this.spirit.position[0]),
