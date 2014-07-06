@@ -134,6 +134,10 @@ _.extend(GamePlayer.prototype, Player.prototype, {
     this.gamefactory.addBullet(bullet);
   },
 
+  onNameChange: function() {
+    this.txtName.setText(this.nametag);
+  },
+
 });
 Object.defineProperty(GamePlayer.prototype, "name", {
   get: function () {
@@ -141,6 +145,7 @@ Object.defineProperty(GamePlayer.prototype, "name", {
   },
   set: function (value) {
     this.nametag = value;
+    this.nametag = this.nametag.substring(0, _globals.MAX_NAME_SIZE);
     this.txtName.setText(value);
   }
 });

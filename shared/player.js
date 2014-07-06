@@ -31,7 +31,7 @@ Player.prototype = {
    */
   onMove: function() {},
   onShoot: function() {},
-  onUpdatePosition: function() {},
+  onNameChange: function() {},
 
   move: function(data) {
     var x = Physics.mpxi(this.spirit.position[0])
@@ -93,6 +93,16 @@ Object.defineProperty(Player.prototype, "y", {
   set: function (value) {
     this.spirit.position[1] = Physics.pxmi(value);
     // this.onUpdatePosition(null, value);
+  }
+});
+Object.defineProperty(Player.prototype, "name", {
+  get: function () {
+    return this.nametag;
+  },
+  set: function (value) {
+    this.nametag = value;
+    this.nametag = this.nametag.substring(0, _globals.MAX_NAME_SIZE);
+    this.onNameChange();
   }
 });
 

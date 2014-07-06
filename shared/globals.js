@@ -21,6 +21,7 @@ var Globals = {
 
   MAX_GAMES: 50,
   MAX_CLIENTS: 3,
+  MAX_NAME_SIZE: 9,
 
   TOUCH_DELAY: 250,
   MAX_BULLET_SPEED: 450,
