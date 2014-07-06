@@ -11,6 +11,7 @@
 
 var _globals = require('../../../shared/globals')
   , packets = require('../../../shared/packets')
+  , Physics = require('../../../shared/physics')()
   , GameFactory = require('../gamefactory');
 
 var server_url = 'http://192.168.1.101:3000/loosecannon';
@@ -136,6 +137,7 @@ Play.prototype = {
 
     // add game objects
     this.gamefactory.addBullets(_globals.MAX_BULLETS);
+    this.gamefactory.addExplosions();
     // this.voxels = this.gamefactory.addBlocks(data.level.blocks[0], data.level.blocks[1]);
 
     // add enemy sprites
@@ -181,9 +183,21 @@ Play.prototype = {
 
         if (cgB === _globals.masks.PLAYER) {
           // console.log(cgB, _globals.masks.PLAYER, bodyB.id, self.player.spirit.id);
-          //bodyB.id !== self.player.spirit.id) {
+          if (bodyB.id !== self.player.spirit.id) {
+            // explode
+            // var x = Physics.mpxi(bodyA.position[0])
+            //   , y = Physics.mpxi(bodyA.position[1]);
+            // self.gamefactory.addExplosion(x, y);
+
+            // self.gamefactory.removeBullet(bodyA);
+          }
           // enemy player damage
         } else {
+          // explode
+          var x = Physics.mpxi(bodyA.position[0])
+            , y = Physics.mpxi(bodyA.position[1]);
+          self.gamefactory.addExplosion(x, y);
+
           self.gamefactory.removeBullet(bodyA);
         }
     });

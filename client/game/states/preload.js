@@ -29,6 +29,7 @@ Preload.prototype = {
     this.load.image('ground64', 'assets/ground_64x64.png');
     this.load.image('water', 'assets/water.png');
     this.load.image('bullet', 'assets/bullet.png');
+    this.load.spritesheet('explosion', 'assets/explosion.png', 128, 128);
 
   },
   create: function() {

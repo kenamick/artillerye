@@ -110,7 +110,8 @@ Factory.prototype = {
   addBullet: function(spirit) {
     var bullet = this.bulletsGroup.getFirstDead();
     if (!bullet) {
-      throw "Bullets not available!"
+      _globals.debug('Bullets not available!');
+      return;
     }
 
     bullet.revive();
@@ -128,6 +129,31 @@ Factory.prototype = {
     var bullet = spirit.parent;
     this.spirits.remove(spirit);
     bullet.kill();
+  },
+
+  addExplosions: function() {
+    this.explosionsGroup = this.game.add.group();
+    return this.explosionsGroup;
+  },
+
+  addExplosion: function(x, y) {
+    var explosion = this.explosionsGroup.getFirstDead();
+    if (!explosion) {
+      explosion = this.game.add.sprite(0, 0, 'explosion');
+      explosion.anchor.set(0.5, 0.5);
+
+      var animation = explosion.animations.add('boom', [0, 1, 2, 3], 60, false);
+      animation.killOnComplete = true;
+
+      this.explosionsGroup.add(explosion);
+    }
+
+    explosion.revive();
+    explosion.x = x;
+    explosion.y = y;
+    explosion.angle = this.game.rnd.integerInRange(0, 360);
+    explosion.animations.play('boom');
+    return explosion;
   },
 
   setTrajectory: function(sx, sy, dx, dy) {
