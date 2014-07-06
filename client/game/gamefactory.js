@@ -24,8 +24,8 @@ function Factory(game) {
   this.bulletsGroup = null;
   // sprite entities that need updating
   this.entities = [];
-  // list of player shoot trajectories on screen
-  this.trajectories = [];
+  // player shoot trajectory
+  this.trajectory = {};
 
 };
 
@@ -127,37 +127,31 @@ Factory.prototype = {
     bullet.kill();
   },
 
-  addTrajectory: function(sx, sy, dx, dy) {
-    var bitmap = this.game.add.bitmapData(this.game.width, this.game.height);
-    bitmap.context.fillStyle = 'rgb(255, 255, 255)';
-    bitmap.context.strokeStyle = 'rgb(255, 255, 255)';
-    var sprite = this.game.add.image(0, 0, bitmap);
+  setTrajectory: function(sx, sy, dx, dy) {
+    if (!this.trajectory.bitmap) {
+      this.trajectory.bitmap = this.game.add.bitmapData(this.game.width, this.game.height);
+      this.trajectory.bitmap.context.fillStyle = 'rgb(255, 255, 255)';
+      this.trajectory.bitmap.context.strokeStyle = 'rgb(255, 255, 255)';
+      this.trajectory.sprite = this.game.add.image(0, 0, this.trajectory.bitmap);
+    }
 
-    var trajectory = {
-      id: sx + sy + dx + dy,
-      acitve: true,
-      sprite: sprite,
-      bitmap: bitmap,
-      timeOffset: 0,
-      sx: sx,
-      sy: sy,
-      dx: dx,
-      dy: dy
-    };
+    if (!this.trajectory.sprite.alive) {
+      this.trajectory.sprite.revive();
+    }
 
-    this.trajectories.push(trajectory);
-    return trajectory;
+    this.trajectory.sx = sx;
+    this.trajectory.sy = sy;
+    this.trajectory.dx = dx;
+    this.trajectory.dy = dy;
+    this.trajectory.timeOffset = 0;
+
+    return this.trajectory;
   },
 
-  removeTrajectory: function(trajectory) {
-    for (var i = this.trajectories.length - 1; i >= 0; i--) {
-      if (this.trajectories[i].id === trajectory.id) {
-        this.trajectories[i].sprite.kill();
-        this.trajectories.splice(i, 1);
-        return true;
-      }
+  removeTrajectory: function() {
+    if (this.trajectory) {
+      this.trajectory.sprite.kill();
     }
-    return false;
   },
 
   /**
@@ -183,8 +177,13 @@ Factory.prototype = {
       bullet.spirit.alignRotationToVel();
     });
 
-    for (var i = this.trajectories.length - 1; i >= 0; i--) {
-      var trajectory = this.trajectories[i];
+    /**
+     * Draw trajectory routines
+     */
+
+
+    if (this.trajectory.sprite && this.trajectory.sprite.alive) {
+      var trajectory = this.trajectory;
       var context = trajectory.bitmap.context;
 
       context.clearRect(0, 0, this.game.width, this.game.height);

@@ -78,15 +78,9 @@ Play.prototype = {
       self.onGameJoined(data);
     });
     socket.on(packets.PLAYER_SHOOT, function (data) {
-      console.log(data);
-      if (data.pid === self.player.id) {
-        self.player.onShoot(data);
-      } else {
-        for (var i = self.enemies.length - 1; i >= 0; i--) {
-          if (self.enemies[i].id === data.pid)
-            self.enemies[i].onShoot(data);
-        }
-      }
+      self.forPlayer(data.pid, function (player) {
+        player.onShoot(data);
+      });
     });
     socket.on('disconnect', function () {
       _globals.debug('!!Disconnected!!');

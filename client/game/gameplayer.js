@@ -81,7 +81,7 @@ _.extend(GamePlayer.prototype, Player.prototype, {
         }
 
         if (!this.trajectory) {
-          this.trajectory = this.gamefactory.addTrajectory(this.sprite.x, this.sprite.y,
+          this.trajectory = this.gamefactory.setTrajectory(this.sprite.x, this.sprite.y,
             input.activePointer.x, input.activePointer.y);
         }
 
