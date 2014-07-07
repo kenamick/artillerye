@@ -121,7 +121,6 @@ GameProc.prototype = {
 
     socket.on(packets.PLAYER_SHOOT, function (data) {
       self.forPlayer(socket.id, data.pid, function (player) {
-        console.log('emitting bullet');
         self.send(self.gameid, packets.PLAYER_SHOOT, data);
       });
     });

@@ -14,7 +14,8 @@ var _globals = require('../../../shared/globals')
   , Physics = require('../../../shared/physics')()
   , GameFactory = require('../gamefactory');
 
-var server_url = 'http://192.168.1.101:3000/loosecannon';
+// var server_url = 'http://192.168.1.101:3000/loosecannon';
+var server_url = 'http://127.0.0.1:3000/loosecannon';
 
 function Play() {};
 
@@ -191,11 +192,13 @@ Play.prototype = {
           // console.log(cgB, _globals.masks.PLAYER, bodyB.id, self.player.spirit.id);
           if (bodyB.id !== self.player.spirit.id) {
             // explode
-            // var x = Physics.mpxi(bodyA.position[0])
-            //   , y = Physics.mpxi(bodyA.position[1]);
+            var x = Physics.mpxi(bodyA.position[0])
+              , y = Physics.mpxi(bodyA.position[1]);
             // self.gamefactory.addExplosion(x, y);
 
             // self.gamefactory.removeBullet(bodyA);
+
+            self.gamefactory.addParticleExplosion(x, y);
           }
           // enemy player damage
         } else {

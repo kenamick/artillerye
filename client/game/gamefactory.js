@@ -18,6 +18,16 @@ var _globals = require('../../shared/globals')
 var POWER_RADIUS = _globals.HUD_POWER_BUTTON_RADIUS
   , SHOOT_RADIUS = _globals.HUD_SHOOT_BUTTON_RADIUS;
 
+// list of particle bitmaps
+var particlesBM = [];
+var ExplosionParticle = function(game, x, y) {
+   Phaser.Particle.call(this, game, x, y, game.cache.getBitmapData(
+    particlesBM[game.rnd.integerInRange(0, particlesBM.length - 1)]));
+};
+ExplosionParticle.prototype = Object.create(Phaser.Particle.prototype);
+ExplosionParticle.prototype.constructor = ExplosionParticle;
+
+
 function Factory(game) {
   this.game = game;
   this.physics = null;
@@ -29,7 +39,6 @@ function Factory(game) {
   this.entities = [];
   // player shoot trajectory
   this.trajectory = {};
-
 };
 
 Factory.prototype = {
@@ -45,6 +54,44 @@ Factory.prototype = {
         this.entities.push(sprite);
     }
     return batch;
+  },
+
+  _generateParticleBitmaps: function() {
+      var bitmap;
+
+      particlesBM = ['pex01', 'pex02', 'pex03', 'pex04', 'pex05'];
+
+      // http://codepen.io/anon/pen/KjlAq
+      bitmap = this.game.add.bitmapData(4, 4);
+      bitmap.context.fillStyle = '#555';
+      bitmap.context.fillRect(1, 1, 4, 2);
+      bitmap.context.fillRect(1, 2, 2, 4);
+      this.game.cache.addBitmapData(particlesBM[0], bitmap);
+
+      bitmap = this.game.add.bitmapData(5, 5);
+      bitmap.context.fillStyle = '#333';
+      bitmap.context.fillRect(1, 1, 4, 2);
+      bitmap.context.fillRect(3, 2, 2, 2);
+      bitmap.context.fillRect(1, 4, 4, 2);
+      this.game.cache.addBitmapData(particlesBM[1], bitmap);
+
+      bitmap = this.game.add.bitmapData(5, 5);
+      bitmap.context.fillStyle = '#777';
+      bitmap.context.fillRect(1, 1, 3, 2);
+      bitmap.context.fillRect(2, 2, 3, 3);
+      bitmap.context.fillRect(3, 4, 4, 2);
+      this.game.cache.addBitmapData(particlesBM[2], bitmap);
+
+      bitmap = this.game.add.bitmapData(6, 6);
+      bitmap.context.fillStyle = '#444';
+      bitmap.context.fillRect(1, 1, 6, 6);
+      this.game.cache.addBitmapData(particlesBM[3], bitmap);
+
+      bitmap = this.game.add.bitmapData(6, 6);
+      bitmap.context.fillStyle = '#333';
+      bitmap.context.fillRect(1, 1, 3, 3);
+      bitmap.context.fillRect(3, 3, 3, 3);
+      this.game.cache.addBitmapData(particlesBM[4], bitmap);      
   },
 
   initPhysics: function(config) {
@@ -137,6 +184,7 @@ Factory.prototype = {
   },
 
   addExplosions: function() {
+    this._generateParticleBitmaps();
     this.explosionsGroup = this.game.add.group();
     return this.explosionsGroup;
   },
@@ -159,6 +207,23 @@ Factory.prototype = {
     explosion.angle = this.game.rnd.integerInRange(0, 360);
     explosion.animations.play('boom');
     return explosion;
+  },
+
+  addParticleExplosion: function(x, y) {
+    var emitter = this.game.add.emitter(x, y, _globals.MAX_PARTICLES);
+    emitter.width = _globals.WIDTH_PLAYER;
+
+    emitter.particleClass = ExplosionParticle;
+    emitter.makeParticles();
+
+    emitter.bringToTop = true;
+    // emitter.setRotation(0, 0);
+    // emitter.minParticleSpeed.set(0, 100);
+    emitter.maxParticleSpeed.set(50, 100);
+    // emitter.setXSpeed(0, 0);
+    // emitter.setYSpeed(200, 200);
+    // emitter.gravity = 100;
+    emitter.start(true, 3000, null, 20);
   },
 
   setTrajectory: function(sx, sy, dx, dy) {
