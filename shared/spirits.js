@@ -92,7 +92,7 @@ module.exports = function(physics) {
       var blocks = []
         , size = _globals.WIDTH_GROUND
         , amount = width / size
-        , y = height / size - 1;
+        , y = height / size - 1;// - size /2;
 
       for (var i = amount - 1; i >= 0; i--) {
         var shape = physics.shapes.rect(size, size);

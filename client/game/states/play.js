@@ -14,8 +14,8 @@ var _globals = require('../../../shared/globals')
   , Physics = require('../../../shared/physics')()
   , GameFactory = require('../gamefactory');
 
-// var server_url = 'http://192.168.1.101:3000/loosecannon';
-var server_url = 'http://127.0.0.1:3000/loosecannon';
+var server_url = 'http://192.168.1.101:3000/loosecannon';
+// var server_url = 'http://127.0.0.1:3000/loosecannon';
 
 function Play() {};
 
@@ -66,7 +66,7 @@ Play.prototype = {
     var socket = io.connect(server_url);
     this.socket = socket;
 
-    this.packetSeq = 0;    
+    this.packetSeq = 0;
 
     socket.on(packets.CONNECTED, function (data) {
       console.log('Connected to server' + data.server.name)
@@ -88,7 +88,20 @@ Play.prototype = {
       self.forPlayer(data.pid, function (player) {
         player.onMove(data);
       });
-    });    
+    });
+    socket.on(packets.PLAYER_HIT, function (data) {
+      self.forPlayer(data.pid, function (player) {
+        player.onDamage(data);
+        console.log('player is hit ', player.id, player.x, player.y);
+        if (!player.alive) {
+          console.log(player.hitpoints);
+          // TODO: you are dead
+          self.gamefactory.addParticleExplosion(player.x, player.y);
+          // player.kill();
+          // player.sprite.kill();
+        }
+      });
+    });
     socket.on('disconnect', function () {
       _globals.debug('!!Disconnected!!');
       self.gameStarted = false;
@@ -111,12 +124,17 @@ Play.prototype = {
       return;
 
     this.gamefactory.update();
-    this.player.update(this.game, this.sendPacket.bind(this));
-    this.player.render(this.game);
+
+    if (this.player.alive) {
+      this.player.update(this.game, this.sendPacket.bind(this));
+      this.player.render(this.game);
+    }
 
     // render names
     for (var i = this.enemies.length - 1; i >= 0; i--) {
-      this.enemies[i].render(this.game);
+      if (this.enemies[i].alive) {
+        this.enemies[i].render(this.game);
+      }
     };
   },
   /**
@@ -165,6 +183,7 @@ Play.prototype = {
 
     // add player sprite
     this.player = this.gamefactory.addPlayer(data.player.x, data.player.y);
+    console.log(this.player);
     this.player.id = data.player.id;
     this.player.name = data.player.name;
     this.player.setSocket(this.socket);
@@ -195,28 +214,34 @@ Play.prototype = {
         if (!bodyA)
           return;
 
-        if (cgB === _globals.masks.PLAYER) {
-          // console.log(cgB, _globals.masks.PLAYER, bodyB.id, self.player.spirit.id);
-          if (bodyB.id !== self.player.spirit.id) {
-            // explode
-            var x = Physics.mpxi(bodyA.position[0])
-              , y = Physics.mpxi(bodyA.position[1]);
-            // self.gamefactory.addExplosion(x, y);
+        // explode
+        var x = Physics.mpxi(bodyA.position[0])
+          , y = Physics.mpxi(bodyA.position[1]);
+        self.gamefactory.addExplosion(x, y);
+        self.gamefactory.removeBullet(bodyA);
 
-            // self.gamefactory.removeBullet(bodyA);
+        // if (cgB === _globals.masks.PLAYER) {
+        //   // console.log(cgB, _globals.masks.PLAYER, bodyB.id, self.player.spirit.id);
+        //   if (bodyB.id !== self.player.spirit.id) {
+        //     // explode
+        //     var x = Physics.mpxi(bodyA.position[0])
+        //       , y = Physics.mpxi(bodyA.position[1]);
+        //     // self.gamefactory.addExplosion(x, y);
 
-            self.gamefactory.addParticleExplosion(x, y);
-          }
-          // enemy player damage
-        } else {
-          console.log('hit something else', bodyA.id, bodyB.id);
-          // explode
-          var x = Physics.mpxi(bodyA.position[0])
-            , y = Physics.mpxi(bodyA.position[1]);
-          self.gamefactory.addExplosion(x, y);
+        //     // self.gamefactory.removeBullet(bodyA);
 
-          self.gamefactory.removeBullet(bodyA);
-        }
+        //     self.gamefactory.addParticleExplosion(x, y);
+        //   }
+        //   // enemy player damage
+        // } else {
+        //   console.log('hit something else', bodyA.id, bodyB.id);
+        //   // explode
+        //   var x = Physics.mpxi(bodyA.position[0])
+        //     , y = Physics.mpxi(bodyA.position[1]);
+        //   self.gamefactory.addExplosion(x, y);
+
+        //   self.gamefactory.removeBullet(bodyA);
+        // }
     });
   },
   /**

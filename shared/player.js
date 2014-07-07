@@ -26,6 +26,7 @@ function Player(socket, spirit, spirits) {
   this.nametag = 'Unknown';
 
   this.alive = true;
+  this.hitpoints = _globals.MAX_HP_PLAYER;
 };
 
 Player.prototype = {
@@ -36,6 +37,7 @@ Player.prototype = {
   onMove: function() {},
   onShoot: function() {},
   onNameChange: function() {},
+  onDamage: function() {},
 
   move: function(data) {
     if (data.d === 'f') {
@@ -60,11 +62,26 @@ Player.prototype = {
     var magnitude = Math.min(data.s, _globals.MAX_BULLET_SPEED);
     var spirit = this.spirits.addBullet(
       Physics.mpxi(this.spirit.position[0]),
-      Physics.mpxi(this.spirit.position[1]) - _globals.HEIGHT_BULLET * 2);
+      Physics.mpxi(this.spirit.position[1]) - _globals.HEIGHT_BULLET * 3);
 
+    spirit.playerId = this.id;
     // spirit.rotation = -this.spirit.rotation;
     spirit.moveForward(magnitude, data.a);
     return spirit;
+  },
+
+  doDamage: function(amount) {
+    this.hitpoints -= amount;
+    if (this.hitpoints <= 0) {
+      this.hitpoints = 0;
+      this.alive = false;
+    }
+  },
+
+  kill: function() {
+    this.hitpoints = 0;
+    this.alive = false;
+    this.spirits.remove(this.spirit);
   },
 
   setSocket: function(s) {
@@ -87,6 +104,7 @@ Object.defineProperty(Player.prototype, "ai", {
 });
 Object.defineProperty(Player.prototype, "x", {
   get: function () {
+    console.log(this.spirit.position[0]);
     return Physics.mpxi(this.spirit.position[0]);
   },
   set: function (value) {

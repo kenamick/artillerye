@@ -14,7 +14,7 @@ var Globals = {
   /**
    * Global constants
    */
-  
+
   // Gfx & UI
 
   SCREEN_WIDTH: 960,
@@ -34,7 +34,7 @@ var Globals = {
   MAX_PARTICLES: 20,
 
   // Gameplay
-  
+
   MAX_GAMES: 50,
   MAX_CLIENTS: 3,
   MAX_NAME_SIZE: 9,
@@ -43,8 +43,9 @@ var Globals = {
 
   MAX_BULLET_SPEED: 450,
   MAX_BULLETS: 20,
+  MAX_HP_PLAYER: 100,
 
-  WEIGHT_GROUND: 100,
+  WEIGHT_GROUND: 200,
   WEIGHT_PLAYER: 80,
   WEIGHT_BULLET: 10,
   WEIGHT_BLOCK: 90,

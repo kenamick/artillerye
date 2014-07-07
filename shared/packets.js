@@ -35,9 +35,9 @@ var Packets = {
    */
   PLAYER_SHOOT: 'pkp_shoot',
   /**
-   * Server: Bullet hit something
+   * Server: Player hit by bullet
    */
-  BULLET_HIT: 'pk_bullethit',
+  PLAYER_HIT: 'pk_plrhit',
   /**
    * Client: quits game
    */

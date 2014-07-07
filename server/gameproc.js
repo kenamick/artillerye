@@ -32,9 +32,9 @@ function GameProc(send) {
       gravity: {x: 0, y: 150}
     },
     players: [
-      [150, 500],
-      [450, 500],
-      [750, 500]
+      [150, 400],
+      [450, 400],
+      [750, 400]
     ]
   };
 };
@@ -42,17 +42,25 @@ function GameProc(send) {
 GameProc.prototype = {
 
   update: function() {
-    // run physics update
+    /**
+     * Update physics 10 times / second
+     */
     var cb = function(callback) {
       setTimeout(callback, 1000 / 10);
     };
     var updatePhysics = function() {
-
+      /**
+       * Interpolate physics update
+       * We go 6 steps forward because we expect the
+       * physics to run 1/60 on client side, e.g.,
+       * interpolate ~= 1000 / 10 * 6
+       */
       var now = Date.now() / 1000;
       this.lastCallTime = this.lastCallTime || now;
       var timeSinceLastCall = now - this.lastCallTime;
       this.lastCallTime = now;
       this.physics.update(timeSinceLastCall, 6);
+      // this.physics.update2(1.0 / 10);
 
       cb(updatePhysics.bind(this));
     }.bind(this);
@@ -136,6 +144,7 @@ GameProc.prototype = {
     // send game inital info to player
     // TODO: send game state!
     _.extend(data, this.config);
+    console.log(data);
     this.send(socket, packets.GAME_JOINED, data);
 
     // adjust callbacks
@@ -152,7 +161,7 @@ GameProc.prototype = {
         player.move(data);
         self.send(self.gameid, packets.PLAYER_MOVE, data);
       });
-    });    
+    });
     socket.on('disconnect', function () {
       /**
        * Some player quits the game. Set AI control to his entity.
@@ -165,17 +174,38 @@ GameProc.prototype = {
       };
     });
   },
-
+  /**
+   * Handle impacts between all in-game objects
+   * Note: An impact may be registered twice even if you remove the body right after detecting it.
+   * This happens because of the following (from p2js docs):
+   *   "Remove a body from the simulation. If this method is called during step(), the body removal"
+   *   "is scheduled to after the step.""
+   */
   onImpact: function(event) {
     var self = this;
 
     this.physics.isCollide(event.bodyA, event.bodyB, _globals.masks.BULLET,
       function(bodyA, bodyB, cgA, cgB) {
-        if (!bodyA)
+        if (!bodyA || bodyA.isCol)
           return;
 
+        bodyA.isCol = true;
+
         if (cgB === _globals.masks.PLAYER) {
-          console.log('hit player ' + bodyB.id);
+          console.log('hit player');
+          self.forPlayerBody(bodyB.id, function (player) {
+            console.log('player %d hits player %d', bodyA.playerId, player.id);
+            if (player.alive) {
+              if (player.alive) {
+                player.doDamage(101);
+                // notify
+                self.send(self.gameid, packets.PLAYER_HIT, {
+                  pid: player.id,
+                  d: 101
+                });
+              }
+            }
+          });
           // console.log(cgB, _globals.masks.PLAYER, bodyB.id, self.player.spirit.id);
           // if (bodyB.id !== self.player.spirit.id) {
           //   // explode
@@ -196,7 +226,8 @@ GameProc.prototype = {
           // self.gamefactory.addExplosion(x, y);
 
           // self.gamefactory.removeBullet(bodyA);
-          self.spirits.remove(bodyA);
+          // self.spirits.remove(bodyA);
+          self.physics.world.removeBody(bodyA);
         }
     });
   },
@@ -210,15 +241,33 @@ GameProc.prototype = {
   },
 
   forPlayer: function(socketId, playerId, callback) {
+    if (callback === null) {
+      var callback = playerId;
+      for (var i = this.players.length - 1; i >= 0; i--) {
+        if (this.players[i].id === socketId) {
+          callback && callback(this.players[i]);
+          break;
+        }
+      }
+    } else {
+      for (var i = this.players.length - 1; i >= 0; i--) {
+        if (this.players[i].getSocketId() === socketId
+          && this.players[i].id === playerId) {
+          callback && callback(this.players[i]);
+          break;
+        }
+      }
+    }
+  },
+
+  forPlayerBody: function(bodyId, callback) {
     for (var i = this.players.length - 1; i >= 0; i--) {
-      if (this.players[i].getSocketId() === socketId
-        && this.players[i].id === playerId) {
+      if (this.players[i].spirit.id === bodyId) {
         callback && callback(this.players[i]);
         break;
       }
     }
   },
-
 };
 
 /**

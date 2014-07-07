@@ -91,7 +91,7 @@ Factory.prototype = {
       bitmap.context.fillStyle = '#333';
       bitmap.context.fillRect(1, 1, 3, 3);
       bitmap.context.fillRect(3, 3, 3, 3);
-      this.game.cache.addBitmapData(particlesBM[4], bitmap);      
+      this.game.cache.addBitmapData(particlesBM[4], bitmap);
   },
 
   initPhysics: function(config) {
@@ -210,6 +210,7 @@ Factory.prototype = {
   },
 
   addParticleExplosion: function(x, y) {
+    console.log('emiter', x, y);
     var emitter = this.game.add.emitter(x, y, _globals.MAX_PARTICLES);
     emitter.width = _globals.WIDTH_PLAYER;
 
@@ -219,9 +220,9 @@ Factory.prototype = {
     emitter.bringToTop = true;
     // emitter.setRotation(0, 0);
     // emitter.minParticleSpeed.set(0, 100);
-    emitter.maxParticleSpeed.set(50, 100);
-    // emitter.setXSpeed(0, 0);
-    // emitter.setYSpeed(200, 200);
+    // emitter.maxParticleSpeed.set(50, 100);
+    emitter.setXSpeed(50, 75);
+    emitter.setYSpeed(-200, 0);
     // emitter.gravity = 100;
     emitter.start(true, 3000, null, 20);
   },
@@ -369,18 +370,18 @@ Factory.prototype = {
       // movement
       context.fillStyle = 'rgba(110, 210, 0, 0.75)';
       context.beginPath();
-      context.arc(trajectory.mvfx, trajectory.mvfy, 
+      context.arc(trajectory.mvfx, trajectory.mvfy,
         _globals.HUD_MOVE_BUTTON_RADIUS, 0, _globals.math.PI2);
       context.stroke();
       context.closePath();
       context.fill();
       context.fillStyle = 'rgba(248, 210, 0, 0.75)';
       context.beginPath();
-      context.arc(trajectory.mvbx, trajectory.mvby, 
+      context.arc(trajectory.mvbx, trajectory.mvby,
         _globals.HUD_MOVE_BUTTON_RADIUS, 0, _globals.math.PI2);
       context.stroke();
       context.closePath();
-      context.fill();      
+      context.fill();
 
 
       trajectory.bitmap.dirty = true;

@@ -157,6 +157,10 @@ Physics.prototype = {
     }
   },
 
+  update2: function(dt) {
+    this.world.step(dt);
+  },
+
   normalizeVertices: function(vertices) {
     for (var i = vertices.length - 1; i >= 0; i--) {
       vertices[i][0] = pxm(vertices[i][0]);
