@@ -58,10 +58,9 @@ Player.prototype = {
 
   shoot: function(data) {
     var magnitude = Math.min(data.s, _globals.MAX_BULLET_SPEED);
-
     var spirit = this.spirits.addBullet(
       Physics.mpxi(this.spirit.position[0]),
-      Physics.mpxi(this.spirit.position[1]) - 8);
+      Physics.mpxi(this.spirit.position[1]) - _globals.HEIGHT_BULLET * 2);
 
     // spirit.rotation = -this.spirit.rotation;
     spirit.moveForward(magnitude, data.a);

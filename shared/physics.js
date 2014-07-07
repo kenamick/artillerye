@@ -142,14 +142,18 @@ Physics.prototype = {
     return body;
   },
 
-  update: function() {
+  update: function(timeSinceLastCall, maxSubSteps) {
     if(this.enabled) {
       // var now = Date.now() / 1000;
       // this.lastCallTime = this.lastCallTime || now;
       // var timeSinceLastCall = now - this.lastCallTime;
       // this.lastCallTime = now;
       // this.world.step(DT, timeSinceLastCall, this.maxSubSteps);
-      this.world.step(DT);
+      if (timeSinceLastCall) {
+        this.world.step(DT, timeSinceLastCall, maxSubSteps);
+      } else {
+        this.world.step(DT);
+      }
     }
   },
 

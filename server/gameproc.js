@@ -42,7 +42,21 @@ function GameProc(send) {
 GameProc.prototype = {
 
   update: function() {
+    // run physics update
+    var cb = function(callback) {
+      setTimeout(callback, 1000 / 10);
+    };
+    var updatePhysics = function() {
 
+      var now = Date.now() / 1000;
+      this.lastCallTime = this.lastCallTime || now;
+      var timeSinceLastCall = now - this.lastCallTime;
+      this.lastCallTime = now;
+      this.physics.update(timeSinceLastCall, 6);
+
+      cb(updatePhysics.bind(this));
+    }.bind(this);
+    updatePhysics.call(this);
   },
 
   initGame: function() {
@@ -55,7 +69,13 @@ GameProc.prototype = {
       restitution: this.config.physics.restitution,
       gravity: this.config.physics.gravity
     });
+    this.physics.setImpactHandler(this.onImpact.bind(this));
+
     this.spirits = Spirits(this.physics);
+
+    // add game objects
+    this.spirits.addWalls(_globals.SCREEN_WIDTH, _globals.SCREEN_HEIGHT);
+    this.spirits.addGround(_globals.SCREEN_WIDTH, _globals.SCREEN_HEIGHT);
 
     // add players slots
     // initially all are AI controlled
@@ -69,6 +89,8 @@ GameProc.prototype = {
 
       this.players.push(player);
     }
+
+    this.update();
   },
 
   joinClient: function(socket) {
@@ -121,11 +143,13 @@ GameProc.prototype = {
 
     socket.on(packets.PLAYER_SHOOT, function (data) {
       self.forPlayer(socket.id, data.pid, function (player) {
+        player.shoot(data);
         self.send(self.gameid, packets.PLAYER_SHOOT, data);
       });
     });
     socket.on(packets.PLAYER_MOVE, function (data) {
       self.forPlayer(socket.id, data.pid, function (player) {
+        player.move(data);
         self.send(self.gameid, packets.PLAYER_MOVE, data);
       });
     });    
@@ -143,24 +167,37 @@ GameProc.prototype = {
   },
 
   onImpact: function(event) {
-    // type: "impact",
-    // bodyA : null,
-    // bodyB : null,
-    // shapeA : null,
-    // shapeB : null,
-    // contactEquation : null,
+    var self = this;
 
-    isCollide(event.bodyA, event.bodyB, _globals.masks.BULLET, _globals.masks.GROUND,
-      function(bodyA, bodyB) {
+    this.physics.isCollide(event.bodyA, event.bodyB, _globals.masks.BULLET,
+      function(bodyA, bodyB, cgA, cgB) {
         if (!bodyA)
           return;
 
-        // TODO: remove body from local physics
-        //
-        // listener(packets.BULLET_HIT, data);
+        if (cgB === _globals.masks.PLAYER) {
+          console.log('hit player ' + bodyB.id);
+          // console.log(cgB, _globals.masks.PLAYER, bodyB.id, self.player.spirit.id);
+          // if (bodyB.id !== self.player.spirit.id) {
+          //   // explode
+          //   var x = Physics.mpxi(bodyA.position[0])
+          //     , y = Physics.mpxi(bodyA.position[1]);
+          //   // self.gamefactory.addExplosion(x, y);
 
-        console.log('bullet collides with ground! ', bodyA.id, bodyB.id);
+          //   // self.gamefactory.removeBullet(bodyA);
 
+          //   self.gamefactory.addParticleExplosion(x, y);
+          // }
+          // enemy player damage
+        } else {
+          console.log('hit something else', bodyA.id, bodyB.id);
+          // explode
+          // var x = Physics.mpxi(bodyA.position[0])
+          //   , y = Physics.mpxi(bodyA.position[1]);
+          // self.gamefactory.addExplosion(x, y);
+
+          // self.gamefactory.removeBullet(bodyA);
+          self.spirits.remove(bodyA);
+        }
     });
   },
 
@@ -176,8 +213,8 @@ GameProc.prototype = {
     for (var i = this.players.length - 1; i >= 0; i--) {
       if (this.players[i].getSocketId() === socketId
         && this.players[i].id === playerId) {
-
         callback && callback(this.players[i]);
+        break;
       }
     }
   },

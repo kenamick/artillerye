@@ -59,9 +59,6 @@ Play.prototype = {
     // }.bind(this);
     // cb(updatePhysics);
 
-    // this.gameclient = GameClientReal(this);
-    // this.gameclient.connect('http://localhost:3000/game');
-
     /**
      * Connect to server and join a game
      */
@@ -212,6 +209,7 @@ Play.prototype = {
           }
           // enemy player damage
         } else {
+          console.log('hit something else', bodyA.id, bodyB.id);
           // explode
           var x = Physics.mpxi(bodyA.position[0])
             , y = Physics.mpxi(bodyA.position[1]);
