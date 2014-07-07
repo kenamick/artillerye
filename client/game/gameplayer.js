@@ -75,8 +75,8 @@ _.extend(GamePlayer.prototype, Player.prototype, {
                * Shoot
                */
               var data = {
-                angle: Physics.atan2(touchX, touchY, this.sprite.x, this.sprite.y),
-                speed: this.trajectory.power
+                a: Physics.atan2(touchX, touchY, this.sprite.x, this.sprite.y),
+                s: this.trajectory.power
               };
               this.onShoot(data);
 

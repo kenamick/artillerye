@@ -57,14 +57,14 @@ Player.prototype = {
   },
 
   shoot: function(data) {
-    var magnitude = Math.min(data.speed, _globals.MAX_BULLET_SPEED);
+    var magnitude = Math.min(data.s, _globals.MAX_BULLET_SPEED);
 
     var spirit = this.spirits.addBullet(
       Physics.mpxi(this.spirit.position[0]),
       Physics.mpxi(this.spirit.position[1]) - 8);
 
     // spirit.rotation = -this.spirit.rotation;
-    spirit.moveForward(magnitude, data.angle);
+    spirit.moveForward(magnitude, data.a);
     return spirit;
   },
 

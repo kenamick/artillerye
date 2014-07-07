@@ -131,7 +131,7 @@ GameProc.prototype = {
     });    
     socket.on('disconnect', function () {
       /**
-       * A player quits game. Set AI control to his entity.
+       * Some player quits the game. Set AI control to his entity.
        */
       for (var i = 0; i < self.players.length; i++) {
         if (!self.players[i].ai && self.players[i].getSocketId() == socket.id) {

@@ -22,6 +22,7 @@ function Play() {};
 Play.prototype = {
 
   create: function() {
+    var self = this;
 
     this.gamefactory = new GameFactory(this.game);
 
@@ -66,7 +67,9 @@ Play.prototype = {
      */
 
     var socket = io.connect(server_url);
-    var self = this;
+    this.socket = socket;
+
+    this.packetSeq = 0;    
 
     socket.on(packets.CONNECTED, function (data) {
       console.log('Connected to server' + data.server.name)
@@ -94,8 +97,6 @@ Play.prototype = {
       self.gameStarted = false;
       //TODO: bring player back to lobby
     });
-
-    this.socket = socket;
   },
   /**
    * Game update loop
@@ -134,7 +135,8 @@ Play.prototype = {
    */
   sendPacket: function(packet, data) {
     _.extend(data, {
-      pid: this.player.id
+      pid: this.player.id,
+      sq: ++this.packetSeq
     });
     this.socket.emit(packet, data);
   },
