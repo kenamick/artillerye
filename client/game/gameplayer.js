@@ -75,7 +75,6 @@ _.extend(GamePlayer.prototype, Player.prototype, {
                * Shoot
                */
               var data = {
-                pid: this.id,
                 angle: Physics.atan2(touchX, touchY, this.sprite.x, this.sprite.y),
                 speed: this.trajectory.power
               };
@@ -95,7 +94,7 @@ _.extend(GamePlayer.prototype, Player.prototype, {
                 this.trajectory.mvfx, this.trajectory.mvfy, touchX, touchY)) {
                 
                 // move forward
-                var data = {pid: this.id, d: 'f'};
+                var data = {d: 'f'};
                 this.onMove(data);
 
                 // notify server
@@ -105,7 +104,7 @@ _.extend(GamePlayer.prototype, Player.prototype, {
                 this.trajectory.mvbx, this.trajectory.mvby, touchX, touchY)) {
                 
                 // move backward
-                var data = {pid: this.id, d: 'b'};
+                var data = {d: 'b'};
                 this.onMove(data);
                 
                 // notify server

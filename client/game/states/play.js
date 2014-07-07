@@ -133,6 +133,9 @@ Play.prototype = {
    * Send a packet to server. Compress & serialize, if needed.
    */
   sendPacket: function(packet, data) {
+    _.extend(data, {
+      pid: this.player.id
+    });
     this.socket.emit(packet, data);
   },
   /**
@@ -216,11 +219,13 @@ Play.prototype = {
         }
     });
   },
-
+  /**
+   * Find player avatar for which the server sent
+   * a packet update.
+   */
   forPlayer: function(pid, callback) {
     if (pid === this.player.id) {
-      // skip, because we already did this action
-      // on client side!
+      // skip, because we already did this action locally, at client side!
       // callback(this.player);
     } else {
       for (var i = this.enemies.length - 1; i >= 0; i--) {
