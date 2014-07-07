@@ -147,6 +147,11 @@ GamePlayer.prototype = _.create(Player.prototype, {
 
   onDamage: function(data) {
     this.doDamage(data.d);
+    if (!this.alive) {
+      this.kill();
+      this.sprite.kill();
+      this.txtName.setText('');
+    }
   },
 
 });

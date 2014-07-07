@@ -265,7 +265,7 @@ function MyBody() {
   // this.physics = physics;
 };
 
-_.extend(MyBody.prototype, p2.Body.prototype, {
+MyBody.prototype = _.create(p2.Body.prototype, {
   /**
    * Align facing to velocity vector
    */

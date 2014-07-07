@@ -94,11 +94,9 @@ Play.prototype = {
         player.onDamage(data);
         console.log('player is hit ', player.id, player.x, player.y);
         if (!player.alive) {
-          console.log(player.hitpoints);
-          // TODO: you are dead
+
+          // TODO: write you are dead
           self.gamefactory.addParticleExplosion(player.x, player.y);
-          // player.kill();
-          // player.sprite.kill();
         }
       });
     });

@@ -210,7 +210,6 @@ Factory.prototype = {
   },
 
   addParticleExplosion: function(x, y) {
-    console.log('emiter', x, y);
     var emitter = this.game.add.emitter(x, y, _globals.MAX_PARTICLES);
     emitter.width = _globals.WIDTH_PLAYER;
 
