@@ -246,11 +246,13 @@ Factory.prototype = {
     var phi = Phaser.Math.angleBetween(dx, dy, sx, sy);
 
     // power surface point
-    this.trajectory.pspx = dx + Math.cos(phi) * (POWER_RADIUS + SHOOT_RADIUS * 2);
-    this.trajectory.pspy = dy + Math.sin(phi) * (POWER_RADIUS + SHOOT_RADIUS * 2);
+    this.trajectory.pspx = dx + Math.cos(phi) * (POWER_RADIUS);
+    this.trajectory.pspy = dy + Math.sin(phi) * (POWER_RADIUS);
     // shoot
-    this.trajectory.shootx = dx + Math.cos(phi) * (POWER_RADIUS + SHOOT_RADIUS);
-    this.trajectory.shooty = dy + Math.sin(phi) * (POWER_RADIUS + SHOOT_RADIUS);
+    // this.trajectory.shootx = dx + Math.cos(phi) * (POWER_RADIUS + SHOOT_RADIUS);
+    // this.trajectory.shooty = dy + Math.sin(phi) * (POWER_RADIUS + SHOOT_RADIUS);
+    this.trajectory.shootx = dx + (POWER_RADIUS + SHOOT_RADIUS);
+    this.trajectory.shooty = dy;
 
     if (!this.trajectory.sprite.alive) {
       this.trajectory.sprite.revive();
