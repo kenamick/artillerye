@@ -27,11 +27,11 @@ var Packets = {
    */
   UPDATE_GAME_STATE: 'pk_ugs',
   /**
-   * Client: Player fires cannon
+   * Client: Player moves on screen
    */
   PLAYER_MOVE: 'pkp_move',
   /**
-   * Client: Player moves on screen
+   * Client: Player fires cannon
    */
   PLAYER_SHOOT: 'pkp_shoot',
   /**

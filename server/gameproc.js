@@ -124,6 +124,11 @@ GameProc.prototype = {
         self.send(self.gameid, packets.PLAYER_SHOOT, data);
       });
     });
+    socket.on(packets.PLAYER_MOVE, function (data) {
+      self.forPlayer(socket.id, data.pid, function (player) {
+        self.send(self.gameid, packets.PLAYER_MOVE, data);
+      });
+    });    
     socket.on('disconnect', function () {
       /**
        * A player quits game. Set AI control to his entity.

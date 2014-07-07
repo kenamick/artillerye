@@ -18,10 +18,14 @@ function Player(socket, spirit, spirits) {
   this.parent = this;
 
   this.socket = socket;
-  this.enableAI = typeof socket === 'undefined';
   this.spirit = spirit;
   this.spirits = spirits;
+
+  this.enableAI = typeof socket === 'undefined';
+
   this.nametag = 'Unknown';
+
+  this.alive = true;
 };
 
 Player.prototype = {
@@ -34,17 +38,22 @@ Player.prototype = {
   onNameChange: function() {},
 
   move: function(data) {
-    var x = Physics.mpxi(this.spirit.position[0])
-      , dx = data.target.x
-      , leftMost = x - 5
-      , rightMost = x + 5;
-
-    // console.log(dx, leftMost, rightMost);
-    if (dx > rightMost) {
-      this.spirit.moveRight(100);
-    } else if (dx < leftMost) {
-      this.spirit.moveLeft(100);
+    if (data.d === 'f') {
+      this.spirit.moveRight(50);
+    } else if (data.d === 'b') {
+      this.spirit.moveLeft(50);
     }
+    // var x = Physics.mpxi(this.spirit.position[0])
+    //   , dx = data.target.x
+    //   , leftMost = x - 5
+    //   , rightMost = x + 5;
+
+    // // console.log(dx, leftMost, rightMost);
+    // if (dx > rightMost) {
+    //   this.spirit.moveRight(100);
+    // } else if (dx < leftMost) {
+    //   this.spirit.moveLeft(100);
+    // }
   },
 
   shoot: function(data) {

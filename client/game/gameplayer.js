@@ -38,47 +38,25 @@ _.extend(GamePlayer.prototype, Player.prototype, {
 
   update: function(game, send) {
     var input = game.input;
-
-    // Movement
-
-    // if (input.activePointer.isDown) {
-    //   this.inputWasDown = true;
-    // } else if (input.activePointer.isUp && this.inputWasDown) {
-    //   this.inputWasDown = false;
-
-    //   var data = {
-    //     target: {
-    //       x: input.activePointer.x,
-    //       y: 0
-    //     }
-    //   };
-    //   this.move(data);
-
-    //   notify server
-    //   gameclient.send(packets.UPDATE_PLAYER, {
-    //     tag: packets.player.MOVE,
-    //     data: data
-    //   });
-    // }
-
-    // Shoot
-
     if (input.activePointer.isDown) {
-
       var touchX = input.activePointer.x
         , touchY = input.activePointer.y
         , trajectoryUpdate = false;
 
-
+      /**
+       * Increase shoot magnitude smoothly
+       */
       if (this.trajectory) {
-        // increase power value
+        
         var dist = Phaser.Math.distance(this.trajectory.dx, this.trajectory.dy, touchX, touchY);
         if (dist < _globals.HUD_POWER_BUTTON_RADIUS) {
           this.gamefactory.updateTrajectory();
           trajectoryUpdate = true;
         }
       }
-
+      /**
+       * Timed events
+       */
       if (game.time.now - this.lastShootAt >_globals.TOUCH_DELAY) {
         this.lastShootAt = game.time.now;
 
@@ -93,25 +71,55 @@ _.extend(GamePlayer.prototype, Player.prototype, {
               touchX, touchY);
 
             if (dist < _globals.HUD_SHOOT_BUTTON_RADIUS) {
-              // notify server
+              /** 
+               * Shoot
+               */
               var data = {
                 pid: this.id,
                 angle: Physics.atan2(touchX, touchY, this.sprite.x, this.sprite.y),
                 speed: this.trajectory.power
               };
+              this.onShoot(data);
+
+              // notify server
               send(packets.PLAYER_SHOOT, data);
 
               // remove marker
               this.gamefactory.removeTrajectory();
               this.trajectory = null;
             } else {
-              // player clicked elsewhere on the map
-              // remove trajectory marker
+              /** 
+               * Movement
+               */
+              if (_globals.HUD_MOVE_BUTTON_RADIUS > Phaser.Math.distance(
+                this.trajectory.mvfx, this.trajectory.mvfy, touchX, touchY)) {
+                
+                // move forward
+                var data = {pid: this.id, d: 'f'};
+                this.onMove(data);
+
+                // notify server
+                send(packets.PLAYER_MOVE, data);     
+
+              } else if (_globals.HUD_MOVE_BUTTON_RADIUS > Phaser.Math.distance(
+                this.trajectory.mvbx, this.trajectory.mvby, touchX, touchY)) {
+                
+                // move backward
+                var data = {pid: this.id, d: 'b'};
+                this.onMove(data);
+                
+                // notify server
+                send(packets.PLAYER_MOVE, data);
+              }
+
+              // Player clicked elsewhere on the map
+              // or decide to move vehicle => remove trajectory marker
               this.gamefactory.removeTrajectory();
-              this.trajectory = null;
+              this.trajectory = null;                
             }
-          }
-        }
+
+          } // !trajectoryUpdate
+        } // this.trajectory
 
         if (add) {
           this.trajectory = this.gamefactory.setTrajectory(this.sprite.x, this.sprite.y,
@@ -119,9 +127,6 @@ _.extend(GamePlayer.prototype, Player.prototype, {
         }
 
       }
-    } else if (input.activePointer.isUp) {
-      // TODO:
-
     }
   },
 

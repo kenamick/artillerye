@@ -251,8 +251,14 @@ Factory.prototype = {
     // shoot
     // this.trajectory.shootx = dx + Math.cos(phi) * (POWER_RADIUS + SHOOT_RADIUS);
     // this.trajectory.shooty = dy + Math.sin(phi) * (POWER_RADIUS + SHOOT_RADIUS);
-    this.trajectory.shootx = dx + (POWER_RADIUS + SHOOT_RADIUS);
-    this.trajectory.shooty = dy;
+    this.trajectory.shootx = dx;
+    this.trajectory.shooty = dy - (POWER_RADIUS + SHOOT_RADIUS);
+    // move forward
+    this.trajectory.mvfx = dx + (POWER_RADIUS + SHOOT_RADIUS);
+    this.trajectory.mvfy = dy;
+    // move backward
+    this.trajectory.mvbx = dx - (POWER_RADIUS + SHOOT_RADIUS);
+    this.trajectory.mvby = dy;
 
     if (!this.trajectory.sprite.alive) {
       this.trajectory.sprite.revive();
@@ -352,7 +358,7 @@ Factory.prototype = {
       var radialGradient = context.createRadialGradient(
         trajectory.shootx, trajectory.shooty, SHOOT_RADIUS / 4,
         trajectory.shootx + 10, trajectory.shooty + 10, SHOOT_RADIUS * 2);
-      radialGradient.addColorStop(0, "#1EFF1E");
+      radialGradient.addColorStop(0, "#FF1E1E");
       radialGradient.addColorStop(1, "#0C230C");
       context.fillStyle = radialGradient; //'rgba(25, 225, 25, 0.5)';
       context.beginPath();
@@ -360,6 +366,22 @@ Factory.prototype = {
       context.stroke();
       context.closePath();
       context.fill();
+      // movement
+      context.fillStyle = 'rgba(110, 210, 0, 0.75)';
+      context.beginPath();
+      context.arc(trajectory.mvfx, trajectory.mvfy, 
+        _globals.HUD_MOVE_BUTTON_RADIUS, 0, _globals.math.PI2);
+      context.stroke();
+      context.closePath();
+      context.fill();
+      context.fillStyle = 'rgba(248, 210, 0, 0.75)';
+      context.beginPath();
+      context.arc(trajectory.mvbx, trajectory.mvby, 
+        _globals.HUD_MOVE_BUTTON_RADIUS, 0, _globals.math.PI2);
+      context.stroke();
+      context.closePath();
+      context.fill();      
+
 
       trajectory.bitmap.dirty = true;
     }

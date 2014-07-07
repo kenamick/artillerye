@@ -84,6 +84,11 @@ Play.prototype = {
         player.onShoot(data);
       });
     });
+    socket.on(packets.PLAYER_MOVE, function (data) {
+      self.forPlayer(data.pid, function (player) {
+        player.onMove(data);
+      });
+    });    
     socket.on('disconnect', function () {
       _globals.debug('!!Disconnected!!');
       self.gameStarted = false;
@@ -214,7 +219,9 @@ Play.prototype = {
 
   forPlayer: function(pid, callback) {
     if (pid === this.player.id) {
-      callback(this.player);
+      // skip, because we already did this action
+      // on client side!
+      // callback(this.player);
     } else {
       for (var i = this.enemies.length - 1; i >= 0; i--) {
         if (this.enemies[i].id === pid)
