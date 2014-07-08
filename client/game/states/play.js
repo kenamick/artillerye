@@ -48,16 +48,41 @@ Play.prototype = {
     this.cursors = this.game.input.keyboard.createCursorKeys();
 
     // run physics update
-    // var cb = function(callback) {
-    //   window.setTimeout(callback, 1000 / 40);
+    // var runPhysics = function(callback) {
+    //   window.setTimeout(callback, 1000 / 60);
     // };
     // var updatePhysics = function() {
-    //   if (!this.gameStarted)
-    //     return;
-    //   this.gamefactory.update();
-    //   cb(updatePhysics);
-    // }.bind(this);
-    // cb(updatePhysics);
+    //   if (this.gameStarted) {
+    //     this.gamefactory.update();
+    //   }
+    //   runPhysics(updatePhysics.bind(this));
+    // };
+    // runPhysics(updatePhysics.bind(this));
+
+    /**
+     * Update physics 10 times / second
+     */
+    var cb = function(callback) {
+      setTimeout(callback, 1000 / 60);
+    };
+    var updatePhysics = function() {
+      if (this.gameStarted) {
+        /**
+         * Interpolate physics update
+         * We go 6 steps forward because we expect the
+         * physics to run 1/60 on client side, e.g.,
+         * interpolate ~= 1000 / 10 * 6
+         */
+        var now = Date.now() / 1000;
+        this.lastCallTime = this.lastCallTime || now;
+        var timeSinceLastCall = now - this.lastCallTime;
+        this.lastCallTime = now;
+        this.gamefactory.physics.update(timeSinceLastCall, 6);
+        // this.physics.update2(1.0 / 10);
+      }
+      cb(updatePhysics.bind(this));
+    }.bind(this);
+    cb(updatePhysics);
 
     /**
      * Connect to server and join a game
@@ -90,6 +115,7 @@ Play.prototype = {
       });
     });
     socket.on(packets.PLAYER_HIT, function (data) {
+      console.log(data);
       self.forPlayer(data.pid, function (player) {
         player.onDamage(data);
         console.log('player is hit ', player.id, player.x, player.y);

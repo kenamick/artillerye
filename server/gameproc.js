@@ -64,7 +64,7 @@ GameProc.prototype = {
 
       cb(updatePhysics.bind(this));
     }.bind(this);
-    updatePhysics.call(this);
+    cb(updatePhysics);
   },
 
   initGame: function() {
@@ -196,14 +196,12 @@ GameProc.prototype = {
           self.forPlayerBody(bodyB.id, function (player) {
             console.log('player %d hits player %d', bodyA.playerId, player.id);
             if (player.alive) {
-              if (player.alive) {
-                player.doDamage(101);
-                // notify
-                self.send(self.gameid, packets.PLAYER_HIT, {
-                  pid: player.id,
-                  d: 101
-                });
-              }
+              player.doDamage(101);
+              // notify
+              self.send(self.gameid, packets.PLAYER_HIT, {
+                pid: player.id,
+                d: 101
+              });
             }
           });
           // console.log(cgB, _globals.masks.PLAYER, bodyB.id, self.player.spirit.id);

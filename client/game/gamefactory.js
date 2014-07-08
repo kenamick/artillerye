@@ -293,7 +293,7 @@ Factory.prototype = {
    */
   update: function() {
 
-    this.physics.update();
+    // this.physics.update();
 
     for (var i = this.entities.length - 1; i >= 0; i--) {
       var sprite = this.entities[i];
