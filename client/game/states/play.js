@@ -170,18 +170,19 @@ Play.prototype = {
     this.gamefactory.addExplosions();
     // this.voxels = this.gamefactory.addBlocks(data.level.blocks[0], data.level.blocks[1]);
 
+    var yDelta = -10;
+
     // add enemy sprites
     for (var i = 0, count = data.enemies.length; i < count; i++) {
       var enemy = data.enemies[i];
-      var enemyEntity = this.gamefactory.addPlayer(enemy.x, enemy.y);
+      var enemyEntity = this.gamefactory.addPlayer(enemy.x + yDelta, enemy.y + yDelta);
       enemyEntity.name = enemy.name;
       enemyEntity.id = enemy.id;
       this.enemies.push(enemyEntity);
     }
 
     // add player sprite
-    this.player = this.gamefactory.addPlayer(data.player.x, data.player.y);
-    console.log(this.player);
+    this.player = this.gamefactory.addPlayer(data.player.x + yDelta, data.player.y + yDelta);
     this.player.id = data.player.id;
     this.player.name = data.player.name;
     this.player.setSocket(this.socket);

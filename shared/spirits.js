@@ -92,11 +92,12 @@ module.exports = function(physics) {
       var blocks = []
         , size = _globals.WIDTH_GROUND
         , amount = width / size
-        , y = height / size - 1;// - size /2;
+        , y = height / size - 1
+        , midOffset = size / 2;
 
-      for (var i = amount - 1; i >= 0; i--) {
+      for (var i = 0; i < amount; i++) {
         var shape = physics.shapes.rect(size, size);
-        var spirit = physics.addBody(i * size, y * size, shape,
+        var spirit = physics.addBody(i * size + midOffset, y * size + midOffset, shape,
           _globals.WEIGHT_GROUND);
 
         // spirit.mass = 0;
