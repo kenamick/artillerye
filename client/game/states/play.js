@@ -24,6 +24,10 @@ Play.prototype = {
   create: function() {
     var self = this;
 
+    // By default if the browser tab loses focus the game will pause. 
+    // You can stop that behaviour by setting this property to true.
+    this.game.stage.disableVisibilityChange = true;
+
     this.gamefactory = new GameFactory(this.game);
 
     // add client graphics
@@ -47,9 +51,7 @@ Play.prototype = {
     // this.game.input.onDown.add(this.click, this);
     this.cursors = this.game.input.keyboard.createCursorKeys();
 
-    /**
-     * Update physics 60 times / second
-     */
+    // Update physics 60 times / second
     var runPhysics = function(callback) {
       setTimeout(callback, 1000 / 60);
     };
@@ -65,7 +67,7 @@ Play.prototype = {
         this.lastCallTime = this.lastCallTime || now;
         var timeSinceLastCall = now - this.lastCallTime;
         this.lastCallTime = now;
-        this.gamefactory.physics.update(timeSinceLastCall, 6);
+        this.gamefactory.physics.update(timeSinceLastCall, 3);
         // this.physics.update2(1.0 / 10);
       }
       runPhysics(updatePhysics.bind(this));
@@ -82,7 +84,7 @@ Play.prototype = {
     this.packetSeq = 0;
 
     socket.on(packets.CONNECTED, function (data) {
-      console.log('Connected to server' + data.server.name)
+      _globals.debug('Connected to server' + data.server.name)
     });
 
     socket.on(packets.GAME_JOINED, function (data) {
@@ -103,7 +105,6 @@ Play.prototype = {
       });
     });
     socket.on(packets.PLAYER_HIT, function (data) {
-      console.log(data);
       self.forPlayer(data.pid, function (player) {
         player.onDamage(data);
         console.log('player is hit ', player.id, player.x, player.y);
@@ -172,10 +173,9 @@ Play.prototype = {
    */
   onGameJoined: function(data) {
     // create physics world
-    this.gamefactory.initPhysics(data.physics);
+    this.gamefactory.initPhysics(data.physics, this.onImpact.bind(this));
 
-    this.gamefactory.physics.setImpactHandler(this.onImpact.bind(this));
-
+    // add environment objects
     this.gamefactory.addWalls(_globals.SCREEN_WIDTH, _globals.SCREEN_HEIGHT);
     this.gamefactory.addGround(_globals.SCREEN_WIDTH, _globals.SCREEN_HEIGHT);
 
@@ -184,7 +184,7 @@ Play.prototype = {
     this.gamefactory.addExplosions();
     // this.voxels = this.gamefactory.addBlocks(data.level.blocks[0], data.level.blocks[1]);
 
-    var yDelta = -10;
+    var yDelta = -5;
 
     // add enemy sprites
     for (var i = 0, count = data.enemies.length; i < count; i++) {

@@ -94,12 +94,14 @@ Factory.prototype = {
       this.game.cache.addBitmapData(particlesBM[4], bitmap);
   },
 
-  initPhysics: function(config) {
+  initPhysics: function(config, impactHandlerCallback) {
     this.physics = Physics.create({
       restitution: config.restitution,
       gravity: config.gravity
     });
     this.spirits = Spirits(this.physics);
+
+    this.physics.setImpactHandler(impactHandlerCallback);
   },
 
   addWalls: function(width, height) {
@@ -313,7 +315,6 @@ Factory.prototype = {
     /**
      * Draw trajectory routines
      */
-
 
     if (this.trajectory.sprite && this.trajectory.sprite.alive) {
       var trajectory = this.trajectory;

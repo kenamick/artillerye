@@ -41,10 +41,8 @@ function GameProc(send) {
 
 GameProc.prototype = {
 
-  update: function() {
-    /**
-     * Update physics 10 times / second
-     */
+  startPhysics: function() {
+    // Update physics 10 times / second
     var cb = function(callback) {
       setTimeout(callback, 1000 / 10);
     };
@@ -99,7 +97,7 @@ GameProc.prototype = {
       this.players.push(player);
     }
 
-    this.update();
+    this.startPhysics();
   },
 
   joinClient: function(socket) {
