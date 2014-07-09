@@ -57,10 +57,11 @@ var io = SocketIO(httpServer).of('/loosecannon');
  */
 var send = function(socket, packet, data) {
   if (typeof socket === 'string') {
-    console.log('emit to room', socket, packet);
+    console.log('emit packet to room', socket, packet);
     io.to(socket).emit(packet, data);
   } else {
-    console.log('sending packet', packet);
+    if (packet.pi !== packets.PING)
+      console.log('sending packet', packet);
     socket.emit(packet, data);
   }
 };
