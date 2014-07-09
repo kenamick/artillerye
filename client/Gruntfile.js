@@ -45,7 +45,7 @@ module.exports = function (grunt) {
           middleware: function (connect) {
             return [
               lrSnippet,
-              mountFolder(connect, 'dist')
+              mountFolder(connect, 'build')
             ];
           }
         }
@@ -56,32 +56,86 @@ module.exports = function (grunt) {
         path: 'http://localhost:9000'
       }
     },
+    /**
+     * Clean-up of built/copied resources
+     */
+    clean: {
+      build: [
+        'build/*'
+      ],
+      dist: [
+        'dist/*'
+      ]
+    },
+    /**
+     * Copy files for testing (build) and for production (dist)
+     */
     copy: {
-      dist: {
+      build: {
         files: [
           // includes files within path and its sub-directories
-          { expand: true, src: ['assets/**'], dest: 'dist/' },
-          { expand: true, flatten: true, src: ['game/plugins/*.js'], dest: 'dist/js/plugins/' },
-          { expand: true, flatten: true, src: ['bower_components/**/build/*.js'], dest: 'dist/js/' },
-          { expand: true, flatten: true, src: ['bower_components/**/dist/*.js'], dest: 'dist/js/' },
-          { expand: true, flatten: true, src: ['bower_components/socket.io-client/socket.io.js'], dest: 'dist/js/' },
-          { expand: true, src: ['css/**'], dest: 'dist/' },
-          { expand: true, src: ['index.html'], dest: 'dist/' }
+          { expand: true, src: ['assets/**'], dest: 'build/' },
+          { expand: true, flatten: true, src: ['game/plugins/*.js'], dest: 'build/js/plugins/' },
+          { expand: true, flatten: true, src: ['bower_components/**/build/*.js'], dest: 'build/js/' },
+          { expand: true, flatten: true, src: ['bower_components/**/dist/*.js'], dest: 'build/js/' },
+          { expand: true, flatten: true, src: ['bower_components/socket.io-client/socket.io.js'], dest: 'build/js/' },
+          { expand: true, src: ['css/**'], dest: 'build/' },
+          { expand: true, src: ['index.html'], dest: 'build/' }
+        ]
+      },
+      dist: {
+        files: [
+          { expand: true, cwd: 'build/', src: ['assets/**'], dest: 'dist/' },
+          { expand: true, cwd: 'build/', src: ['css/**'], dest: 'dist/' },
+          { expand: true, cwd: 'build/', src: ['js/phaser.min.js'], dest: 'dist/' },
+          { expand: true, cwd: 'build/', src: ['index.html'], dest: 'dist/' }
         ]
       }
     },
     browserify: {
       build: {
         src: ['game/main.js'],
-        dest: 'dist/js/game.js'
+        dest: 'build/js/game.js'
       }
-    }
+    },
+    /**
+     * Minify js code
+     */
+    uglify: {
+      options: {
+        report: 'min',
+        preserveComments: false
+      },
+      dist: {
+        files: {
+          'dist/js/game.min.js': ['build/js/game.js'],
+          'dist/js/socket.io.min.js': ['build/js/socket.io.js']
+        }
+      }
+    },
+    htmlbuild: {
+      dist: {
+        src: 'index.html',
+        dest: 'dist/'
+        //TODO
+      }
+    },
+    jshint: {
+      options: {
+        jshintrc: ".jshintrc"
+      },
+      beforeConcat: {
+        files: {
+          src: ['game/*.js', 'game/states/*.js']
+        }
+      }
+    },
   });
 
-  grunt.registerTask('build', ['buildBootstrapper', 'browserify','copy']);
+  grunt.registerTask('build', ['buildBootstrapper', 'browserify', 'copy:build']);
   grunt.registerTask('serve', ['build', 'connect:livereload', 'open', 'watch']);
   grunt.registerTask('default', ['serve']);
-  grunt.registerTask('prod', ['build', 'copy']);
+  grunt.registerTask('prod', ['clean', 'build', 'uglify', 'copy:dist']);
 
   grunt.registerTask('buildBootstrapper', 'builds the bootstrapper file correctly', function() {
     var stateFiles = grunt.file.expand('game/states/*.js');

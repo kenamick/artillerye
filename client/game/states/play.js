@@ -9,7 +9,8 @@
 
 'use strict';
 
-var _globals = require('../../../shared/globals')
+var _ = require('lodash')
+  , _globals = require('../../../shared/globals')
   , packets = require('../../../shared/packets')
   , Physics = require('../../../shared/physics')()
   , GameFactory = require('../gamefactory');
@@ -24,7 +25,7 @@ Play.prototype = {
   create: function() {
     var self = this;
 
-    // By default if the browser tab loses focus the game will pause. 
+    // By default if the browser tab loses focus the game will pause.
     // You can stop that behaviour by setting this property to true.
     this.game.stage.disableVisibilityChange = true;
 
@@ -95,7 +96,7 @@ Play.prototype = {
         var diff = Date.now() - data.t;
         self.texts['ping'].setText('ping: ' + diff);
       }
-    });    
+    });
     socket.on(packets.GAME_JOINED, function (data) {
       // hack
       if (self.gameStarted)
@@ -201,7 +202,7 @@ Play.prototype = {
       var enemy = data.enemies[i];
       // only add non-destroyed enemies
       if (enemy.alive) {
-        var enemyEntity = this.gamefactory.addPlayer(enemy.x + yDelta, 
+        var enemyEntity = this.gamefactory.addPlayer(enemy.x + yDelta,
           enemy.y + yDelta);
         _.merge(enemyEntity, enemy);
         this.enemies.push(enemyEntity);
@@ -214,7 +215,7 @@ Play.prototype = {
       // TODO: killed while joining
       // redirect to main
     }
-    this.player = this.gamefactory.addPlayer(data.player.x + yDelta, 
+    this.player = this.gamefactory.addPlayer(data.player.x + yDelta,
       data.player.y + yDelta);
     _.merge(this.player, data.player);
     this.player.setSocket(this.socket);
@@ -286,7 +287,7 @@ Play.prototype = {
       runPing(ping.bind(this));
     }.bind(this);
     runPing(ping);
-  },  
+  },
   /**
    * Find player avatar for which the server sent
    * a packet update.
@@ -300,7 +301,7 @@ Play.prototype = {
     }
     // else
     // skip, because we already did this action locally, at client side!
-    
+
     for (var i = this.enemies.length - 1; i >= 0; i--) {
       if (this.enemies[i].id === pid) {
         callback(this.enemies[i]);
