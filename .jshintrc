@@ -18,5 +18,5 @@
   "trailing": true,
   "smarttabs": true,
   "white": true,
-  "laxcomma": true
+  "laxcomma": true // Bad line breaking before
 }
