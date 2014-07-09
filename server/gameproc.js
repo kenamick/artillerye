@@ -125,7 +125,7 @@ GameProc.prototype = {
       } else {
         data.enemies.push(entity);
       }
-    };
+    }
 
     if (!found) {
       // TODO:

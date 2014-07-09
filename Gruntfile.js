@@ -73,15 +73,11 @@ module.exports = function (grunt) {
       }
     },
     jshint: {
-      options: {
-        jshintrc: ".jshintrc"
-      },
-      beforeConcat: {
-        files: {
-          src: sources
-        }
+      options: { jshintrc: ".jshintrc" },
+      src: {
+        src: sources 
       }
-    },    
+    },
   });
 
   grunt.config.requires('watch.server.files');
@@ -103,5 +99,10 @@ module.exports = function (grunt) {
     }, 500);
   });
 
+
   grunt.registerTask('default', ['nodemon']);
+
+  grunt.registerTask('build', ['clean', 'jshint', 'concat', 'uglify']);
+
+  grunt.registerTask('dist', ['build', 'copy']);
 };
