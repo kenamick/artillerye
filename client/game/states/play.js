@@ -14,8 +14,8 @@ var _globals = require('../../../shared/globals')
   , Physics = require('../../../shared/physics')()
   , GameFactory = require('../gamefactory');
 
-var server_url = 'http://192.168.1.101:3000/loosecannon';
-// var server_url = 'http://127.0.0.1:3000/loosecannon';
+// var server_url = 'http://192.168.1.101:3000/loosecannon';
+var server_url = 'http://127.0.0.1:3000/loosecannon';
 
 function Play() {};
 
@@ -47,22 +47,10 @@ Play.prototype = {
     // this.game.input.onDown.add(this.click, this);
     this.cursors = this.game.input.keyboard.createCursorKeys();
 
-    // run physics update
-    // var runPhysics = function(callback) {
-    //   window.setTimeout(callback, 1000 / 60);
-    // };
-    // var updatePhysics = function() {
-    //   if (this.gameStarted) {
-    //     this.gamefactory.update();
-    //   }
-    //   runPhysics(updatePhysics.bind(this));
-    // };
-    // runPhysics(updatePhysics.bind(this));
-
     /**
-     * Update physics 10 times / second
+     * Update physics 60 times / second
      */
-    var cb = function(callback) {
+    var runPhysics = function(callback) {
       setTimeout(callback, 1000 / 60);
     };
     var updatePhysics = function() {
@@ -80,9 +68,9 @@ Play.prototype = {
         this.gamefactory.physics.update(timeSinceLastCall, 6);
         // this.physics.update2(1.0 / 10);
       }
-      cb(updatePhysics.bind(this));
+      runPhysics(updatePhysics.bind(this));
     }.bind(this);
-    cb(updatePhysics);
+    runPhysics(updatePhysics);
 
     /**
      * Connect to server and join a game
@@ -201,16 +189,24 @@ Play.prototype = {
     // add enemy sprites
     for (var i = 0, count = data.enemies.length; i < count; i++) {
       var enemy = data.enemies[i];
-      var enemyEntity = this.gamefactory.addPlayer(enemy.x + yDelta, enemy.y + yDelta);
-      enemyEntity.name = enemy.name;
-      enemyEntity.id = enemy.id;
-      this.enemies.push(enemyEntity);
+      // only add non-destroyed enemies
+      if (enemy.alive) {
+        var enemyEntity = this.gamefactory.addPlayer(enemy.x + yDelta, 
+          enemy.y + yDelta);
+        _.merge(enemyEntity, enemy);
+        this.enemies.push(enemyEntity);
+      }
     }
 
     // add player sprite
-    this.player = this.gamefactory.addPlayer(data.player.x + yDelta, data.player.y + yDelta);
-    this.player.id = data.player.id;
-    this.player.name = data.player.name;
+    if (!data.player.alive) {
+      _globals.debug('Killed while joining!');
+      // TODO: killed while joining
+      // redirect to main
+    }
+    this.player = this.gamefactory.addPlayer(data.player.x + yDelta, 
+      data.player.y + yDelta);
+    _.merge(this.player, data.player);
     this.player.setSocket(this.socket);
 
     _globals.debug('Joined game:', data.player.x, data.player.y);

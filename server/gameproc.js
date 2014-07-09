@@ -94,6 +94,7 @@ GameProc.prototype = {
       var player = new Player(null, spirit, this.spirits);
       player.id = (i + 1);
       player.ai = true;
+      player.name = 'Player ' + (i + 1),
 
       this.players.push(player);
     }
@@ -112,13 +113,8 @@ GameProc.prototype = {
 
     for (var i = 0; i < this.players.length; i++) {
       var player = this.players[i];
-      var entity = {
-        id: player.id,
-        name: 'Player ' + (i+1),
-        x: player.x,
-        y: player.y
-      };
-
+      var entity = player.getProps();
+      
       if (!found && player.ai) {
         player.ai = false;
         player.setSocket(socket);
@@ -196,7 +192,11 @@ GameProc.prototype = {
           self.forPlayerBody(bodyB.id, function (player) {
             console.log('player %d hits player %d', bodyA.playerId, player.id);
             if (player.alive) {
+              
               player.doDamage(101);
+              if (!player.alive)
+                player.kill();
+
               // notify
               self.send(self.gameid, packets.PLAYER_HIT, {
                 pid: player.id,
@@ -232,7 +232,7 @@ GameProc.prototype = {
 
   isFull: function() {
     for (var i = this.players.length - 1; i >= 0; i--) {
-      if (this.players[i].ai)
+      if (this.players[i].ai && this.players[i].alive)
         return false;
     };
     return true;

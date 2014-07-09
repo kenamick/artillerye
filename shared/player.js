@@ -73,6 +73,7 @@ Player.prototype = {
   doDamage: function(amount) {
     this.hitpoints -= amount;
     if (this.hitpoints <= 0) {
+      // this.kill();
       this.hitpoints = 0;
       this.alive = false;
     }
@@ -92,6 +93,17 @@ Player.prototype = {
     if (this.socket)
       return this.socket.id;
   },
+
+  getProps: function() {
+    return {
+      id: this.id,
+      name: this.name,
+      x: this.x,
+      y: this.y,
+      alive: this.alive,
+      hp: this.hitpoints
+    };
+  }
 
 };
 Object.defineProperty(Player.prototype, "ai", {
