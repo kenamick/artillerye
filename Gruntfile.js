@@ -1,8 +1,20 @@
 'use strict';
 
 var request = require('request');
+var sources = [
+  'app.js',
+  'js/shared/globals.js',
+  'js/shared/packets.js',
+  'js/shared/physics.js',
+  'js/shared/player.js',
+  'js/shared/spirits.js',
+  'server/gameproc.js',
+  'server/index.js',
+  'server/user.js'
+];
 
 module.exports = function (grunt) {
+  
   // show elapsed time at the end
   require('time-grunt')(grunt);
   // load all grunt tasks
@@ -59,7 +71,17 @@ module.exports = function (grunt) {
           ignore: ['node_modules/**', 'client/**'],
         }
       }
-    }
+    },
+    jshint: {
+      options: {
+        jshintrc: ".jshintrc"
+      },
+      beforeConcat: {
+        files: {
+          src: sources
+        }
+      }
+    },    
   });
 
   grunt.config.requires('watch.server.files');
