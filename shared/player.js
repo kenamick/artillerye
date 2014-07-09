@@ -116,7 +116,6 @@ Object.defineProperty(Player.prototype, "ai", {
 });
 Object.defineProperty(Player.prototype, "x", {
   get: function () {
-    console.log(this.spirit.position[0]);
     return Physics.mpxi(this.spirit.position[0]);
   },
   set: function (value) {

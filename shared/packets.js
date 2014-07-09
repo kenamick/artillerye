@@ -11,7 +11,11 @@
 
 var Packets = {
   /**
-   * Client conneted to server
+   * Client: Ping to server
+   */  
+  PING: 'pi',
+  /**
+   * Client: conneted to server
    */
   CONNECTED: 'pk_connected',
   /**

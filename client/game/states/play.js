@@ -35,10 +35,14 @@ Play.prototype = {
       this.backdrop = this.game.add.sprite(0, 0, 'sky01');
 
       // add fps counter
-      var font = { font: '14px Arial', fill: '#ffffff' };
+      var font = { font: '13px Arial', fill: '#ffffff' };
       this.game.time.advancedTiming = true;
-      this.fpsText = this.game.add.text(5, 5, '', font);
-      this.txtName = this.game.add.text(5, 16, '', font);
+
+      this.dbgInfo = [];
+      this.texts = [];
+      this.texts['fps'] = this.game.add.text(5, 5, 'fps:', font);
+      this.texts['ping'] = this.game.add.text(50, 5, 'ping:', font);
+      this.texts['gameid'] = this.game.add.text(5, 17, 'gid:', font);
     }
 
     // sprites & in-game objects
@@ -86,7 +90,12 @@ Play.prototype = {
     socket.on(packets.CONNECTED, function (data) {
       _globals.debug('Connected to server' + data.server.name)
     });
-
+    socket.on(packets.PING, function (data) {
+      if ('ping' in self.texts) {
+        var diff = Date.now() - data.t;
+        self.texts['ping'].setText('ping: ' + diff);
+      }
+    });    
     socket.on(packets.GAME_JOINED, function (data) {
       // hack
       if (self.gameStarted)
@@ -127,10 +136,7 @@ Play.prototype = {
   update: function(game) {
     // draw fps
     if (game.time.fps !== 0) {
-      this.fpsText.setText('fps: ' + game.time.fps);
-      if (this.player) {
-        this.txtName.setText('name: ' + this.player.name);
-      }
+      this.texts['fps'].setText('fps: ' + game.time.fps);
     }
 
     if (!this.gameStarted)
@@ -216,12 +222,10 @@ Play.prototype = {
 
     // all objects initalized => start game
     this.gameStarted = true;
-  },
-  /**
-   * Update player props
-   */
-  onPlayerUpdated: function(data) {
-    this.player.onReceivePacket(data.tag, data.data);
+
+    // debug info
+    this.texts['gameid'].setText('gid: ' + data.gid);
+    this.startPing();
   },
   /**
    * Resolve local client collisions
@@ -265,6 +269,22 @@ Play.prototype = {
         // }
     });
   },
+  /**
+   * Start regular ping to server
+   */
+  startPing: function() {
+    // Update physics 60 times / second
+    var runPing = function(callback) {
+      setTimeout(callback, 3250);
+    };
+    var ping = function() {
+      if (this.gameStarted) {
+        this.sendPacket(packets.PING, {t: Date.now()});
+      }
+      runPing(ping.bind(this));
+    }.bind(this);
+    runPing(ping);
+  },  
   /**
    * Find player avatar for which the server sent
    * a packet update.

@@ -102,6 +102,7 @@ GameProc.prototype = {
 
   joinClient: function(socket) {
     var data = {
+      gid: this.gameid.substr(0, 7),
       player: {},
       enemies: []
     };
@@ -138,12 +139,14 @@ GameProc.prototype = {
     // send game inital info to player
     // TODO: send game state!
     _.extend(data, this.config);
-    console.log(data);
     this.send(socket, packets.GAME_JOINED, data);
 
     // adjust callbacks
     var self = this;
 
+    socket.on(packets.PING, function (data) {
+      self.send(socket, packets.PING, data);
+    });
     socket.on(packets.PLAYER_SHOOT, function (data) {
       self.forPlayer(socket.id, data.pid, function (player) {
         player.shoot(data);

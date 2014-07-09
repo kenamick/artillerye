@@ -71,7 +71,8 @@ io.on('connection', function(socket) {
   // send player some server info
   send(socket, packets.CONNECTED, {
     server: {
-      name: 'Mindfields'
+      name: 'Mindfields',
+      games: gamesList.length
     }
   });
 
