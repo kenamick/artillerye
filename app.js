@@ -74,6 +74,7 @@ io.on('connection', function(socket) {
   send(socket, packets.CONNECTED, {
     server: {
       name: 'Mindfields',
+      ver: '0.0.0', // TODO: this is important!
       games: gamesList.length
     }
   });
