@@ -114,7 +114,7 @@ GameProc.prototype = {
       var player = this.players[i];
       var entity = player.getProps();
       
-      if (!found && player.ai) {
+      if (!found && player.ai && player.alive) {
         player.ai = false;
         player.setSocket(socket);
 

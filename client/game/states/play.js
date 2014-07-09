@@ -114,13 +114,17 @@ Play.prototype = {
       });
     });
     socket.on(packets.PLAYER_HIT, function (data) {
-      self.forPlayer(data.pid, function (player) {
+      self.forPlayer(data.pid, true, function (player) {
         player.onDamage(data);
         console.log('player is hit ', player.id, player.x, player.y);
         if (!player.alive) {
-
-          // TODO: write you are dead
+          // play destruction animation
           self.gamefactory.addParticleExplosion(player.x, player.y);
+
+          // TODO: GAMEOVER SCREEN
+          if (self.player.id === player.id) {
+            self.game.state.start('gameover');
+          }
         }
       });
     });
@@ -215,8 +219,6 @@ Play.prototype = {
     _.merge(this.player, data.player);
     this.player.setSocket(this.socket);
 
-    _globals.debug('Joined game:', data.player.x, data.player.y);
-
     // create additional in-game objects
     this.postCreate();
 
@@ -289,14 +291,20 @@ Play.prototype = {
    * Find player avatar for which the server sent
    * a packet update.
    */
-  forPlayer: function(pid, callback) {
-    if (pid === this.player.id) {
-      // skip, because we already did this action locally, at client side!
-      // callback(this.player);
-    } else {
-      for (var i = this.enemies.length - 1; i >= 0; i--) {
-        if (this.enemies[i].id === pid)
-          callback(this.enemies[i]);
+  forPlayer: function(pid, includeMe, callback) {
+    if (typeof includeMe !== 'function' && includeMe) {
+      if (pid === this.player.id) {
+        callback(this.player);
+        return;
+      }
+    }
+    // else
+    // skip, because we already did this action locally, at client side!
+    
+    for (var i = this.enemies.length - 1; i >= 0; i--) {
+      if (this.enemies[i].id === pid) {
+        callback(this.enemies[i]);
+        return;
       }
     }
   },
