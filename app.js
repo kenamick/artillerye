@@ -44,7 +44,7 @@ app.get('/be', routes.index);
 app.get('/be/users', user.list);
 
 var httpServer = http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
+  console.log('Server listening on port ' + app.get('port'));
 });
 
 // socket.io

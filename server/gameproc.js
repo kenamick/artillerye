@@ -1,4 +1,3 @@
-
 /**
  * Artillerye
  *
@@ -8,7 +7,8 @@
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nd/4.0/.
  */
 
- 'use strict';
+/*jshint -W030 */
+'use strict';
 
 var _ = require('lodash')
   , uuid = require('node-uuid')
@@ -37,7 +37,7 @@ function GameProc(send) {
       [750, 400]
     ]
   };
-};
+}
 
 GameProc.prototype = {
 
@@ -92,8 +92,7 @@ GameProc.prototype = {
       var player = new Player(null, spirit, this.spirits);
       player.id = (i + 1);
       player.ai = true;
-      player.name = 'Player ' + (i + 1),
-
+      player.name = 'Player ' + (i + 1);
       this.players.push(player);
     }
 
@@ -128,6 +127,7 @@ GameProc.prototype = {
     }
 
     if (!found) {
+      console.log('Room got full!');
       // TODO:
       // Someone else has already joined.
       // Send player back to lobby.
@@ -164,11 +164,11 @@ GameProc.prototype = {
        * Some player quits the game. Set AI control to his entity.
        */
       for (var i = 0; i < self.players.length; i++) {
-        if (!self.players[i].ai && self.players[i].getSocketId() == socket.id) {
+        if (!self.players[i].ai && self.players[i].getSocketId() === socket.id) {
           _globals.debug('Player Quit! ' + socket.id);
           self.players[i].ai = true;
         }
-      };
+      }
     });
   },
   /**
@@ -183,8 +183,9 @@ GameProc.prototype = {
 
     this.physics.isCollide(event.bodyA, event.bodyB, _globals.masks.BULLET,
       function(bodyA, bodyB, cgA, cgB) {
-        if (!bodyA || bodyA.isCol)
+        if (!bodyA || bodyA.isCol) {
           return;
+        }
 
         bodyA.isCol = true;
 
@@ -195,8 +196,9 @@ GameProc.prototype = {
             if (player.alive) {
               
               player.doDamage(101);
-              if (!player.alive)
+              if (!player.alive) {
                 player.kill();
+              }
 
               // notify
               self.send(self.gameid, packets.PLAYER_HIT, {
@@ -233,9 +235,10 @@ GameProc.prototype = {
 
   isFull: function() {
     for (var i = this.players.length - 1; i >= 0; i--) {
-      if (this.players[i].ai && this.players[i].alive)
+      if (this.players[i].ai && this.players[i].alive) {
         return false;
-    };
+      }
+    }
     return true;
   },
 
@@ -250,8 +253,8 @@ GameProc.prototype = {
       }
     } else {
       for (var i = this.players.length - 1; i >= 0; i--) {
-        if (this.players[i].getSocketId() === socketId
-          && this.players[i].id === playerId) {
+        if (this.players[i].getSocketId() === socketId && 
+          this.players[i].id === playerId) {
           callback && callback(this.players[i]);
           break;
         }
