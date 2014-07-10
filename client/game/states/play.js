@@ -15,8 +15,8 @@ var _ = require('lodash')
   , Physics = require('../../../shared/physics')()
   , GameFactory = require('../gamefactory');
 
-// var serverUrl = 'http://192.168.1.101:3000/loosecannon';
-var serverUrl = 'http://127.0.0.1:3000/loosecannon';
+var serverUrl = 'http://192.168.1.101:3000/loosecannon';
+// var serverUrl = 'http://127.0.0.1:3000/loosecannon';
 
 function Play() {}
 
@@ -106,7 +106,9 @@ Play.prototype = {
       self.onGameJoined(data);
     });
     socket.on(packets.PLAYER_SHOOT, function (data) {
+      console.log('on packet', data);
       self.forPlayer(data.pid, function (player) {
+        console.log('whaaat');
         player.onShoot(data);
       });
     });
@@ -301,6 +303,8 @@ Play.prototype = {
         callback(this.player);
         return;
       }
+    } else {
+      callback = includeMe;
     }
     // else
     // skip, because we already did this action locally, at client side!
