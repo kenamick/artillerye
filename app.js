@@ -64,7 +64,7 @@ var send = function(socket, packet, data) {
     console.log('emit packet to room', socket, packet);
     io.to(socket).emit(packet, data);
   } else {
-    if (packet.pi !== packets.PING) {
+    if (packet !== packets.PING) {
       console.log('sending packet', packet);
     }
     socket.emit(packet, data);
