@@ -13,6 +13,7 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , SocketIO = require('socket.io')
+  , colors = require('colors')
   , routes = require('./server')
   , user = require('./server/user')
   , _globals = require('./shared/globals')
@@ -21,7 +22,6 @@ var express = require('express')
 
 
 var app = express();
-
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
   // app.set('views', __dirname + '/views');
@@ -31,7 +31,7 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(app.router);
-  app.use(express.static(path.join(__dirname, 'public')));
+  app.use(express.static(path.join(__dirname, 'client')));
   app.use(express.static(path.join(path.join(__dirname, 'client'), 'dist')));
 });
 
@@ -40,10 +40,14 @@ app.configure('development', function(){
 });
 
 // web routes
+
 app.get('/be', routes.index);
 app.get('/be/users', user.list);
 
+// start http server
+
 var httpServer = http.createServer(app).listen(app.get('port'), function(){
+  console.log('❤❤❤ Artillerye ❤❤❤ '.blue.bold);
   console.log('Server listening on port ' + app.get('port'));
 });
 
