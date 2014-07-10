@@ -7,7 +7,7 @@ You command a tank unit that has to destory the enemy by shooting projectiles.
 
 # Controls
 
-Use the **Mouse** to move and shoot.
+Use the **Mouse** or **Touch** to shoot.
 
 Use **Enter** to send a chat message.
 

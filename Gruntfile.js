@@ -1,17 +1,11 @@
+/**
+ * Artillerye server build file
+ * 
+ */
+
 'use strict';
 
 var request = require('request');
-var sources = [
-  'app.js',
-  'js/shared/globals.js',
-  'js/shared/packets.js',
-  'js/shared/physics.js',
-  'js/shared/player.js',
-  'js/shared/spirits.js',
-  'server/gameproc.js',
-  'server/index.js',
-  'server/user.js'
-];
 
 module.exports = function (grunt) {
   
@@ -74,10 +68,23 @@ module.exports = function (grunt) {
     },
     jshint: {
       options: { jshintrc: ".jshintrc" },
-      src: {
-        src: sources 
+      beforeConcat: {
+        files: {
+          src: ['app.js', 'server/*.js', 'shared/*.js']
+        }
       }
     },
+    run_grunt: {
+      options: {
+        minimumFiles: 1
+      },
+      prod: {
+        options: {
+          log: true,
+        },
+        src: ['./client/Gruntfile.js']
+      }
+    }
   });
 
   grunt.config.requires('watch.server.files');
@@ -99,10 +106,20 @@ module.exports = function (grunt) {
     }, 500);
   });
 
+  grunt.registerTask('run-cli-grunt', function () {
+    var done = this.async();
+    grunt.util.spawn({
+      grunt: true,
+      args: ['prod'],
+      opts: {
+        cwd: './client'
+      }
+    }, function (err, result, code) {
+      done();
+    });
+  });  
 
   grunt.registerTask('default', ['nodemon']);
-
-  grunt.registerTask('build', ['clean', 'jshint', 'concat', 'uglify']);
-
-  grunt.registerTask('dist', ['build', 'copy']);
+  grunt.registerTask('build', ['run_grunt']); // ['clean', 'jshint', 'concat', 'uglify']);
+  grunt.registerTask('prod', ['build', 'copy']);
 };

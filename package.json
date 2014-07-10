@@ -1,7 +1,14 @@
 {
   "name": "artillerye-server",
+  "description": "Artillerye. A 2D online multiplayer artillery game.",
   "version": "0.0.1",
   "private": true,
+  "author": {
+    "name": "",
+    "email": "",
+    "web": ""
+  },
+  "homepage": "",
   "scripts": {
     "start": "node app"
   },
@@ -20,7 +27,8 @@
     "time-grunt": "~0.1.1",
     "load-grunt-tasks": "~0.2.0",
     "grunt-nodemon": "^0.2.1",
-    "grunt-contrib-jshint": "^0.10.0"
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-run-grunt": "^0.1.4"
   },
   "engines": {
     "node": ">=0.10.0"
