@@ -139,7 +139,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', ['buildBootstrapper', 'browserify', 'copy:build']);
   grunt.registerTask('serve', ['build', 'connect:livereload', 'open', 'watch']);
   grunt.registerTask('default', ['serve']);
-  grunt.registerTask('prod', ['clean', 'build', 'uglify', 'copy:dist', 'processhtml']);
+  grunt.registerTask('prod', ['jshint', 'clean', 'build', 'uglify', 'copy:dist', 'processhtml']);
 
   grunt.registerTask('buildBootstrapper', 'builds the bootstrapper file correctly', function() {
     var stateFiles = grunt.file.expand('game/states/*.js');

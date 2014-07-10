@@ -27,7 +27,7 @@ function GamePlayer(sprite, gamefactory) {
   this.nameFont = { font: '12px Arial', fill: '#ffffff' };
   this.txtName = this.gamefactory.game.add.text(this.sprite.x, this.sprite.y ,
     this.nametag, this.nameFont);
-};
+}
 
 // GamePlayer.prototype.constructor = Player;
 // GamePlayer.prototype = Object.create(Player.prototype);
@@ -39,7 +39,10 @@ GamePlayer.prototype = _.create(Player.prototype, {
   },
 
   update: function(game, send) {
-    var input = game.input;
+    var dist
+      , data
+      , input = game.input;
+
     if (input.activePointer.isDown) {
       var touchX = input.activePointer.x
         , touchY = input.activePointer.y
@@ -50,7 +53,7 @@ GamePlayer.prototype = _.create(Player.prototype, {
        */
       if (this.trajectory) {
 
-        var dist = Phaser.Math.distance(this.trajectory.dx, this.trajectory.dy, touchX, touchY);
+        dist = Phaser.Math.distance(this.trajectory.dx, this.trajectory.dy, touchX, touchY);
         if (dist < _globals.HUD_POWER_BUTTON_RADIUS) {
           this.gamefactory.updateTrajectory();
           trajectoryUpdate = true;
@@ -77,7 +80,7 @@ GamePlayer.prototype = _.create(Player.prototype, {
               /**
                * Shoot
                */
-              var data = {
+              data = {
                 a: Physics.atan2(touchX, touchY, this.sprite.x, this.sprite.y),
                 s: this.trajectory.power
               };
@@ -97,7 +100,7 @@ GamePlayer.prototype = _.create(Player.prototype, {
                 this.trajectory.mvfx, this.trajectory.mvfy, touchX, touchY)) {
 
                 // move forward
-                var data = {d: 'f'};
+                data = {d: 'f'};
                 this.onMove(data);
 
                 // notify server
@@ -107,7 +110,7 @@ GamePlayer.prototype = _.create(Player.prototype, {
                 this.trajectory.mvbx, this.trajectory.mvby, touchX, touchY)) {
 
                 // move backward
-                var data = {d: 'b'};
+                data = {d: 'b'};
                 this.onMove(data);
 
                 // notify server
@@ -155,7 +158,7 @@ GamePlayer.prototype = _.create(Player.prototype, {
   },
 
 });
-Object.defineProperty(GamePlayer.prototype, "name", {
+Object.defineProperty(GamePlayer.prototype, 'name', {
   get: function () {
     return this.nametag;
   },

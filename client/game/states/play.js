@@ -15,10 +15,10 @@ var _ = require('lodash')
   , Physics = require('../../../shared/physics')()
   , GameFactory = require('../gamefactory');
 
-// var server_url = 'http://192.168.1.101:3000/loosecannon';
-var server_url = 'http://127.0.0.1:3000/loosecannon';
+// var serverUrl = 'http://192.168.1.101:3000/loosecannon';
+var serverUrl = 'http://127.0.0.1:3000/loosecannon';
 
-function Play() {};
+function Play() {}
 
 Play.prototype = {
 
@@ -40,10 +40,10 @@ Play.prototype = {
       this.game.time.advancedTiming = true;
 
       this.dbgInfo = [];
-      this.texts = [];
-      this.texts['fps'] = this.game.add.text(5, 5, 'fps:', font);
-      this.texts['ping'] = this.game.add.text(50, 5, 'ping:', font);
-      this.texts['gameid'] = this.game.add.text(5, 17, 'gid:', font);
+      this.texts = {};
+      this.texts.fps = this.game.add.text(5, 5, 'fps:', font);
+      this.texts.ping = this.game.add.text(50, 5, 'ping:', font);
+      this.texts.gameid = this.game.add.text(5, 17, 'gid:', font);
     }
 
     // sprites & in-game objects
@@ -83,24 +83,25 @@ Play.prototype = {
      * Connect to server and join a game
      */
 
-    var socket = io.connect(server_url);
+    var socket = io.connect(serverUrl);
     this.socket = socket;
 
     this.packetSeq = 0;
 
     socket.on(packets.CONNECTED, function (data) {
-      _globals.debug('Connected to server' + data.server.name)
+      _globals.debug('Connected to server' + data.server.name);
     });
     socket.on(packets.PING, function (data) {
       if ('ping' in self.texts) {
         var diff = Date.now() - data.t;
-        self.texts['ping'].setText('ping: ' + diff);
+        self.texts.ping.setText('ping: ' + diff);
       }
     });
     socket.on(packets.GAME_JOINED, function (data) {
       // hack
-      if (self.gameStarted)
+      if (self.gameStarted) {
         window.location.reload();
+      }
 
       self.onGameJoined(data);
     });
@@ -141,11 +142,12 @@ Play.prototype = {
   update: function(game) {
     // draw fps
     if (game.time.fps !== 0) {
-      this.texts['fps'].setText('fps: ' + game.time.fps);
+      this.texts.fps.setText('fps: ' + game.time.fps);
     }
 
-    if (!this.gameStarted)
+    if (!this.gameStarted) {
       return;
+    }
 
     this.gamefactory.update();
 
@@ -159,7 +161,7 @@ Play.prototype = {
       if (this.enemies[i].alive) {
         this.enemies[i].render(this.game);
       }
-    };
+    }
   },
   /**
    * Create artifcats after the game has been initialized
@@ -227,7 +229,7 @@ Play.prototype = {
     this.gameStarted = true;
 
     // debug info
-    this.texts['gameid'].setText('gid: ' + data.gid);
+    this.texts.gameid.setText('gid: ' + data.gid);
     this.startPing();
   },
   /**
@@ -239,8 +241,9 @@ Play.prototype = {
 
     physics.isCollide(event.bodyA, event.bodyB, _globals.masks.BULLET,
       function(bodyA, bodyB, cgA, cgB) {
-        if (!bodyA)
+        if (!bodyA) {
           return;
+        }
 
         // explode
         var x = Physics.mpxi(bodyA.position[0])

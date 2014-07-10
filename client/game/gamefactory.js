@@ -39,7 +39,7 @@ function Factory(game) {
   this.entities = [];
   // player shoot trajectory
   this.trajectory = {};
-};
+}
 
 Factory.prototype = {
 
@@ -116,12 +116,13 @@ Factory.prototype = {
   addWater: function(size) {
     var batch = this.game.add.spriteBatch(this.game, null, 'waterb')
       , width = this.game.width / size + 1
-      , dy = this.game.height - size / 2;
+      , dy = this.game.height - size / 2
+      , sprite;
 
     for (var i = 0; i < width; i++) {
-      var sprite = batch.create(i * size, dy, 'water');
+      sprite = batch.create(i * size, dy, 'water');
       // each tile moves east, tween repeats
-      var tween = this.game.add.tween(sprite).to({x: i * size - _globals.TILE_SIZE},
+      this.game.add.tween(sprite).to({x: i * size - _globals.TILE_SIZE},
         3125, Phaser.Easing.Linear.In, true, 0, Number.MAX_VALUE);
     }
 
@@ -303,8 +304,9 @@ Factory.prototype = {
         sprite.x = sprite.spirit.x;
         sprite.y = sprite.spirit.y;
 
-        if (!sprite.spirit.fixedRotation)
+        if (!sprite.spirit.fixedRotation) {
           sprite.rotation = sprite.spirit.angle;
+        }
       }
     }
 
@@ -326,8 +328,9 @@ Factory.prototype = {
       var MARCH_SPEED = 40;
 
       trajectory.timeOffset += 1.0 / MARCH_SPEED; //(1000 * MARCH_SPEED / 60);
-      if (trajectory.timeOffset >= 1)
+      if (trajectory.timeOffset >= 1) {
         trajectory.timeOffset = 0;
+      }
 
       context.setLineDash([2 + trajectory.timeOffset, 3]);
       context.beginPath();
@@ -359,8 +362,8 @@ Factory.prototype = {
       var radialGradient = context.createRadialGradient(
         trajectory.shootx, trajectory.shooty, SHOOT_RADIUS / 4,
         trajectory.shootx + 10, trajectory.shooty + 10, SHOOT_RADIUS * 2);
-      radialGradient.addColorStop(0, "#FF1E1E");
-      radialGradient.addColorStop(1, "#0C230C");
+      radialGradient.addColorStop(0, '#FF1E1E');
+      radialGradient.addColorStop(1, '#0C230C');
       context.fillStyle = radialGradient; //'rgba(25, 225, 25, 0.5)';
       context.beginPath();
       context.arc(trajectory.shootx, trajectory.shooty, SHOOT_RADIUS, 0, _globals.math.PI2);
