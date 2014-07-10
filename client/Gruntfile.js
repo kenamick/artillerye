@@ -87,12 +87,20 @@ module.exports = function (grunt) {
         files: [
           { expand: true, cwd: 'build/', src: ['assets/**'], dest: 'dist/' },
           { expand: true, cwd: 'build/', src: ['css/**'], dest: 'dist/' },
-          { expand: true, cwd: 'build/', src: ['js/phaser.min.js'], dest: 'dist/' }
+          { expand: true, cwd: 'build/', src: ['js/phaser.min.js'], dest: 'dist/' },
+          // { expand: true, cwd: 'build/', src: ['js/phaser.min.js', 'js/lodash.min.js', 'js/p2.min.js'], dest: 'dist/' },
         ]
       }
     },
+    /**
+     * Bundle game files into one file
+     * Note: 3rd party libs are excluded
+     */    
     browserify: {
       build: {
+        // options: {
+        //   ignore: ['p2','lodash']
+        // },
         src: ['game/main.js'],
         dest: 'build/js/game.js'
       }
@@ -101,14 +109,23 @@ module.exports = function (grunt) {
      * Minify js code
      */
     uglify: {
-      options: {
-        report: 'min',
-        preserveComments: false
+      all: {
+        options: {
+          report: 'min',
+          preserveComments: false
+        },
+        files: {
+            'dist/js/socket.io.min.js': ['build/js/socket.io.js']
+        }
       },
-      dist: {
+      game: {
+        options: {
+          report: 'min',
+          preserveComments: false,
+          banner: '<%= grunt.file.read("templates/header.txt") %>'
+        },
         files: {
           'dist/js/game.min.js': ['build/js/game.js'],
-          'dist/js/socket.io.min.js': ['build/js/socket.io.js']
         }
       }
     },
@@ -136,10 +153,10 @@ module.exports = function (grunt) {
     },
   });
 
-  grunt.registerTask('build', ['buildBootstrapper', 'browserify', 'copy:build']);
+  grunt.registerTask('build', ['buildBootstrapper', 'clean:build', 'browserify', 'copy:build']);
   grunt.registerTask('serve', ['build', 'connect:livereload', 'open', 'watch']);
   grunt.registerTask('default', ['serve']);
-  grunt.registerTask('prod', ['jshint', 'clean', 'build', 'uglify', 'copy:dist', 'processhtml']);
+  grunt.registerTask('prod', ['jshint', 'build', 'clean:dist', 'uglify:all', 'uglify:game', 'copy:dist', 'processhtml']);
 
   grunt.registerTask('buildBootstrapper', 'builds the bootstrapper file correctly', function() {
     var stateFiles = grunt.file.expand('game/states/*.js');
