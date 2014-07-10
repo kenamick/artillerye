@@ -1,6 +1,6 @@
 /**
  * Artillerye server build file
- * 
+ *
  */
 
 'use strict';
@@ -8,7 +8,7 @@
 var request = require('request');
 
 module.exports = function (grunt) {
-  
+
   // show elapsed time at the end
   require('time-grunt')(grunt);
   // load all grunt tasks
@@ -74,6 +74,37 @@ module.exports = function (grunt) {
         }
       }
     },
+    /**
+     * Clean-up of built/copied resources
+     */
+    clean: {
+      build: [
+        'build/*'
+      ],
+      dist: [
+        'dist/*'
+      ]
+    },
+    /**
+     * Copy files for testing (build) and for production (dist)
+     */
+    copy: {
+      build: {
+        files: [
+          { expand: true, src: ['server/**/*.js', 'shared/**/*.js'], dest: 'build/' },
+          { expand: true, src: ['app.js', '.gitignore', 'package.json', 'LICENSE'], dest: 'build/' },
+        ]
+      },
+      dist: {
+        files: [
+          { expand: true, cwd: 'build/', src: ['**'], dest: 'dist/' },
+          { expand: true, cwd: 'client/dist/', src: ['**'], dest: 'dist/client' }
+        ]
+      }
+    },
+    /**
+     * Invoke client grunt build to produce distributable
+     */
     run_grunt: {
       options: {
         minimumFiles: 1
@@ -81,6 +112,7 @@ module.exports = function (grunt) {
       prod: {
         options: {
           log: true,
+          task: ['prod']
         },
         src: ['./client/Gruntfile.js']
       }
@@ -106,20 +138,7 @@ module.exports = function (grunt) {
     }, 500);
   });
 
-  grunt.registerTask('run-cli-grunt', function () {
-    var done = this.async();
-    grunt.util.spawn({
-      grunt: true,
-      args: ['prod'],
-      opts: {
-        cwd: './client'
-      }
-    }, function (err, result, code) {
-      done();
-    });
-  });  
-
   grunt.registerTask('default', ['nodemon']);
-  grunt.registerTask('build', ['run_grunt']); // ['clean', 'jshint', 'concat', 'uglify']);
-  grunt.registerTask('prod', ['build', 'copy']);
+  grunt.registerTask('build', ['clean:build', 'copy:build']);
+  grunt.registerTask('prod', ['run_grunt', 'build', 'clean:dist', 'copy:dist']);
 };
