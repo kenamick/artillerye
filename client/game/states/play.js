@@ -283,7 +283,7 @@ Play.prototype = {
   startPing: function() {
     // Update physics 60 times / second
     var runPing = function(callback) {
-      setTimeout(callback, 3250);
+      setTimeout(callback, _globals.PING_TIMEOUT);
     };
     var ping = function() {
       if (this.gameStarted) {

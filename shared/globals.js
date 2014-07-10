@@ -51,6 +51,12 @@ var Globals = {
   WEIGHT_BLOCK: 90,
 
   /**
+   * Misc
+   */
+
+  PING_TIMEOUT: 3250,
+
+  /**
    * Debugging
    */
 
