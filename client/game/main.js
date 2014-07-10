@@ -10,7 +10,7 @@
 'use strict';
 
 window.onload = function () {
-  var game = new Phaser.Game(960, 640, Phaser.CANVAS, 'artillerye');
+  var game = new Phaser.Game(960, 640, Phaser.AUTO, 'artillerye');
 
   // Game States
   game.state.add('boot', require('./states/boot'));

@@ -15,15 +15,13 @@ var _ = require('lodash')
   , Physics = require('../../../shared/physics')()
   , GameFactory = require('../gamefactory');
 
-var serverUrl = 'http://192.168.1.101:3000/loosecannon';
-// var serverUrl = 'http://127.0.0.1:3000/loosecannon';
-
 function Play() {}
 
 Play.prototype = {
 
   create: function() {
-    var self = this;
+    var self = this
+      , conf = this.game.cache.getJSON('gameconf');
 
     // By default if the browser tab loses focus the game will pause.
     // You can stop that behaviour by setting this property to true.
@@ -82,6 +80,9 @@ Play.prototype = {
     /**
      * Connect to server and join a game
      */
+
+    var serverUrl = conf.server || 'http://127.0.0.1:3000';
+    serverUrl += '/loosecannon';
 
     var socket = io.connect(serverUrl);
     this.socket = socket;

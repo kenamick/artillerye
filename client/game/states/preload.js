@@ -31,6 +31,9 @@ Preload.prototype = {
     this.load.image('bullet', 'assets/bullet.png');
     this.load.spritesheet('explosion', 'assets/explosion.png', 128, 128);
 
+    // load client configs
+    this.load.json('gameconf', 'gameconf.json', true);
+
   },
   create: function() {
     this.asset.cropEnabled = false;

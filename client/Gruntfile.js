@@ -21,11 +21,11 @@ module.exports = function (grunt) {
     watch: {
       scripts: {
         files: [
-            'index.html',
-            'game/**/*.js',
-            '!game/main.js',
-            'config.json',
-            '../shared/*.js'
+          'index.html',
+          'game/**/*.js',
+          '!game/main.js',
+          'config.json',
+          '../shared/*.js'
         ],
         options: {
           spawn: false,
@@ -74,12 +74,17 @@ module.exports = function (grunt) {
       build: {
         files: [
           // includes files within path and its sub-directories
-          { expand: true, src: ['assets/**'], dest: 'build/' },
           { expand: true, flatten: true, src: ['game/plugins/*.js'], dest: 'build/js/plugins/' },
           { expand: true, flatten: true, src: ['bower_components/**/build/*.js'], dest: 'build/js/' },
           { expand: true, flatten: true, src: ['bower_components/**/dist/*.js'], dest: 'build/js/' },
           { expand: true, flatten: true, src: ['bower_components/socket.io-client/socket.io.js'], dest: 'build/js/' },
+          { expand: true, src: ['assets/**'], dest: 'build/' },
           { expand: true, src: ['css/**'], dest: 'build/' },
+          { expand: true, cwd:  'templates/', src: ['gameconf.json.tpl'], dest: 'build/',
+            rename: function(dest, src) {
+              return dest + 'gameconf.json';
+            }
+          },
           { expand: true, src: ['index.html'], dest: 'build/' }
         ]
       },
@@ -89,13 +94,14 @@ module.exports = function (grunt) {
           { expand: true, cwd: 'build/', src: ['css/**'], dest: 'dist/' },
           { expand: true, cwd: 'build/', src: ['js/phaser.min.js'], dest: 'dist/' },
           // { expand: true, cwd: 'build/', src: ['js/phaser.min.js', 'js/lodash.min.js', 'js/p2.min.js'], dest: 'dist/' },
+          { expand: true, cwd: 'templates/', src: ['gameconf.json.tpl'], dest: 'dist/' },
         ]
       }
     },
     /**
      * Bundle game files into one file
      * Note: 3rd party libs are excluded
-     */    
+     */
     browserify: {
       build: {
         // options: {
@@ -115,7 +121,7 @@ module.exports = function (grunt) {
           preserveComments: false
         },
         files: {
-            'dist/js/socket.io.min.js': ['build/js/socket.io.js']
+          'dist/js/socket.io.min.js': ['build/js/socket.io.js']
         }
       },
       game: {
@@ -125,7 +131,7 @@ module.exports = function (grunt) {
           banner: '<%= grunt.file.read("templates/header.txt") %>'
         },
         files: {
-          'dist/js/game.min.js': ['build/js/game.js'],
+          'dist/js/game.min.js': ['build/js/game.js']
         }
       }
     },
