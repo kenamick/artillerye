@@ -87,8 +87,7 @@ module.exports = function (grunt) {
         files: [
           { expand: true, cwd: 'build/', src: ['assets/**'], dest: 'dist/' },
           { expand: true, cwd: 'build/', src: ['css/**'], dest: 'dist/' },
-          { expand: true, cwd: 'build/', src: ['js/phaser.min.js'], dest: 'dist/' },
-          { expand: true, cwd: 'build/', src: ['index.html'], dest: 'dist/' }
+          { expand: true, cwd: 'build/', src: ['js/phaser.min.js'], dest: 'dist/' }
         ]
       }
     },
@@ -113,11 +112,16 @@ module.exports = function (grunt) {
         }
       }
     },
-    htmlbuild: {
+    processhtml: {
+      options: {
+        data: {
+          message: 'Hello world!'
+        }
+      },
       dist: {
-        src: 'index.html',
-        dest: 'dist/'
-        //TODO
+        files: {
+          'dist/index.html': ['index.html']
+        }
       }
     },
     jshint: {
@@ -135,7 +139,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', ['buildBootstrapper', 'browserify', 'copy:build']);
   grunt.registerTask('serve', ['build', 'connect:livereload', 'open', 'watch']);
   grunt.registerTask('default', ['serve']);
-  grunt.registerTask('prod', ['clean', 'build', 'uglify', 'copy:dist']);
+  grunt.registerTask('prod', ['clean', 'build', 'uglify', 'copy:dist', 'processhtml']);
 
   grunt.registerTask('buildBootstrapper', 'builds the bootstrapper file correctly', function() {
     var stateFiles = grunt.file.expand('game/states/*.js');

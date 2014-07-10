@@ -1,6 +1,15 @@
 {
-  "name": "artillerye",
+  "name": "Artillerye",
+  "description": "Artillerye. A 2D online multiplayer artillery game.",
+  "version": "0.0.1",
   "private": true,
+  "main": "index.html",
+  "author": {
+    "name": "",
+    "email": "",
+    "web": ""
+  },
+  "homepage": "",  
   "devDependencies": {
     "bower": "~0.9.2",
     "browserify": "~3.38.0",
@@ -13,8 +22,8 @@
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-uglify": "^0.5.0",
     "grunt-contrib-watch": "~0.4.3",
-    "grunt-html-build": "~0.3.2",
     "grunt-open": "~0.2.0",
+    "grunt-processhtml": "^0.3.3",    
     "matchdep": "~0.1.2",
     "moment": "~2.0.0",
     "underscore": "*",
