@@ -106,9 +106,7 @@ Play.prototype = {
       self.onGameJoined(data);
     });
     socket.on(packets.PLAYER_SHOOT, function (data) {
-      console.log('on packet', data);
       self.forPlayer(data.pid, function (player) {
-        console.log('whaaat');
         player.onShoot(data);
       });
     });
@@ -120,7 +118,9 @@ Play.prototype = {
     socket.on(packets.PLAYER_HIT, function (data) {
       self.forPlayer(data.pid, true, function (player) {
         player.onDamage(data);
+
         console.log('player is hit ', player.id, player.x, player.y);
+
         if (!player.alive) {
           // play destruction animation
           self.gamefactory.addParticleExplosion(player.x, player.y);

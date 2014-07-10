@@ -112,7 +112,7 @@ GameProc.prototype = {
     for (var i = 0; i < this.players.length; i++) {
       var player = this.players[i];
       var entity = player.getProps();
-      
+
       if (!found && player.ai && player.alive) {
         player.ai = false;
         player.setSocket(socket);
@@ -194,8 +194,8 @@ GameProc.prototype = {
           self.forPlayerBody(bodyB.id, function (player) {
             console.log('player %d hits player %d', bodyA.playerId, player.id);
             if (player.alive) {
-              
-              player.doDamage(101);
+
+              player.doDamage(51);
               if (!player.alive) {
                 player.kill();
               }
@@ -203,7 +203,7 @@ GameProc.prototype = {
               // notify
               self.send(self.gameid, packets.PLAYER_HIT, {
                 pid: player.id,
-                d: 101
+                d: 51
               });
             }
           });
@@ -253,7 +253,7 @@ GameProc.prototype = {
       }
     } else {
       for (var i = this.players.length - 1; i >= 0; i--) {
-        if (this.players[i].getSocketId() === socketId && 
+        if (this.players[i].getSocketId() === socketId &&
           this.players[i].id === playerId) {
           callback && callback(this.players[i]);
           break;

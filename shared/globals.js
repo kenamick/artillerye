@@ -54,7 +54,7 @@ var Globals = {
    * Misc
    */
 
-  PING_TIMEOUT: 3250,
+  PING_TIMEOUT: 3125,
 
   /**
    * Debugging

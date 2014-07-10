@@ -27,6 +27,8 @@ function GamePlayer(sprite, gamefactory) {
   this.nameFont = { font: '12px Arial', fill: '#ffffff' };
   this.txtName = this.gamefactory.game.add.text(this.sprite.x, this.sprite.y ,
     this.nametag, this.nameFont);
+
+  this.updateName();
 }
 
 // GamePlayer.prototype.constructor = Player;
@@ -145,11 +147,16 @@ GamePlayer.prototype = _.create(Player.prototype, {
   },
 
   onNameChange: function() {
-    this.txtName.setText(this.nametag);
+    this.updateName();
+  },
+
+  updateName: function() {
+    this.txtName.setText(this.nametag + ' (' + this.hitpoints + ')');
   },
 
   onDamage: function(data) {
     this.doDamage(data.d);
+    this.updateName();
     if (!this.alive) {
       this.kill();
       this.sprite.kill();
@@ -165,7 +172,7 @@ Object.defineProperty(GamePlayer.prototype, 'name', {
   set: function (value) {
     this.nametag = value;
     this.nametag = this.nametag.substring(0, _globals.MAX_NAME_SIZE);
-    this.txtName.setText(value);
+    this.onNameChange();
   }
 });
 
