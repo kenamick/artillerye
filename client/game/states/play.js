@@ -51,8 +51,14 @@ Play.prototype = {
     // game has not yet started
     this.gameStarted = false;
 
-    // this.game.input.onDown.add(this.click, this);
-    this.cursors = this.game.input.keyboard.createCursorKeys();
+    // init in-game chat props
+    this.game.input.keyboard.addCallbacks(this, this.onKeyDown);
+    this.chat = {};
+    this.chat.active = false;
+    this.chat.message = '';
+    this.chat.buffer = [];
+    this.chat.hud = this.game.add.text(5, 600, 'ASDASDASDASDASD',
+      { font: '13px Arial', fill: '#ffffff' });
 
     // Update physics 60 times / second
     var runPhysics = function(callback) {
@@ -97,6 +103,9 @@ Play.prototype = {
         var diff = Date.now() - data.t;
         self.texts.ping.setText('ping: ' + diff);
       }
+    });
+    socket.on(packets.SEND_CHAT_MSG, function (data) {
+      //TODO: display chat message
     });
     socket.on(packets.GAME_JOINED, function (data) {
       // hack
@@ -234,6 +243,14 @@ Play.prototype = {
     // debug info
     this.texts.gameid.setText('gid: ' + data.gid);
     this.startPing();
+
+    this.chat.hud = this.game.add.text(5, 600, 'ASDASDASDASDASD',
+      { font: '13px Arial', fill: '#ffffff' });
+
+    console.log(this.chat.hud);
+    // this.world.bringToTop(this.chat.hud);
+    this.chat.hud.setText("LAINAAAAAAAAA");
+    console.log(this.chat.hud);
   },
   /**
    * Resolve local client collisions
@@ -279,6 +296,57 @@ Play.prototype = {
     });
   },
   /**
+   * Handle user keyboard/text input
+   */
+  onKeyDown: function(event) {
+    var flush = false;
+
+    // TODO: Optimize this by using buffers instead of strings!!
+
+    // if(event.which < "A".charCodeAt(0) || event.which > "Z".charCodeAt(0)) {
+    if(event.which < 65 || event.which > 90) {
+
+      // start typing or send chat message
+      if (event.which === 13) {
+        if (this.chat.active && this.chat.message.trim().length > 0) {
+          // send
+          console.log(this.chat.message);
+          this.chat.message = '';
+          flush = true;
+        }
+
+        // this.chat.hud.parent.bringToTop(this.chat.hud);
+
+        // if (!this.chat.hud) {
+        //   this.chat.hud = this.game.add.text(5, 600, '',
+        //     { font: '13px Arial', fill: '#ffffff' });
+        //   // this.chat.hud.setShadow(6, 566, '#000', 2);
+        //   // this.chat.hud.parent.bringToTop(this.chat.hud);
+        //   this.game.world.bringToTop(this.chat.hud);
+        // }
+
+        this.chat.active = !this.chat.active;
+
+      } else if (event.which === 32 && this.chat.active) {
+        this.chat.message += ' ';
+      }
+    } else if (this.chat.active) {
+      var letter = String.fromCharCode(event.which);
+
+      if(!event.shiftKey) {
+        letter = letter.toLowerCase();
+      }
+
+      this.chat.message += letter;
+      flush = true;
+    }
+
+    if (flush) {
+      this.chat.hud.setText(this.chat.message);
+    }
+
+  },
+  /**
    * Start regular ping to server
    */
   startPing: function() {
@@ -317,6 +385,7 @@ Play.prototype = {
       }
     }
   },
+
 
 };
 

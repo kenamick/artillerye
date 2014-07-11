@@ -12,8 +12,14 @@
 var Packets = {
   /**
    * Client: Ping to server
-   */  
+   * Server: Reply to client
+   */
   PING: 'pi',
+  /**
+   * Client: Send chat message to server
+   * Server: Publish chat message
+   */
+  SEND_CHAT_MSG: 'cm',
   /**
    * Client: conneted to server
    */

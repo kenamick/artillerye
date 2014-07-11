@@ -147,6 +147,9 @@ GameProc.prototype = {
     socket.on(packets.PING, function (data) {
       self.send(socket, packets.PING, data);
     });
+    socket.on(packets.SEND_CHAT_MSG, function (data) {
+      self.send(self.gameid, packets.SEND_CHAT_MSG, data);
+    });
     socket.on(packets.PLAYER_SHOOT, function (data) {
       self.forPlayer(socket.id, data.pid, function (player) {
         player.shoot(data);

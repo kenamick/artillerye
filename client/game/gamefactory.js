@@ -44,7 +44,7 @@ function Factory(game) {
 Factory.prototype = {
 
   _addBatch: function(batchName, blocks, spriteName) {
-    var batch = this.game.add.spriteBatch(this.game, null, batchName);
+    var batch = this.game.add.spriteBatch(undefined, batchName);
 
     for (var i = blocks.length - 1; i >= 0; i--) {
         var sprite = batch.create(blocks[i].x, blocks[i].y, spriteName);
