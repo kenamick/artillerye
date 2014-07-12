@@ -243,14 +243,6 @@ Play.prototype = {
     // debug info
     this.texts.gameid.setText('gid: ' + data.gid);
     this.startPing();
-
-    this.chat.hud = this.game.add.text(5, 600, 'ASDASDASDASDASD',
-      { font: '13px Arial', fill: '#ffffff' });
-
-    console.log(this.chat.hud);
-    // this.world.bringToTop(this.chat.hud);
-    this.chat.hud.setText("LAINAAAAAAAAA");
-    console.log(this.chat.hud);
   },
   /**
    * Resolve local client collisions
@@ -315,7 +307,7 @@ Play.prototype = {
           flush = true;
         }
 
-        // this.chat.hud.parent.bringToTop(this.chat.hud);
+        this.chat.hud.parent.bringToTop(this.chat.hud);
 
         // if (!this.chat.hud) {
         //   this.chat.hud = this.game.add.text(5, 600, '',

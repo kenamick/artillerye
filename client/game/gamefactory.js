@@ -53,6 +53,7 @@ Factory.prototype = {
 
         this.entities.push(sprite);
     }
+
     return batch;
   },
 
@@ -114,7 +115,7 @@ Factory.prototype = {
   },
 
   addWater: function(size) {
-    var batch = this.game.add.spriteBatch(this.game, null, 'waterb')
+    var batch = this.game.add.spriteBatch(undefined, 'waterb')
       , width = this.game.width / size + 1
       , dy = this.game.height - size / 2
       , sprite;
