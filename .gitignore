@@ -4,3 +4,4 @@ public/components
 *.log
 dist
 build
+*.sublime-*
