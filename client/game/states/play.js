@@ -39,9 +39,9 @@ Play.prototype = {
 
       this.dbgInfo = [];
       this.texts = {};
-      this.texts.fps = this.game.add.text(5, 5, 'fps:', font);
-      this.texts.ping = this.game.add.text(50, 5, 'ping:', font);
-      this.texts.gameid = this.game.add.text(5, 17, 'gid:', font);
+      this.texts.fps = this.game.add.text(this.game.width - 45, 5, 'fps:', font);
+      this.texts.ping = this.game.add.text(this.game.width - 105, 5, 'ping:', font);
+      this.texts.gameid = this.game.add.text(this.game.width - 105, 17, 'gid:', font);
     }
 
     // sprites & in-game objects
@@ -52,13 +52,21 @@ Play.prototype = {
     this.gameStarted = false;
 
     // init in-game chat props
+    var chatFont = { font: '13px Arial', fill: '#ffffff' }
+      , sentFont = { font: '13px Arial', fill: '#95B9C7' };
     this.game.input.keyboard.addCallbacks(this, this.onKeyDown);
     this.chat = {};
     this.chat.active = false;
     this.chat.message = '';
     this.chat.buffer = [];
-    this.chat.hud = this.game.add.text(5, 600, 'ASDASDASDASDASD',
-      { font: '13px Arial', fill: '#ffffff' });
+    this.chat.hud = this.game.add.text(5, 5, '', chatFont);
+    this.chat.hud.setShadow(1, 1, '#333', 4);
+    this.chat.lines = [];
+    for (var i = 0, ly = 17; i < _globals.MAX_CHAT_MESSAGES; i++, ly += 12) {
+      this.chat.lines[i] = this.game.add.text(5, ly, '', sentFont);
+      this.chat.lines[i].setShadow(1, 1, '#333', 2);
+      this.chat.lines[i].setText('Test ' + i);
+    }
 
     // Update physics 60 times / second
     var runPhysics = function(callback) {
@@ -105,7 +113,10 @@ Play.prototype = {
       }
     });
     socket.on(packets.SEND_CHAT_MSG, function (data) {
-      //TODO: display chat message
+      self.forPlayer(data.pid, true, function (player) {
+        console.log(data);
+        self.addChatMsg(player, data.t);
+      });
     });
     socket.on(packets.GAME_JOINED, function (data) {
       // hack
@@ -152,9 +163,20 @@ Play.prototype = {
    * Game update loop
    */
   update: function(game) {
+    var i, j, cn;
+
     // draw fps
     if (game.time.fps !== 0) {
       this.texts.fps.setText('fps: ' + game.time.fps);
+    }
+
+    // draw chat texts
+    if (this.chat.buffer.length > 0) {
+      cn = Math.min(_globals.MAX_CHAT_MESSAGES, this.chat.buffer.length);
+      j = this.chat.buffer.length - 1;
+      for (i = 0; i < cn; i++) {
+        this.chat.lines[i].setText(this.chat.buffer[j - i]);
+      }
     }
 
     if (!this.gameStarted) {
@@ -169,7 +191,7 @@ Play.prototype = {
     }
 
     // render names
-    for (var i = this.enemies.length - 1; i >= 0; i--) {
+    for (i = this.enemies.length - 1; i >= 0; i--) {
       if (this.enemies[i].alive) {
         this.enemies[i].render(this.game);
       }
@@ -302,26 +324,22 @@ Play.prototype = {
       if (event.which === 13) {
         if (this.chat.active && this.chat.message.trim().length > 0) {
           // send
-          console.log(this.chat.message);
+          this.sendPacket(packets.SEND_CHAT_MSG, {t: this.chat.message});
+          // reset msg
           this.chat.message = '';
-          flush = true;
+        } else if (!this.chat.active) {
+          // starts typing new msg
+          this.chat.message = ' ';
+          // make sure text is placed top-most
+          this.chat.hud.parent.bringToTop(this.chat.hud);
         }
 
-        this.chat.hud.parent.bringToTop(this.chat.hud);
-
-        // if (!this.chat.hud) {
-        //   this.chat.hud = this.game.add.text(5, 600, '',
-        //     { font: '13px Arial', fill: '#ffffff' });
-        //   // this.chat.hud.setShadow(6, 566, '#000', 2);
-        //   // this.chat.hud.parent.bringToTop(this.chat.hud);
-        //   this.game.world.bringToTop(this.chat.hud);
-        // }
-
         this.chat.active = !this.chat.active;
-
+        flush = true;
       } else if (event.which === 32 && this.chat.active) {
         this.chat.message += ' ';
       }
+
     } else if (this.chat.active) {
       var letter = String.fromCharCode(event.which);
 
@@ -334,9 +352,20 @@ Play.prototype = {
     }
 
     if (flush) {
-      this.chat.hud.setText(this.chat.message);
+      if (this.chat.message.length > 0) {
+        this.chat.hud.setText(this.player.name + ':' + this.chat.message);
+      } else {
+        this.chat.hud.setText('');
+      }
     }
 
+  },
+
+  addChatMsg: function(player, msg) {
+    this.chat.buffer.push(player.name + ': ' + msg);
+    if (this.chat.buffer.length > _globals.MAX_CHAT_MESSAGES) {
+      this.chat.buffer.shift();
+    }
   },
   /**
    * Start regular ping to server

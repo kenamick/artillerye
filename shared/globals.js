@@ -55,6 +55,7 @@ var Globals = {
    */
 
   PING_TIMEOUT: 3125,
+  MAX_CHAT_MESSAGES: 7,
 
   /**
    * Debugging
