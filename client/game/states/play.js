@@ -316,9 +316,12 @@ Play.prototype = {
     var flush = false;
 
     // TODO: Optimize this by using buffers instead of strings!!
+    //       Actually, this whole function needs to be rewritten. ;)
 
-    // if(event.which < "A".charCodeAt(0) || event.which > "Z".charCodeAt(0)) {
-    if(event.which < 65 || event.which > 90) {
+    if(event.which === 33 || (event.which < 48 || event.which > 59) &&
+      (event.which < 63 || event.which > 90)) {
+
+      var len = this.chat.message.length;
 
       // start typing or send chat message
       if (event.which === 13) {
@@ -336,21 +339,24 @@ Play.prototype = {
 
         this.chat.active = !this.chat.active;
         flush = true;
-      } else if (event.which === 32 && this.chat.active) {
+
+      } else if (event.which === 32 && this.chat.active && len <= _globals.MAX_CHAT_MSG_SIZE) {
         this.chat.message += ' ';
+
       } else if (event.which === 8 && this.chat.active) {
-        var len = this.chat.message.length;
         if (len > 1) { // assume 1 space
           this.chat.message = this.chat.message.substring(0, len - 1);
           flush = true;
         }
       }
 
-    } else if (this.chat.active) {
+    } else if (this.chat.active && this.chat.message.length <= _globals.MAX_CHAT_MSG_SIZE) {
       var letter = String.fromCharCode(event.which);
 
       if(!event.shiftKey) {
         letter = letter.toLowerCase();
+      } else if (letter === '1') {
+        letter = '!';
       }
 
       this.chat.message += letter;

@@ -150,6 +150,11 @@ GameProc.prototype = {
     socket.on(packets.SEND_CHAT_MSG, function (data) {
       // make sure player is correct and resend message to everyone
       self.forPlayer(socket.id, data.pid, function (player) {
+        // TODO: add protection. If some player frequently sends such
+        //       long texts, then kick him out!
+        if (data.t.length > _globals.MAX_CHAT_MSG_SIZE) {
+          data.t = data.t.substring(0, _globals.MAX_CHAT_MSG_SIZE);
+        }
         self.send(self.gameid, packets.SEND_CHAT_MSG, data);
       });
     });
