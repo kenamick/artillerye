@@ -338,6 +338,12 @@ Play.prototype = {
         flush = true;
       } else if (event.which === 32 && this.chat.active) {
         this.chat.message += ' ';
+      } else if (event.which === 8 && this.chat.active) {
+        var len = this.chat.message.length;
+        if (len > 1) { // assume 1 space
+          this.chat.message = this.chat.message.substring(0, len - 1);
+          flush = true;
+        }
       }
 
     } else if (this.chat.active) {
