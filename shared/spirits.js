@@ -83,9 +83,9 @@ module.exports = function(physics) {
       physics.setBodyCollision(
         physics.addWallBottom(0, height), masks.WALL, getAllMasks(masks.WALL));
       physics.setBodyCollision(
-        physics.addWallLeft(0, 0), masks.WALL,getAllMasks(masks.WALL));
+        physics.addWallLeft(0, 0), masks.WALL_LEFT, getAllMasks(masks.WALL));
       physics.setBodyCollision(
-        physics.addWallRight(width, 0), masks.WALL, getAllMasks(masks.WALL));
+        physics.addWallRight(width, 0), masks.WALL_RIGHT, getAllMasks(masks.WALL));
     },
 
     addGround: function(width, height) {

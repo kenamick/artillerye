@@ -246,7 +246,7 @@ Object.defineProperty(Physics.prototype, "paused", {
  */
 function Shapes(physics) {
   // this.physics = physics;
-};
+}
 
 Shapes.prototype = {
 

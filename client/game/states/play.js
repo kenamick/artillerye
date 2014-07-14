@@ -65,7 +65,7 @@ Play.prototype = {
     for (var i = 0, ly = 17; i < _globals.MAX_CHAT_MESSAGES; i++, ly += 12) {
       this.chat.lines[i] = this.game.add.text(5, ly, '', sentFont);
       this.chat.lines[i].setShadow(1, 1, '#333', 2);
-      this.chat.lines[i].setText('Test ' + i);
+      // this.chat.lines[i].setText('Test ' + i);
     }
 
     // Update physics 60 times / second
@@ -282,8 +282,19 @@ Play.prototype = {
         // explode
         var x = Physics.mpxi(bodyA.position[0])
           , y = Physics.mpxi(bodyA.position[1]);
-        self.gamefactory.addExplosion(x, y);
-        self.gamefactory.removeBullet(bodyA);
+
+        if (cgB === _globals.masks.WALL_LEFT) {
+          bodyA.position[0] = Physics.pxmi(self.game.width - _globals.WIDTH_BULLET - 5);
+          bodyA.angle = -bodyA.angle;
+          // bodyA.velocity[0] = -bodyA.velocity[0];
+          // bodyA.moveForward(100, bodyA.angle);
+        } else if (cgB === _globals.masks.WALL_RIGHT) {
+          bodyA.position[0] = Physics.pxmi(5);
+          bodyA.velocity[0] = -bodyA.velocity[0];
+        } else {
+          self.gamefactory.addExplosion(x, y);
+          self.gamefactory.removeBullet(bodyA);
+        }
 
         // if (cgB === _globals.masks.PLAYER) {
         //   // console.log(cgB, _globals.masks.PLAYER, bodyB.id, self.player.spirit.id);

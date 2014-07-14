@@ -83,12 +83,14 @@ var Globals = {
    */
 
   masks: {
-    DEFAULT: 1,
-    WALL: 2,
-    GROUND: 4,
-    BLOCK: 8,
-    PLAYER: 16,
-    BULLET: 32
+    DEFAULT:    1,
+    WALL:       2,
+    WALL_LEFT:  4,
+    WALL_RIGHT: 8,
+    GROUND:     16,
+    BLOCK:      32,
+    PLAYER:     64,
+    BULLET:     128
   },
 
   /**
@@ -96,11 +98,11 @@ var Globals = {
    */
 
   math: {
-    PI:  3.14159265358979,
-    PI2: 6.28318530716,
-    PI_2: 1.5707963267948966,
-    PI_4: 0.3926990817,
-    PI3_2: 4.71238898037
+    PI:     3.14159265358979,
+    PI2:    6.28318530716,
+    PI_2:   1.5707963267948966,
+    PI_4:   0.3926990817,
+    PI3_2:  4.71238898037
   }
 
 };
