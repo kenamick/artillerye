@@ -139,6 +139,6 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('default', ['nodemon']);
-  grunt.registerTask('build', ['clean:build', 'copy:build']);
-  grunt.registerTask('prod', ['run_grunt', 'build', 'clean:dist', 'copy:dist']);
+  grunt.registerTask('build', ['jshint', 'clean:build', 'copy:build']);
+  grunt.registerTask('prod', ['build', 'run_grunt', 'clean:dist', 'copy:dist']);
 };
