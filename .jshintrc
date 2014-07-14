@@ -1,25 +1,25 @@
 {
   // Development //
-  
+
   // Allow developments statements e.g. `console.log();`.
   "devel"       : true,
   // This option defines globals available when your code is running inside of the Node runtime environment.
-  "node"        : true, 
+  "node"        : true,
 
   // ECMAScript Support //
 
   // Support legacy browser and javascript environments.
   "es3"         : false,
   // This option tells JSHint that your code uses ECMAScript 6 specific syntax.
-  "esnext"      : false,  
+  "esnext"      : false,
   // Require `use strict` pragma in every file.
   "strict"      : true,
   // Allow global "use strict" (also enables 'strict').
   "globalstrict": false,
 
   // Functionality //
-  
-  "bitwise"     : true,  // Prohibit bitwise operators (&, |, ^, etc.).
+
+  "bitwise"     : false,  // Prohibit bitwise operators (&, |, ^, etc.).
   "boss"        : true,   // Tolerate assignments inside if, for & while. Usually conditions & loops are for comparison, not assignments.
   "camelcase"   : true,   // Force all variable names to use either camelCase style or UPPER_CASE with underscores.
   "curly"       : true,   // Require {} for every new block or scope.
@@ -56,11 +56,11 @@
   // Prohibit use of `++` & `--`.
   "plusplus"  : false,
   // This option enforces the consistency of quotation marks used throughout your code.
-  "quotmark"  : "single",  
+  "quotmark"  : "single",
   // Tolerate all forms of subscript notation besides dot notation e.g. `dict['key']` instead of `dict.key`.
-  "sub"       : false,   
+  "sub"       : false,
   // Prohibit trailing whitespaces.
   "trailing"  : true,
   // Bad line breaking before
-  "laxcomma"  : true  
+  "laxcomma"  : true
 }

@@ -27,7 +27,7 @@ function Player(socket, spirit, spirits) {
 
   this.alive = true;
   this.hitpoints = _globals.MAX_HP_PLAYER;
-};
+}
 
 Player.prototype = {
 
@@ -90,8 +90,9 @@ Player.prototype = {
   },
 
   getSocketId: function() {
-    if (this.socket)
+    if (this.socket) {
       return this.socket.id;
+    }
   },
 
   getProps: function() {
@@ -106,7 +107,7 @@ Player.prototype = {
   }
 
 };
-Object.defineProperty(Player.prototype, "ai", {
+Object.defineProperty(Player.prototype, 'ai', {
   get: function () {
     return this.enableAI;
   },
@@ -114,7 +115,7 @@ Object.defineProperty(Player.prototype, "ai", {
     this.enableAI = value;
   }
 });
-Object.defineProperty(Player.prototype, "x", {
+Object.defineProperty(Player.prototype, 'x', {
   get: function () {
     return Physics.mpxi(this.spirit.position[0]);
   },
@@ -123,7 +124,7 @@ Object.defineProperty(Player.prototype, "x", {
     // this.onUpdatePosition(value, null);
   }
 });
-Object.defineProperty(Player.prototype, "y", {
+Object.defineProperty(Player.prototype, 'y', {
   get: function () {
     return Physics.mpxi(this.spirit.position[1]);
   },
@@ -132,7 +133,7 @@ Object.defineProperty(Player.prototype, "y", {
     // this.onUpdatePosition(null, value);
   }
 });
-Object.defineProperty(Player.prototype, "name", {
+Object.defineProperty(Player.prototype, 'name', {
   get: function () {
     return this.nametag;
   },

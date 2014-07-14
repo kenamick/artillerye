@@ -17,11 +17,12 @@ var _ = require('lodash')
 function getAllMasks(skipId) {
   var result = [];
   for (var i in masks) {
-    if (skipId !== masks[i])
+    if (skipId !== masks[i]) {
       result.push(masks[i]);
+    }
   }
   return result;
-};
+}
 
 function createTerrainPoly(width, height) {
   var poly = []
@@ -47,7 +48,7 @@ function createTerrainPoly(width, height) {
   poly.push([0, baseY]);
 
   return poly;
-};
+}
 
 function createHeightField(width, height) {
   var vertices = []
@@ -68,7 +69,7 @@ function createHeightField(width, height) {
   }
 
   return vertices;
-};
+}
 
 /**
  * Exports
@@ -82,8 +83,7 @@ module.exports = function(physics) {
         physics.addWallTop(0, 0), masks.WALL, getAllMasks(masks.WALL));
       physics.setBodyCollision(
         physics.addWallBottom(0, height), masks.WALL, getAllMasks(masks.WALL));
-      physics.setBodyCollision(
-        physics.addWallLeft(0, 0), masks.WALL_LEFT, getAllMasks(masks.WALL));
+      physics.setBodyCollision(        physics.addWallLeft(0, 0), masks.WALL_LEFT, getAllMasks(masks.WALL));
       physics.setBodyCollision(
         physics.addWallRight(width, 0), masks.WALL_RIGHT, getAllMasks(masks.WALL));
     },
@@ -133,7 +133,7 @@ module.exports = function(physics) {
 
     addBlocks: function(width, height) {
       var vertices = createHeightField(width, height)
-        , size = _globas.WIDTH_BLOCK
+        , size = _globals.WIDTH_BLOCK
         , blocks = [];
 
       for (var i = vertices.length - 1; i >= 0; i--) {
