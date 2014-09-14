@@ -2,9 +2,9 @@
   "name": "artillerye",
   "version": "0.0.0",
   "dependencies": {
-    "phaser-official": "2.0.5",
-    "lodash": "~2.4.1",  	
+    "phaser-official": "2.1.1",
+    "lodash": "~2.4.1",
     "socket.io-client": "~1.0.6",
-    "p2js": "~0.5.0"
+    "p2js": "~0.6.0"
   }
 }
