@@ -7,9 +7,15 @@ You command a tank unit that has to destory the enemy by shooting projectiles.
 
 # Controls
 
-Use the **Mouse** or **Touch** to shoot.
+Use the **Mouse** or **Touch** to shoot. Select an angle and power of the shot.
 
 Use **Enter** to send a chat message.
+
+# Build
+
+Run `grunt` in the main directory to start the server.
+
+Run `grunt` in the `client` directory to start the game client.
 
 # Open Source Libraries
 The following open source javascript libraries:
@@ -24,4 +30,8 @@ The following open source javascript libraries:
 
 # Credits
 
+TODO
+
 ## Sound and Music
+
+TODO
