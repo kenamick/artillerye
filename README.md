@@ -13,9 +13,17 @@ Use **Enter** to send a chat message.
 
 # Build
 
+## Debug
+
+Run `npm install` in the main directory to install all dependencies.
+
+Run `npm install` in the `client` subfolder to install all dependencies.
+
 Run `grunt` in the main directory to start the server.
 
 Run `grunt` in the `client` directory to start the game client.
+
+Play the game at `http://localhost:3000`
 
 # Open Source Libraries
 The following open source javascript libraries:
