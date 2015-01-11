@@ -25,13 +25,15 @@ The following open source javascript libraries:
   * [lodash](http://lodash.com/) - A utility library delivering consistency, customization, performance, & extras.
   * [Node.js](http://nodejs.org/) - Node.js is a platform built on Chrome's JavaScript runtime for easily building fast, scalable network applications. 
 
-# License
-[CC BY-ND 4.0](LICENSE) License
-
 # Credits
+
+## Art
 
 TODO
 
 ## Sound and Music
 
 TODO
+
+# License
+[CC BY-ND 4.0](LICENSE) License
