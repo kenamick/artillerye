@@ -114,7 +114,7 @@ Play.prototype = {
     });
     socket.on(packets.SEND_CHAT_MSG, function (data) {
       self.forPlayer(data.pid, true, function (player) {
-        console.log(data);
+        // console.log(data);
         self.addChatMsg(player, data.t);
       });
     });
@@ -140,7 +140,7 @@ Play.prototype = {
       self.forPlayer(data.pid, true, function (player) {
         player.onDamage(data);
 
-        console.log('player is hit ', player.id, player.x, player.y);
+        // console.log('player is hit ', player.id, player.x, player.y);
 
         if (!player.alive) {
           // play destruction animation
