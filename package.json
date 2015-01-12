@@ -10,7 +10,7 @@
   },
   "homepage": "",
   "scripts": {
-    "start": "PORT=80 node app"
+    "start": "node app"
   },
   "dependencies": {
     "colors": "^0.6.2",
