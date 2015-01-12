@@ -16,19 +16,41 @@ Menu.prototype = {
 
   },
   create: function() {
-    var style = { font: '65px Arial', fill: '#ffffff', align: 'center'};
-    this.sprite = this.game.add.sprite(this.game.world.centerX, 138, 'yeoman');
-    this.sprite.anchor.setTo(0.5, 0.5);
+    var style1 = { font: '65px Arial', fill: '#131313', align: 'center'}
+      , style2 = { font: '18px Arial', fill: '#A1A1A1', align: 'center'}
+      , style22 = { font: '18px Arial', fill: '#131313', align: 'center'}
+      , style3 = { font: '14px Arial', fill: '#A1A1A1', align: 'center'}
+      , text;
 
-    this.titleText = this.game.add.text(this.game.world.centerX, 300, 'Artillerye', style);
-    this.titleText.anchor.setTo(0.5, 0.5);
+    this.game.stage.backgroundColor = '#ffffff';
 
-    this.instructionsText = this.game.add.text(this.game.world.centerX, 400,
-      'Click anywhere to play', { font: '16px Arial', fill: '#ffffff', align: 'center'});
-    this.instructionsText.anchor.setTo(0.5, 0.5);
+    // this.sprite = this.game.add.sprite(this.game.world.centerX, 138, 'bags');
+    // this.sprite.angle = 115;
+    // this.game.add.tween(this.sprite).to({angle: 160}, 2000, Phaser.Easing.Linear.NONE, true, 0, 5000, true);
+    // this.sprite.anchor.setTo(0.5, 0.5);
 
-    this.sprite.angle = -20;
-    this.game.add.tween(this.sprite).to({angle: 20}, 1000, Phaser.Easing.Linear.NONE, true, 0, 1000, true);
+    text = this.game.add.text(this.game.world.centerX, 140, 'Artillerye', style1);
+    text.setShadow(3, 3, '#A1A1A1', 5);
+    text.anchor.setTo(0.5, 0.5);
+
+    text = this.game.add.text(this.game.world.centerX, 200, 'by Dvubuz Games', style2);
+    text.anchor.setTo(0.5, 0.5);
+
+    text = this.game.add.text(this.game.world.centerX, 280, 'Mouse click or tap anywhere on the screen to aim.', style2);
+    text.anchor.setTo(0.5, 0.5);
+    text = this.game.add.text(this.game.world.centerX, 310, 'Hold mouse button or tap for magnitude.', style2);
+    text.anchor.setTo(0.5, 0.5);
+    text = this.game.add.text(this.game.world.centerX, 340, 'Press \'Enter\' to chat.', style2);
+    text.anchor.setTo(0.5, 0.5);
+
+    text = this.game.add.text(this.game.world.centerX, 400, 'Note: There seem to be some gfx issues with Firefox atm. :(', style2);
+    text.anchor.setTo(0.5, 0.5);
+
+    text = this.game.add.text(this.game.world.centerX, 455, 'Click anywhere to start', style22);
+    text.anchor.setTo(0.5, 0.5);
+
+    text = this.game.add.text(25, 580, 'Coding & Sfx by Petar Petrov', style3);
+    text = this.game.add.text(25, 600, 'Backdrop art by Stremena Tuzsuzova', style3);
   },
   update: function() {
     if(this.game.input.activePointer.justPressed()) {
