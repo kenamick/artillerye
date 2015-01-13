@@ -245,8 +245,12 @@ GameProc.prototype = {
   },
 
   isFull: function() {
+    var aliveCount = _.reduce(this.players, function(count, player) {
+      return count + (player.alive ? 1 : 0);
+    }, 0);
     for (var i = this.players.length - 1; i >= 0; i--) {
-      if (this.players[i].ai && this.players[i].alive) {
+      // make sure at least 2 or more player slots are available
+      if (this.players[i].ai && this.players[i].alive && aliveCount >= 2) {
         return false;
       }
     }

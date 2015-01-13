@@ -93,6 +93,7 @@ io.on('connection', function(socket) {
       break;
     }
   }
+  //TODO: free games with 1 (AI) player
 
   if (!foundGame) {
     /**
